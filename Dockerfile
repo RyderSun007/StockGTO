@@ -8,12 +8,14 @@ RUN dotnet restore
 
 # 複製其他原始碼並建置
 COPY . ./
-RUN dotnet publish -c Release -o out
+RUN dotnet publish StockGTO.csproj -c Release -o /app/publish
 
 # 使用 .NET 執行環境來啟動網站
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=build /app/out .
+
+# 🔧 修改這一行，從正確的資料夾複製
+COPY --from=build /app/publish .
 
 # 執行網站
 ENTRYPOINT ["dotnet", "StockGTO.dll"]
