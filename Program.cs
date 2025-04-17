@@ -15,11 +15,19 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
     .AddNegotiate();
 
+
+
+//2025/04/17 讓網站需要windows就可以使用
 // 🛡️ 預設所有請求都需經過授權
-builder.Services.AddAuthorization(options =>
-{
-    options.FallbackPolicy = options.DefaultPolicy;
-});
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.FallbackPolicy = options.DefaultPolicy;
+//});
+
+//2025/04/17 讓網站不需要登入就可以使用
+builder.Services.AddAuthorization(); // 不設預設授權策略
+
+
 
 // 🧱 Razor Pages（如果你會用）
 builder.Services.AddRazorPages();
