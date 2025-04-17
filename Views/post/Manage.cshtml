@@ -1,0 +1,152 @@
+﻿@model IEnumerable<StockGTO.Models.Post>
+
+@{
+    ViewData["Title"] = "文章管理面板";
+}
+
+<!-- 🔧 頁面標題與新增文章按鈕 -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>🛠️ 管理面板：文章總覽</h2>
+    @* 這裡按鈕你現在可以刪掉，因為我們改用內嵌表單囉 *@
+</div>
+
+<!-- 🔹 資料清單表格 -->
+<table class="table table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>標題</th>
+            <th>分類</th>
+            <th>建立時間</th>
+            <th style="width: 100px;">操作</th>
+        </tr>
+    </thead>
+    <tbody id="post-table">
+        @foreach (var post in Model)
+        {
+            <tr id="row-@post.Id">
+                <td>@post.Title</td>
+                <td>@post.Category</td>
+                <td>@post.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>
+                    <button class="btn btn-sm btn-warning" onclick="editPost(@post.Id)">✏️</button>
+                    <button class="btn btn-sm btn-danger" onclick="deletePost(@post.Id)">🗑</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- ✅ 新增文章表單區塊 -->
+<hr />
+<h4>📝 新增文章</h4>
+<form id="create-form" class="border p-4 bg-light rounded mb-4">
+    <div class="mb-2">
+        <label>分類</label>
+        <input id="create-category" class="form-control" placeholder="例如：C# / ABAP / 股票" />
+    </div>
+    <div class="mb-2">
+        <label>標題</label>
+        <input id="create-title" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label>內容</label>
+        <textarea id="create-content" class="form-control" rows="6"></textarea>
+    </div>
+    <button type="button" class="btn btn-primary" onclick="submitNew()">📬 發布</button>
+</form>
+
+<!-- 📝 編輯文章區塊（點按✏️才會顯示） -->
+<div id="edit-panel" class="border p-4 bg-light mt-4" style="display:none;">
+    <h4>✏️ 編輯文章</h4>
+    <form id="edit-form">
+        <input type="hidden" id="edit-id" />
+        <div class="mb-2">
+            <label>標題</label>
+            <input id="edit-title" class="form-control" />
+        </div>
+        <div class="mb-2">
+            <label>分類</label>
+            <input id="edit-category" class="form-control" />
+        </div>
+        <div class="mb-2">
+            <label>內容</label>
+            <textarea id="edit-content" class="form-control" rows="6"></textarea>
+        </div>
+        <button type="button" class="btn btn-success" onclick="submitEdit()">儲存</button>
+        <button type="button" class="btn btn-secondary" onclick="cancelEdit()">取消</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        function editPost(id) {
+            fetch(`/Post/GetContent/${id}`)
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("edit-id").value = id;
+                    document.getElementById("edit-title").value = data.title;
+                    document.getElementById("edit-category").value = data.category || "";
+                    document.getElementById("edit-content").value = data.content;
+                    document.getElementById("edit-panel").style.display = "block";
+                    window.scrollTo({ top: document.getElementById("edit-panel").offsetTop - 40, behavior: 'smooth' });
+                });
+        }
+
+        function cancelEdit() {
+            document.getElementById("edit-panel").style.display = "none";
+        }
+
+        function submitEdit() {
+            const id = document.getElementById("edit-id").value;
+            const post = {
+                id: id,
+                title: document.getElementById("edit-title").value,
+                category: document.getElementById("edit-category").value,
+                content: document.getElementById("edit-content").value
+            };
+
+            fetch(`/Post/Edit`, {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(post)
+            })
+            .then(res => {
+                if (!res.ok) throw new Error("儲存失敗");
+                return res.json();
+            })
+            .then(data => location.reload())
+            .catch(err => alert(err.message));
+        }
+
+        function deletePost(id) {
+            if (!confirm("確定要刪除嗎？")) return;
+
+            fetch(`/Post/Delete/${id}`, { method: "POST" })
+                .then(res => {
+                    if (!res.ok) throw new Error("刪除失敗");
+                    document.getElementById("row-" + id).remove();
+                })
+                .catch(err => alert(err.message));
+        }
+
+        function submitNew() {
+            const post = {
+                category: document.getElementById("create-category").value,
+                title: document.getElementById("create-title").value,
+                content: document.getElementById("create-content").value
+            };
+
+            fetch(`/Post/CreateFromAjax`, {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(post)
+            })
+            .then(res => {
+                if (!res.ok) throw new Error("新增失敗");
+                return res.json();
+            })
+            .then(data => location.reload()) // 成功後刷新畫面
+            .catch(err => alert(err.message));
+        }
+    </script>
+}

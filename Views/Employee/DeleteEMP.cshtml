@@ -1,0 +1,20 @@
+﻿@model StockGTO.Models.Employee
+
+<h2 class="text-danger">⚠️ 確認刪除</h2>
+
+<div class="alert alert-warning">
+    <p>你真的要刪除員工 <strong>@Model.Name</strong> 嗎？</p>
+    <p>此動作無法還原。</p>
+</div>
+
+<form asp-action="DeleteEMP" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <button type="submit" class="btn btn-danger">
+        <i class="bi bi-trash"></i> 確認刪除
+    </button>
+
+    <a asp-action="ShowEmployee" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> 返回清單
+    </a>
+</form>

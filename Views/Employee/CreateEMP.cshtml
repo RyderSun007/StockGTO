@@ -1,0 +1,57 @@
+﻿@model StockGTO.Models.Employee
+
+@{
+    ViewData["Title"] = "新增員工";
+}
+
+<h2 class="mt-4">🆕 新增員工</h2>
+
+<form asp-action="CreateEMP" method="post">
+    <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+        <input asp-for="Name" class="form-control" placeholder="輸入姓名" />
+    </div>
+
+    <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-telephone-fill"></i></span>
+        <input asp-for="Phone" class="form-control" placeholder="輸入電話" />
+    </div>
+
+    <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+        <input asp-for="Email" class="form-control" placeholder="輸入 Email" />
+    </div>
+
+    <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-building"></i></span>
+        <input asp-for="Department" class="form-control" placeholder="輸入部門" />
+    </div>
+
+    <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-calendar-check"></i></span>
+        <input asp-for="HireDate" class="form-control" type="date" />
+    </div>
+
+    <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-cash-coin"></i></span>
+        <input asp-for="Salary" class="form-control" placeholder="輸入薪資" />
+    </div>
+
+    <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-check-circle"></i></span>
+        <div class="form-control d-flex align-items-center">
+            <input type="hidden" name="IsActive" value="false" />
+            <input type="checkbox" class="form-check-input me-2"
+                   id="IsActive" name="IsActive"
+                   value="true" />
+            <label for="IsActive" class="form-check-label mb-0">在職狀態</label>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        <i class="bi bi-check2-circle"></i> 建立
+    </button>
+    <a asp-action="ShowEmployee" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> 返回清單
+    </a>
+</form>

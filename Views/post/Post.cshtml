@@ -1,0 +1,48 @@
+﻿@model IEnumerable<StockGTO.Models.Post>
+
+@{
+    ViewData["Title"] = "文章清單";
+}
+
+<h2>📢 學習筆記布告欄</h2>
+
+<!-- 🔶 顯示文章內容區塊 -->
+<div id="post-detail" class="border rounded p-4 mb-4 bg-light" style="display:none;">
+    <h4 id="post-title" class="text-primary"></h4>
+    <p class="text-muted" id="post-date"></p>
+    <div id="post-content" style="white-space: pre-wrap;"></div>
+</div>
+
+<!-- 🔹 文章清單 -->
+<ul>
+    @foreach (var post in Model)
+    {
+        <li>
+            <a href="javascript:void(0);" onclick="loadPost(@post.Id)">
+                @post.Title
+            </a>
+            <span class="text-muted">（@post.CreatedAt.ToString("yyyy-MM-dd")）</span>
+        </li>
+    }
+</ul>
+
+<!-- 🔸 JavaScript AJAX 載入文章內容 -->
+@section Scripts {
+    <script>
+        function loadPost(id) {
+            fetch(`/Post/GetContent/${id}`)
+                .then(response => {
+                    if (!response.ok) throw new Error("找不到文章！");
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById("post-title").textContent = data.title;
+                    document.getElementById("post-date").textContent = data.createdAt;
+                    document.getElementById("post-content").textContent = data.content;
+                    document.getElementById("post-detail").style.display = "block";
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                })
+                .catch(error => alert(error));
+        }
+    </script>
+}
