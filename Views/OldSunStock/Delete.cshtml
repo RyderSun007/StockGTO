@@ -1,0 +1,17 @@
+﻿@model StockGTO.Models.OldSunStockModel
+@{
+    ViewData["Title"] = "刪除持股";
+}
+
+<h2 class="mt-4 text-danger">⚠️ 確認刪除持股</h2>
+
+<div class="alert alert-warning">
+    <p>你確定要刪除 <strong>@Model.StockName</strong>（@Model.StockCode）這筆持股資料嗎？</p>
+    <p>此操作無法復原。</p>
+</div>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> 確定刪除</button>
+    <a asp-action="Index" class="btn btn-secondary">取消</a>
+</form>

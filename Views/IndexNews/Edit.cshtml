@@ -1,0 +1,44 @@
+﻿@model StockGTO.Models.IndexNews
+@{
+    ViewData["Title"] = "編輯首頁新聞";
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+}
+
+<h2>✏️ 編輯首頁卡片</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="Title">標題</label>
+        <input asp-for="Title" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Summary">摘要</label>
+        <input asp-for="Summary" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ImageUrl">圖片連結</label>
+        <input asp-for="ImageUrl" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="LinkUrl">跳轉連結</label>
+        <input asp-for="LinkUrl" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Position">位置（1~9）</label>
+        <input asp-for="Position" class="form-control" />
+    </div>
+
+    <div class="form-check mt-2">
+        <input asp-for="IsActive" class="form-check-input" />
+        <label asp-for="IsActive" class="form-check-label">啟用</label>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-3">💾 儲存變更</button>
+    <a asp-action="Manage" class="btn btn-secondary mt-3">返回清單</a>
+</form>

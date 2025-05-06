@@ -1,0 +1,87 @@
+﻿@{
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+}
+
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IPagedList<StockGTO.Models.Post>
+
+<main class="container pt-5">
+
+    <!-- 🔍 搜尋 + 篩選區 -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <form method="get" class="row g-3 align-items-center">
+                <div class="col-md-4">
+                    <label class="form-label">📂 分類</label>
+                    <select name="category" class="form-select">
+                        <option value="">全部分類</option>
+                        @foreach (var cat in ViewBag.AllCategories as List<string>)
+                        {
+                            <option value="@cat" selected="@(cat == ViewBag.CurrentCategory ? "selected" : null)">
+                                @cat
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">🔠 關鍵字搜尋</label>
+                    <input name="search" class="form-control" placeholder="輸入標題或作者" value="@ViewBag.CurrentSearch" />
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-danger w-100">
+                        🔍 搜尋文章
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 📦 討論區列表 -->
+    <section class="post-list-wrapper mb-5">
+        <h3 class="mb-4 fw-bold">
+            📋 討論區風格列表 ｜ 共 <span class="text-primary">@Model.TotalItemCount</span> 筆
+        </h3>
+
+        <!-- 🔠 表頭 -->
+        <div class="row fw-bold text-center border-bottom pb-2 mb-3">
+            <div class="col-6">標題</div>
+            <div class="col-3">作者</div>
+            <div class="col-3">日期</div>
+        </div>
+
+        <!-- 🔁 每篇文章 -->
+        @foreach (var post in Model)
+        {
+            <div class="row text-center align-items-center border-bottom py-2">
+                <div class="col-6 text-start">
+                    <a href="/Post/Details/@post.Id" class="text-dark fw-semibold">
+                        @post.Title
+                    </a>
+                </div>
+                <div class="col-3">@post.Author</div>
+                <div class="col-3">@post.CreatedAt.ToString("MM/dd")</div>
+            </div>
+        }
+
+        <!-- ✅ 分頁控制 -->
+        <div class="mt-5 d-flex justify-content-center">
+            @Html.PagedListPager(Model, page => Url.Action("Post", new
+                {
+                    page,
+                    category = ViewBag.CurrentCategory,
+                    search = ViewBag.CurrentSearch
+                }), new PagedListRenderOptions
+       {
+           LiElementClasses = new[] { "page-item" },
+           PageClasses = new[] { "page-link" },
+           UlElementClasses = new[] { "pagination" },
+           DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+           DisplayLinkToLastPage = PagedListDisplayMode.Always,
+           DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+           DisplayLinkToNextPage = PagedListDisplayMode.Always
+       })
+        </div>
+    </section>
+
+</main>

@@ -1,0 +1,67 @@
+﻿@model StockGTO.Models.Post
+
+@{
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+    ViewData["Title"] = "新增文章";
+}
+
+<main class="container pt-5">
+
+    <h2 class="fw-bold mb-4">📝 新增文章 (CreateManage)</h2>
+
+    <form asp-action="CreateManage" method="post" class="bg-light p-4 rounded shadow-sm">
+
+        <!-- 標題 -->
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label fw-bold">標題</label>
+            <input asp-for="Title" class="form-control" placeholder="請輸入文章標題" />
+        </div>
+
+        <!-- 分類 -->
+        <div class="mb-3">
+            <label asp-for="Category" class="form-label fw-bold">分類</label>
+            <select asp-for="Category" class="form-select">
+                <option value="">請選擇分類</option>
+                <option>C#筆記</option>
+                <option>JavaScript</option>
+                <option>Razor</option>
+                <option>SQL</option>
+                <option>前端設計</option>
+                <option>後端邏輯</option>
+                <option>投資筆記</option>
+            </select>
+        </div>
+
+        <!-- 內容 -->
+        <div class="mb-3">
+            <label asp-for="Content" class="form-label fw-bold">內容</label>
+            <textarea asp-for="Content" class="form-control" rows="8" placeholder="請輸入文章內容..."></textarea>
+        </div>
+
+        <!-- 圖片網址 -->
+        <div class="mb-3">
+            <label asp-for="ImageUrl" class="form-label fw-bold">圖片網址 (選填)</label>
+            <input asp-for="ImageUrl" class="form-control" placeholder="https://example.com/image.jpg" />
+        </div>
+
+        <!-- 作者 -->
+        <div class="mb-4">
+            <label asp-for="Author" class="form-label fw-bold">作者</label>
+            <select asp-for="Author" class="form-select">
+                <option value="">請選擇作者</option>
+                <option>管理員</option>
+                <option>老孫</option>
+                <option>股票禪師</option>
+            </select>
+        </div>
+
+        <!-- 送出按鈕 -->
+        <div class="text-end">
+            <button type="submit" class="btn btn-success">
+                ✅ 發布文章
+            </button>
+        </div>
+
+    </form>
+
+</main>

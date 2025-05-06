@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - StockGTO</title>
+
+    <!-- 🌐 字體與圖示 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- 🎨 共用樣式 -->
+    <link rel="stylesheet" href="@Url.Content("~/css/global.css")" />
+
+    <!-- 🧱 Satner 主題樣式 -->
+    <link rel="stylesheet" href="@Url.Content("~/satner/css/bootstrap.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/satner/vendors/linericon/style.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/satner/css/font-awesome.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/satner/vendors/owl-carousel/owl.carousel.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/satner/vendors/owl-carousel/owl.theme.default.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/satner/css/magnific-popup.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/satner/vendors/nice-select/css/nice-select.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/satner/css/style.css")" />
+
+    <!-- 🏠 首頁專用樣式 -->
+    @if (ViewContext.RouteData.Values["Action"]?.ToString() == "Index" &&
+    ViewContext.RouteData.Values["Controller"]?.ToString() == "Home")
+    {
+        <link rel="stylesheet" href="@Url.Content("~/css/homepage.css")" />
+    }
+
+    <!-- 📚 文章頁專用樣式 -->
+    @if (ViewContext.RouteData.Values["Controller"]?.ToString() == "Post")
+    {
+        <link rel="stylesheet" href="@Url.Content("~/css/post.css")" />
+    }
+
+    <!-- 🛠️ 後台管理樣式 -->
+    @if (ViewContext.RouteData.Values["Controller"]?.ToString()?.Contains("Manage") == true ||
+    ViewContext.RouteData.Values["Controller"]?.ToString() == "Employee" ||
+    ViewContext.RouteData.Values["Controller"]?.ToString() == "ArticlePost")
+    {
+        <link rel="stylesheet" href="@Url.Content("~/css/admin.css")" />
+    }
+
+    @RenderSection("Styles", required: false)
+</head>
+
+<body>
+    <!-- 🔹 導覽列 -->
+    <header class="header_area">
+        <div class="main_menu">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <div class="container">
+                    <a class="navbar-brand logo_h" asp-controller="Home" asp-action="Index">
+                        <img src="@Url.Content("~/satner/img/logo.png")" alt="Logo" />
+                    </a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
+                        <ul class="nav navbar-nav menu_nav justify-content-end">
+                            <li class="nav-item active"><a class="nav-link" asp-controller="Home" asp-action="Index">首頁</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="IndexV2">首頁 V2</a></li>
+                            
+                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="News">新聞</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Taiwan">台股</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="US">美股</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="StockSelect">選股</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Fund">基金</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="ETF">ETF</a></li>
+
+                            <!-- 🔹 靜態資料 -->
+                            <li class="nav-item submenu dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">靜態資料</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/staticpages/about.html">關於我們</a></li>
+                                    <li><a class="dropdown-item" href="/staticpages/contact.html">聯絡我們</a></li>
+                                    <li><a class="dropdown-item" href="/staticpages/services.html">服務項目</a></li>
+                                    <li><a class="dropdown-item" href="/staticpages/portfolio.html">作品集</a></li>
+                                </ul>
+                            </li>
+
+                            <!-- 🔹 自有程式 -->
+                            <li class="nav-item submenu dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">自有程式</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Post" asp-action="Post">C#筆記 View</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Post" asp-action="Manage">C#筆記編輯刪除</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Post" asp-action="CreateManage">C#筆記新增文章</a></li>
+                                </ul>
+                            </li>
+
+                            <!-- 🔹 CRUD 區塊 -->
+                            <li class="nav-item submenu dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">CRUD區塊</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="ArticlePost" asp-action="CreateIndexPost">CRUD(HTML技術)</a></li>
+                                    <li><a class="dropdown-item" asp-controller="ArticlePost" asp-action="ManageIndexPost">CRUD(AJAX技術)</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Home" asp-action="Templates">模板管理</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Employee" asp-action="ShowEmployee">員工清單</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 🔸 主內容 -->
+    <main class="container pt-5" style="padding-top: 120px;">
+        @RenderBody()
+    </main>
+
+    <!-- 🔻 頁尾 -->
+    <footer class="footer-area bg-dark text-light mt-5 py-4">
+        <div class="container text-center">
+            <p>&copy; 2025 股市方舟 StockGTO. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- 📦 JavaScript 套件 -->
+    <script src="@Url.Content("~/satner/js/jquery-3.2.1.min.js")"></script>
+    <script src="@Url.Content("~/satner/js/bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/satner/js/stellar.js")"></script>
+    <script src="@Url.Content("~/satner/js/jquery.magnific-popup.min.js")"></script>
+    <script src="@Url.Content("~/satner/vendors/nice-select/js/jquery.nice-select.min.js")"></script>
+    <script src="@Url.Content("~/satner/vendors/isotope/imagesloaded.pkgd.min.js")"></script>
+    <script src="@Url.Content("~/satner/vendors/isotope/isotope-min.js")"></script>
+    <script src="@Url.Content("~/satner/vendors/owl-carousel/owl.carousel.min.js")"></script>
+    <script src="@Url.Content("~/satner/js/mail-script.js")"></script>
+    <script src="@Url.Content("~/satner/js/theme.js")"></script>
+
+    <script>
+        $(document).ready(function () {
+            $(".testi_slider").owlCarousel({
+                items: 2,
+                loop: true,
+                margin: 30,
+                autoplay: true,
+                autoplayTimeout: 3000,
+                smartSpeed: 800,
+                dots: true,
+                nav: false,
+                responsive: {
+                    0: { items: 1 },
+                    768: { items: 2 }
+                }
+            });
+        });
+    </script>
+
+    @RenderSection("Scripts", required: false)
+    <!-- ✅ Bootstrap 的 JS 功能支援（特別是 Carousel 需要） -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-Ho+dA7wXwMJzO7pT+xnQH4BGki6zGHrqlA1P+v+yE8nRnT3h0/8k4C1N+3C+VoRC"
+            crossorigin="anonymous"></script>
+</body>
+</html>

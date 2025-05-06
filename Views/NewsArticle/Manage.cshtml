@@ -1,0 +1,87 @@
+﻿@model StockGTO.Models.NewsArticleViewModel
+
+@{
+    ViewData["Title"] = "首頁新聞管理";
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+}
+
+<h2 class="mb-4"><i class="bi bi-tools"></i> 首頁新聞管理</h2>
+
+<!-- 🔍 查詢區塊 -->
+<form method="get" class="row g-2 mb-4">
+    <div class="col-md-3">
+        <input name="keyword" value="@Model.SearchKeyword" class="form-control" placeholder="關鍵字搜尋 (標題/摘要)" />
+    </div>
+    <div class="col-md-2">
+        <select name="category" class="form-select">
+            <option value="">全部分類</option>
+            <option value="台灣市場" selected="@(Model.Category == "台灣市場")">台灣市場</option>
+            <option value="中國市場" selected="@(Model.Category == "中國市場")">中國市場</option>
+            <option value="國際財經" selected="@(Model.Category == "國際財經")">國際財經</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="showHome" class="form-select">
+            <option value="">首頁顯示？</option>
+            <option value="true" selected="@(Model.ShowOnHomepage == true)">是</option>
+            <option value="false" selected="@(Model.ShowOnHomepage == false)">否</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="isActive" class="form-select">
+            <option value="">是否啟用？</option>
+            <option value="true" selected="@(Model.IsActive == true)">啟用</option>
+            <option value="false" selected="@(Model.IsActive == false)">停用</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search"></i> 查詢</button>
+    </div>
+</form>
+
+<!-- 📋 資料表格 -->
+<table class="table table-bordered table-striped table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>標題</th>
+            <th>分類</th>
+            <th>發布日</th>
+            <th>首頁</th>
+            <th>啟用</th>
+            <th>功能</th>
+        </tr>
+    </thead> 
+    <tbody>
+        @foreach (var item in Model.NewsList)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.Category</td>
+                <td>@item.PublishDate.ToString("yyyy-MM-dd")</td>
+                <td>@(item.ShowOnHomepage ? "✔️" : "")</td>
+                <td>@(item.IsActive ? "✔️" : "")</td>
+                <td>
+                    <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.Id">編輯</a>
+                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.Id" onclick="return confirm('確定要刪除嗎？')">刪除</a>
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>
+
+<!-- 📄 分頁控制 -->
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination justify-content-center">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link"
+                       href="?page=@i&keyword=@Model.SearchKeyword&category=@Model.Category&showHome=@Model.ShowOnHomepage&isActive=@Model.IsActive">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

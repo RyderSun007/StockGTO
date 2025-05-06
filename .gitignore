@@ -1,0 +1,13 @@
+/.vs
+/.config
+/bin
+/obj
+/wwwroot
+/Properties/PublishProfiles
+/Upload
+/NuGetPackages
+HSNPortal/wwwroot/assets/vendor/tinymce/package-lock.json
+.vscode/launch.json
+.vscode/tasks.json
+/node_modules
+.fake

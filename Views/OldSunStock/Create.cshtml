@@ -1,0 +1,35 @@
+﻿@model StockGTO.Models.OldSunStockModel
+@{
+    ViewData["Title"] = "新增持股";
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+}
+
+<h2 class="mb-4 mt-5">➕ 新增持股</h2>
+
+<form asp-action="Create" method="post">
+    <table class="table table-bordered">
+        <tr><th>股票代號</th><td><input asp-for="StockCode" class="form-control" /></td></tr>
+        <tr><th>股票名稱</th><td><input asp-for="StockName" class="form-control" /></td></tr>
+        <tr><th>股數</th><td><input asp-for="Quantity" class="form-control" /></td></tr>
+        <tr><th>成交均價</th><td><input asp-for="BuyPrice" class="form-control" /></td></tr>
+        <tr><th>現價</th><td><input asp-for="CurrentPrice" class="form-control" /></td></tr>
+        <tr><th>殖利率 (%)</th><td><input asp-for="DividendYield" class="form-control" /></td></tr>
+        <tr><th>配息月份</th><td><input asp-for="DividendMonth" class="form-control" /></td></tr>
+        <tr><th>產業別</th><td><input asp-for="IndustryCategory" class="form-control" /></td></tr>
+        <tr><th>配息次數</th><td><input asp-for="DividendFrequency" class="form-control" /></td></tr>
+        <tr><th>5年長期趨勢</th><td><input asp-for="FiveYearTrend" class="form-control" /></td></tr>
+        <tr><th>Beta值</th><td><input asp-for="BetaValue" class="form-control" /></td></tr>
+        <tr>
+            <th>交易動作</th>
+            <td>
+                <select asp-for="BuySellAction" class="form-control">
+                    <option value="買">買</option>
+                    <option value="賣">賣</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+
+    <button type="submit" class="btn btn-primary">✔️ 儲存</button>
+    <a asp-action="Index" class="btn btn-secondary">返回列表</a>
+</form>

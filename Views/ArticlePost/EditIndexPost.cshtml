@@ -1,0 +1,54 @@
+﻿@model StockGTO.Models.IndexPost
+
+@{
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml"; // ✅ 換成 AzNews 樣式
+    ViewData["Title"] = "編輯公告";
+}
+
+<main class="container pt-5">
+
+    <h1 class="fw-bold mb-4">📝 @ViewData["Title"]</h1>
+
+    <form asp-action="EditIndexPost" method="post" class="border p-4 bg-light rounded">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label">標題</label>
+            <input asp-for="Title" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Content" class="form-label">內容</label>
+            <textarea asp-for="Content" class="form-control" id="Content" rows="10"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ImageUrl" class="form-label">圖片網址</label>
+            <input asp-for="ImageUrl" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Category" class="form-label">分類</label>
+            <input asp-for="Category" class="form-control" />
+        </div>
+
+        <div class="mb-4">
+            <label asp-for="Author" class="form-label">作者</label>
+            <input asp-for="Author" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> 更新公告
+        </button>
+        <a asp-action="ManageIndexPost" class="btn btn-secondary ms-2">
+            <i class="fas fa-arrow-left"></i> 返回管理
+        </a>
+    </form>
+
+</main>
+
+<!-- ✍️ 載入 CKEditor -->
+<script src="https://cdn.ckeditor.com/4.20.1/standard/ckeditor.js"></script>
+<script>
+    CKEDITOR.replace('Content');
+</script>

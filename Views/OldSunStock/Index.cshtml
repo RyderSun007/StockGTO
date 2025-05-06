@@ -1,0 +1,88 @@
+﻿@model List<StockGTO.Models.OldSunStockModel>
+@{
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml"; // ← 你的主版面路徑
+}
+@{
+    ViewData["Title"] = "老孫持股一覽";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">📈 老孫持股一覽</h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-warning">尚無持股資料，請點上方「新增」新增持股！</div>
+    }
+    else
+    {
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>交易動作</th>
+                    <th>股票代號</th>
+                    <th>股票名稱</th>
+                    <th>股數</th>
+                    <th>成交均價</th>
+                    <th>現價</th>
+                    <th>付出成本</th>
+                    <th>現值</th>
+                    <th>殖利率 (%)</th>
+                    <th>配息月份</th>
+                    <th>產業別</th>
+                    <th>Beta</th>
+                    <th>功能</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var stock in Model)
+                {
+                    <tr>
+                        <td>@stock.BuySellAction</td>
+                        <td>@stock.StockCode</td>
+                        <td>@stock.StockName</td>
+                        <td>@stock.Quantity</td>
+                        <td>@stock.BuyPrice</td>
+                        <td>@stock.CurrentPrice</td>
+                        <td>@stock.TotalCost</td>
+                        <td>@stock.CurrentValue</td>
+                        <td>@stock.DividendYield</td>
+                        <td>@stock.DividendMonth</td>
+                        <td>@stock.IndustryCategory</td>
+                        <td>@stock.BetaValue</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@stock.Id" class="btn btn-sm btn-warning">✏️ 編輯</a>
+                            <button class="btn btn-danger delete-btn" data-id="@stock.Id">🗑️ 刪除</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <a asp-action="Create" class="btn btn-success mt-3">➕ 新增持股</a>
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".delete-btn").click(function () {
+                if (!confirm("你確定要刪除這筆資料嗎？")) return;
+
+                let id = $(this).data("id");
+                let row = $(this).closest("tr");
+
+                $.ajax({
+                    url: '/OldSunStock/DeleteAjax/' + id,
+                    type: 'DELETE',
+                    success: function () {
+                        row.fadeOut(300, function () {
+                            $(this).remove();
+                        });
+                    },
+                    error: function () {
+                        alert("刪除失敗！");
+                    }
+                });
+            });
+        });
+    </script>
+}

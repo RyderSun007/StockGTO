@@ -1,0 +1,80 @@
+﻿@model StockGTO.ViewModels.IndexNewsViewModel
+@{
+    ViewData["Title"] = "首頁新聞管理";
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+}
+
+<h2 class="mb-4">🛠️ 管理首頁九宮格新聞卡片</h2>
+
+<!-- 🔹 新增表單 -->
+<form asp-action="Create" method="post">
+    <div class="row">
+        <div class="col-md-4">
+            <label asp-for="NewNews.Title">標題</label>
+            <input asp-for="NewNews.Title" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="NewNews.ImageUrl">圖片連結</label>
+            <input asp-for="NewNews.ImageUrl" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="NewNews.LinkUrl">跳轉連結</label>
+            <input asp-for="NewNews.LinkUrl" class="form-control" />
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-md-3">
+            <label asp-for="NewNews.Position">位置（1~9）</label>
+            <select asp-for="NewNews.Position" class="form-select">
+                @for (int i = 1; i <= 9; i++)
+                {
+                    <option value="@i">位置 @i</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="NewNews.Summary">摘要</label>
+            <input asp-for="NewNews.Summary" class="form-control" />
+        </div>
+        <div class="col-md-3 d-flex align-items-center">
+            <div class="form-check mt-4">
+                <input asp-for="NewNews.IsActive" class="form-check-input" />
+                <label asp-for="NewNews.IsActive" class="form-check-label">啟用</label>
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-success mt-3">💾 儲存卡片</button>
+</form>
+
+<hr />
+
+<!-- 🔸 清單預覽區 -->
+<h4 class="mt-4">📋 已建立卡片</h4>
+<table class="table table-bordered mt-2">
+    <thead class="table-light">
+        <tr>
+            <th>位置</th>
+            <th>標題</th>
+            <th>圖片預覽</th>
+            <th>啟用</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.NewsList.OrderBy(n => n.Position))
+        {
+            <tr>
+                <td>@item.Position</td>
+                <td>@item.Title</td>
+                <td>
+                    <img src="@item.ImageUrl" alt="預覽" width="100" style="object-fit:cover;height:60px;" />
+                </td>
+                <td>@(item.IsActive ? "✅" : "❌")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">✏️ 編輯</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger" onclick="return confirm('真的要刪除嗎？')">🗑️ 刪除</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

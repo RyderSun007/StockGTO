@@ -1,0 +1,56 @@
+﻿@model StockGTO.Models.Post
+
+@{
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+    ViewData["Title"] = "新增文章";
+}
+
+<main class="container pt-5">
+
+    <h2 class="fw-bold mb-4">📝 新增文章 (Create)</h2>
+
+    <form asp-action="Create" method="post" class="bg-light p-4 rounded shadow-sm">
+
+        <!-- 分類 -->
+        <div class="mb-3">
+            <label asp-for="Category" class="form-label fw-bold">分類</label>
+            <input asp-for="Category" class="form-control" placeholder="例如：C# / ABAP / 股票" />
+        </div>
+
+        <!-- 標題 -->
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label fw-bold">標題</label>
+            <input asp-for="Title" class="form-control" placeholder="請輸入文章標題" />
+        </div>
+
+        <!-- 內容 -->
+        <div class="mb-4">
+            <label asp-for="Content" class="form-label fw-bold">內容</label>
+            <textarea asp-for="Content" id="editor" class="form-control" rows="10" placeholder="請輸入文章內容..."></textarea>
+
+        </div>
+
+        <!-- 送出按鈕 -->
+        <div class="text-end">
+            <button type="submit" class="btn btn-success">
+                ✅ 發布
+            </button>
+        </div>
+
+    </form>
+
+</main>
+
+<!-- 📌 加入 CKEditor 5 CDN -->
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+<script>
+    ClassicEditor
+        .create(document.querySelector('#editor'), {
+            ckfinder: {
+                uploadUrl: '/Upload/Image'
+            }
+        })
+        .catch(error => {
+            console.error(error);
+        });
+</script>

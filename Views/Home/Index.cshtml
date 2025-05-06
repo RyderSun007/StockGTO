@@ -1,0 +1,895 @@
+﻿@model StockGTO.ViewModels.HomeViewModel
+@using System.Linq
+
+@{
+    ViewData["Title"] = "StockGTO | 股市周刊"; // 例：首頁 或 文章管理
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+    
+}
+@{
+    ViewData["Title"] = "StockGTO | 股市周刊";
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+
+    var newsList = Model.IndexNews
+        .Where(x => x.IsActive)
+        .OrderByDescending(x => x.CreatedAt)
+        .Take(10)
+        .ToList();
+
+    var main = newsList.FirstOrDefault(x => x.Position == 1);
+}
+
+
+<!-- 🔔 跑馬燈區塊 Start -->
+<div class="bg-warning py-2 px-3 text-dark" style="overflow: hidden; white-space: nowrap;">
+    <marquee behavior="scroll" direction="left" scrollamount="5">
+        @foreach (var news in newsList)
+        {
+            <span class="mx-3">
+                🗞️ <a href="@news.LinkUrl" target="_blank" class="text-dark fw-bold">@news.Title</a>
+            </span>
+        }
+    </marquee>
+</div>
+<!-- 🔔 跑馬燈區塊 End -->
+
+
+<!-- 🌟【首頁熱門區塊 Trending Area】Start -->
+<!-- 🌟【首頁熱門區塊 Trending Area】Start -->
+<div class="trending-area fix">
+    <div class="container">
+        <div class="trending-main">
+            <div class="row align-items-start">
+                <!-- 🔶 主圖 + 下方三卡（Position 1~4） -->
+                <div class="col-lg-8 d-flex flex-column justify-content-between" style="min-height: 600px;">
+                    <!-- 📌 主圖 Position = 1 -->
+                    @if (main != null)
+                    {
+                        <div class="trending-top mb-3">
+                            <div class="trend-top-img">
+                                <a href="@main.LinkUrl" target="_blank">
+                                    <img src="@main.ImageUrl" alt="@main.Title" class="img-fluid" style="width:100%; height:auto;" />
+                                </a>
+                                <div class="trend-top-cap">
+                                    <span class="badge bg-warning text-dark">主卡區</span>
+                                    <h2><a href="@main.LinkUrl" target="_blank">@main.Title</a></h2>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- 📌 下三卡 Position = 2~4 -->
+                    <div class="trending-bottom mt-auto">
+                        <div class="row">
+                            @foreach (var item in newsList.Where(n => n.Position >= 2 && n.Position <= 4 && n.IsActive))
+                            {
+                                <div class="col-lg-4 d-flex">
+                                    <div class="single-bottom mb-3 w-100">
+                                        <div class="trend-bottom-img mb-2">
+                                            <a href="@item.LinkUrl" target="_blank">
+                                                <img src="@item.ImageUrl" alt="@item.Title" class="img-fluid"
+                                                     style="width:100%; height:120px; object-fit:cover;" />
+                                            </a>
+                                        </div>
+                                        <div class="trend-bottom-cap">
+                                            <span class="badge bg-dark text-light">下面三卡顯示區</span>
+                                            <h4 style="font-size:1rem;">
+                                                <a href="@item.LinkUrl" target="_blank">@item.Title</a>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 🔷 右五卡 Position = 5~9 -->
+                <div class="col-lg-4">
+                    <div class="trand-right">
+                        @foreach (var item in newsList.Where(n => n.Position >= 5 && n.Position <= 9 && n.IsActive))
+                        {
+                            <div class="trand-right-single d-flex mb-3">
+                                <div class="trand-right-img">
+                                    <a href="@item.LinkUrl" target="_blank">
+                                        <img src="@item.ImageUrl" alt="@item.Title" class="img-fluid"
+                                             style="width:100px; height:80px; object-fit:cover;" />
+                                    </a>
+                                </div>
+                                <div class="trand-right-cap ps-3">
+                                    <span class="badge bg-light text-dark mb-1">右邊五卡顯示區</span>
+                                    <h4 class="mb-0" style="font-size:1rem; line-height:1.4;">
+                                        <a href="@item.LinkUrl" target="_blank">@item.Title</a>
+                                    </h4>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div> <!-- .trending-main -->
+    </div> <!-- .container -->
+</div>
+<!-- 🌟【首頁熱門區塊 Trending Area】End -->
+
+    
+
+
+        <!-- Whats New Start -->
+
+        <section class="whats-news-area pt-50 pb-20">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="row d-flex justify-content-between">
+                            <div class="col-lg-3 col-md-3">
+                                <div class="section-tittle mb-30">
+                                    <h3>熱門新聞</h3>
+                                </div>
+                            </div>
+                            <div class="col-lg-9 col-md-9">
+                                <div class="properties__button">
+                                    <!--Nav Button  -->
+                                    <nav>
+                                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                            <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">重大新聞</a>
+                                            <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">地方新聞</a>
+                                            <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">社會新聞</a>
+                                            <a class="nav-item nav-link" id="nav-last-tab" data-toggle="tab" href="#nav-last" role="tab" aria-controls="nav-contact" aria-selected="false">股市</a>
+                                            <a class="nav-item nav-link" id="nav-Sports" data-toggle="tab" href="#nav-nav-Sport" role="tab" aria-controls="nav-contact" aria-selected="false">房市</a>
+                                            <a class="nav-item nav-link" id="nav-technology" data-toggle="tab" href="#nav-techno" role="tab" aria-controls="nav-contact" aria-selected="false">全球</a>
+                                        </div>
+                                    </nav>
+                                    <!--End Nav Button  -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <!-- Nav Card -->
+                                <div class="tab-content" id="nav-tabContent">
+                                    <!-- card one  重大新聞 -->
+                                        <!-- card one 改為動態新聞卡片 -->
+                                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                                        <div class="whats-news-caption">
+                                            <div class="row" id="dynamic-news-area">
+                                                 <!-- Python 爬蟲資料會注入這裡 -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Card two 地方新聞 -->
+                                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                                        <div class="whats-news-caption">
+                                            <div class="row">
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="single-what-news mb-100">
+                                                        <div class="what-img">
+                                                            <img src="~/aznews/assets/img/news/whatNews1.jpg" asp-append-version="true" alt="">
+                                                        </div>
+                                                        <div class="what-cap">
+                                                            <span class="color1">Night party</span>
+                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="single-what-news mb-100">
+                                                        <div class="what-img">
+                                                            <img src="~/aznews/assets/img/news/whatNews2.jpg" asp-append-version="true" alt="">
+                                                        </div>
+                                                        <div class="what-cap">
+                                                            <span class="color1">Night party</span>
+                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="single-what-news mb-100">
+                                                        <div class="what-img">
+                                                            <img src="~/aznews/assets/img/news/whatNews3.jpg" asp-append-version="true" alt="">
+                                                        </div>
+                                                        <div class="what-cap">
+                                                            <span class="color1">Night party</span>
+                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="single-what-news mb-100">
+                                                        <div class="what-img">
+                                                            <img src="~/aznews/assets/img/news/whatNews4.jpg" asp-append-version="true" alt="">
+                                                        </div>
+                                                        <div class="what-cap">
+                                                            <span class="color1">Night party</span>
+                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Card three 社會新聞 -->
+                                    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+                                        <div class="whats-news-caption">
+                                            <div class="row">
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="single-what-news mb-100">
+                                                        <div class="what-img">
+                                                            <img src="~/aznews/assets/img/news/whatNews1.jpg" asp-append-version="true" alt="">
+                                                        </div>
+                                                        <div class="what-cap">
+                                                            <span class="color1">Night party</span>
+                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="single-what-news mb-100">
+                                                        <div class="what-img">
+                                                            <img src="~/aznews/assets/img/news/whatNews2.jpg" asp-append-version="true" alt="">
+                                                        </div>
+                                                        <div class="what-cap">
+                                                            <span class="color1">Night party</span>
+                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="single-what-news mb-100">
+                                                        <div class="what-img">
+                                                            <img src="~/aznews/assets/img/news/whatNews3.jpg" asp-append-version="true" alt="">
+                                                        </div>
+                                                        <div class="what-cap">
+                                                            <span class="color1">Night party</span>
+                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="single-what-news mb-100">
+                                                        <div class="what-img">
+                                                            <img src="~/aznews/assets/img/news/whatNews4.jpg" asp-append-version="true" alt="">
+                                                        </div>
+                                                        <div class="what-cap">
+                                                            <span class="color1">Night party</span>
+                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- card fure 股市 -->
+                                    <div class="tab-pane fade" id="nav-last" role="tabpanel" aria-labelledby="nav-last-tab">
+                                        <div class="whats-news-caption">
+                                            <div class="row">
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="single-what-news mb-100">
+                                                        <div class="what-img">
+                                                            <img src="~/aznews/assets/img/news/whatNews1.jpg" asp-append-version="true" alt="">
+                                                        </div>
+                                                        <div class="what-cap">
+                                                            <span class="color1">Night party</span>
+                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="single-what-news mb-100">
+                                                        <div class="what-img">
+                                                            <img src="~/aznews/assets/img/news/whatNews2.jpg" asp-append-version="true" alt="">
+                                                        </div>
+                                                        <div class="what-cap">
+                                                            <span class="color1">Night party</span>
+                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="single-what-news mb-100">
+                                                        <div class="what-img">
+                                                            <img src="~/aznews/assets/img/news/whatNews3.jpg" asp-append-version="true" alt="">
+                                                        </div>
+                                                        <div class="what-cap">
+                                                            <span class="color1">Night party</span>
+                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="single-what-news mb-100">
+                                                        <div class="what-img">
+                                                            <img src="~/aznews/assets/img/news/whatNews4.jpg" asp-append-version="true" alt="">
+                                                        </div>
+                                                        <div class="what-cap">
+                                                            <span class="color1">Night party</span>
+                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- card Five  房市-->
+                                    <div class="tab-pane fade" id="nav-nav-Sport" role="tabpanel" aria-labelledby="nav-Sports">
+                                        <div class="whats-news-caption">
+                                            <div class="row">
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="single-what-news mb-100">
+                                                        <div class="what-img">
+                                                            <img src="~/aznews/assets/img/news/whatNews1.jpg" asp-append-version="true" alt="">
+                                                        </div>
+                                                        <div class="what-cap">
+                                                            <span class="color1">Night party</span>
+                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="single-what-news mb-100">
+                                                        <div class="what-img">
+                                                            <img src="~/aznews/assets/img/news/whatNews2.jpg" asp-append-version="true" alt="">
+                                                        </div>
+                                                        <div class="what-cap">
+                                                            <span class="color1">Night party</span>
+                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="single-what-news mb-100">
+                                                        <div class="what-img">
+                                                            <img src="~/aznews/assets/img/news/whatNews3.jpg" asp-append-version="true" alt="">
+                                                        </div>
+                                                        <div class="what-cap">
+                                                            <span class="color1">Night party</span>
+                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="single-what-news mb-100">
+                                                        <div class="what-img">
+                                                            <img src="~/aznews/assets/img/news/whatNews4.jpg" asp-append-version="true" alt="">
+                                                        </div>
+                                                        <div class="what-cap">
+                                                            <span class="color1">Night party</span>
+                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- card Six 全球新聞  -->
+                                    <div class="tab-pane fade" id="nav-techno" role="tabpanel" aria-labelledby="nav-technology">
+                                        <div class="whats-news-caption">
+                                            <div class="row">
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="single-what-news mb-100">
+                                                        <div class="what-img">
+                                                            <img src="~/aznews/assets/img/news/whatNews1.jpg" asp-append-version="true" alt="">
+                                                        </div>
+                                                        <div class="what-cap">
+                                                            <span class="color1">Night party</span>
+                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="single-what-news mb-100">
+                                                        <div class="what-img">
+                                                            <img src="~/aznews/assets/img/news/whatNews2.jpg" asp-append-version="true" alt="">
+                                                        </div>
+                                                        <div class="what-cap">
+                                                            <span class="color1">Night party</span>
+                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="single-what-news mb-100">
+                                                        <div class="what-img">
+                                                            <img src="~/aznews/assets/img/news/whatNews3.jpg" asp-append-version="true" alt="">
+                                                        </div>
+                                                        <div class="what-cap">
+                                                            <span class="color1">Night party</span>
+                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="single-what-news mb-100">
+                                                        <div class="what-img">
+                                                            <img src="~/aznews/assets/img/news/whatNews4.jpg" asp-append-version="true" alt="">
+                                                        </div>
+                                                        <div class="what-cap">
+                                                            <span class="color1">Night party</span>
+                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- End Nav Card -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <!-- Section Tittle -->
+                        <div class="section-tittle mb-40">
+                            <h3>Follow Us</h3>
+                        </div>
+                        <!-- Flow Socail -->
+                        <div class="single-follow mb-45">
+                            <div class="single-box">
+                                <div class="follow-us d-flex align-items-center">
+                                    <div class="follow-social">
+                                        <a href="#"><img src="~/aznews/assets/img/news/icon-fb.png" asp-append-version="true" alt=""></a>
+                                    </div>
+                                    <div class="follow-count">
+                                        <span>8,045</span>
+                                        <p>Fans</p>
+                                    </div>
+                                </div>
+                                <div class="follow-us d-flex align-items-center">
+                                    <div class="follow-social">
+                                        <a href="#"><img src="~/aznews/assets/img/news/icon-tw.png" asp-append-version="true" alt=""></a>
+                                    </div>
+                                    <div class="follow-count">
+                                        <span>8,045</span>
+                                        <p>Fans</p>
+                                    </div>
+                                </div>
+                                <div class="follow-us d-flex align-items-center">
+                                    <div class="follow-social">
+                                        <a href="#"><img src="~/aznews/assets/img/news/icon-ins.png" asp-append-version="true" alt=""></a>
+                                    </div>
+                                    <div class="follow-count">
+                                        <span>8,045</span>
+                                        <p>Fans</p>
+                                    </div>
+                                </div>
+                                <div class="follow-us d-flex align-items-center">
+                                    <div class="follow-social">
+                                        <a href="#"><img src="~/aznews/assets/img/news/icon-yo.png" asp-append-version="true" alt=""></a>
+                                    </div>
+                                    <div class="follow-count">
+                                        <span>8,045</span>
+                                        <p>Fans</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                <!-- New Poster 
+                        <div class="news-poster d-none d-lg-block">
+                            <img src="~/aznews/assets/img/news/news_card.jpg" asp-append-version="true" alt="">
+                </div>     -->
+
+                <!-- 🔥 熱門快訊區塊 -->
+                <!-- 🔥 熱門快訊區塊 -->
+                <div class="col-lg-4">
+                    <div class="hot-news-container p-3 shadow-sm rounded bg-white">
+                        <h5 class="mb-3 fw-bold text-danger">
+                            🔥 熱門快訊 (Python)
+                        </h5>
+                        <div id="hot-news-box"></div>
+                    </div>
+                </div>
+            </div> <!-- Div class="col-lg-4" -->
+              
+        </div>
+ </div>
+
+
+
+
+        </section>
+        <!-- Whats New End -->
+<!--   Weekly-News start -->
+<div class="weekly-news-area pt-50">
+    <div class="container">
+        <div class="weekly-wrapper">
+            <!-- section Tittle -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-tittle mb-30">
+                        <h3>Weekly Top News</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="weekly-news-active dot-style d-flex dot-style">
+                        <div class="weekly-single">
+                            <div class="weekly-img">
+                                <img src="~/aznews/assets/img/news/weeklyNews2.jpg" asp-append-version="true" alt="">
+                            </div>
+                            <div class="weekly-caption">
+                                <span class="color1">Strike</span>
+                                <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                            </div>
+                        </div>
+                        <div class="weekly-single active">
+                            <div class="weekly-img">
+                                <img src="~/aznews/assets/img/news/weeklyNews1.jpg" asp-append-version="true" alt="">
+                            </div>
+                            <div class="weekly-caption">
+                                <span class="color1">Strike</span>
+                                <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                            </div>
+                        </div>
+                        <div class="weekly-single">
+                            <div class="weekly-img">
+                                <img src="~/aznews/assets/img/news/weeklyNews3.jpg" asp-append-version="true" alt="">
+                            </div>
+                            <div class="weekly-caption">
+                                <span class="color1">Strike</span>
+                                <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                            </div>
+                        </div>
+                        <div class="weekly-single">
+                            <div class="weekly-img">
+                                <img src="~/aznews/assets/img/news/weeklyNews1.jpg" asp-append-version="true" alt="">
+                            </div>
+                            <div class="weekly-caption">
+                                <span class="color1">Strike</span>
+                                <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Weekly-News -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <!--   Weekly2-News start -->
+        <div class="weekly2-news-area  weekly2-pading gray-bg">
+            <div class="container">
+                <div class="weekly2-wrapper">
+                    <!-- section Tittle -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="section-tittle mb-30">
+                                <h3>Weekly Top News</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="weekly2-news-active dot-style d-flex dot-style">
+                                <div class="weekly2-single">
+                                    <div class="weekly2-img">
+                                        <img src="~/aznews/assets/img/news/weekly2News1.jpg" asp-append-version="true" alt="">
+                                    </div>
+                                    <div class="weekly2-caption">
+                                        <span class="color1">Corporate</span>
+                                        <p>25 Jan 2020</p>
+                                        <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                    </div>
+                                </div>
+                                <div class="weekly2-single">
+                                    <div class="weekly2-img">
+                                        <img src="~/aznews/assets/img/news/weekly2News2.jpg" asp-append-version="true" alt="">
+                                    </div>
+                                    <div class="weekly2-caption">
+                                        <span class="color1">Event night</span>
+                                        <p>25 Jan 2020</p>
+                                        <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                    </div>
+                                </div>
+                                <div class="weekly2-single">
+                                    <div class="weekly2-img">
+                                        <img src="~/aznews/assets/img/news/weekly2News3.jpg" asp-append-version="true" alt="">
+                                    </div>
+                                    <div class="weekly2-caption">
+                                        <span class="color1">Corporate</span>
+                                        <p>25 Jan 2020</p>
+                                        <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                    </div>
+                                </div>
+                                <div class="weekly2-single">
+                                    <div class="weekly2-img">
+                                        <img src="~/aznews/assets/img/news/weekly2News4.jpg" asp-append-version="true" alt="">
+                                    </div>
+                                    <div class="weekly2-caption">
+                                        <span class="color1">Event time</span>
+                                        <p>25 Jan 2020</p>
+                                        <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                    </div>
+                                </div>
+                                <div class="weekly2-single">
+                                    <div class="weekly2-img">
+                                        <img src="~/aznews/assets/img/news/weekly2News4.jpg" asp-append-version="true" alt="">
+                                    </div>
+                                    <div class="weekly2-caption">
+                                        <span class="color1">Corporate</span>
+                                        <p>25 Jan 2020</p>
+                                        <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Weekly-News -->
+
+
+
+        <!-- Start Youtube -->
+        <div class="youtube-area video-padding">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="video-items-active">
+                            <div class="video-items text-center">
+                        <iframe src="https://www.youtube.com/embed/m_dhMSvUCIc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+                            <div class="video-items text-center">
+                        <iframe src="https://www.youtube.com/embed/V1p33hqPrUk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+                            <div class="video-items text-center">
+                        <iframe src="https://www.youtube.com/embed/AEBeWMM1atA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+                            </div>
+                            <div class="video-items text-center">
+                        <iframe src="https://www.youtube.com/embed/6YLkmv0_-EE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+                            </div>
+                            <div class="video-items text-center">
+                        <iframe src="https://www.youtube.com/embed/6IquAgfvYmc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-info">    
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="video-caption">
+                                <div class="top-caption">
+                                    <span class="color1">Politics</span>
+                                </div>
+                                <div class="bottom-caption">
+                                    <h2>新聞直播</h2>
+                                    <p>各大新聞台 </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="testmonial-nav text-center">
+                                <div class="single-video">
+                            <iframe src="https://www.youtube.com/embed/m_dhMSvUCIc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    <div class="video-intro">
+                                        <h4>TVBS NEWSt</h4>
+                                    </div>
+                                </div>
+                                <div class="single-video">
+                            <iframe src="https://www.youtube.com/embed/V1p33hqPrUk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    <div class="video-intro">
+                                        <h4>東森新聞</h4>
+                                    </div>
+                                </div>
+                                <div class="single-video">
+                            <iframe src="https://www.youtube.com/embed/AEBeWMM1atA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    <div class="video-intro">
+                                        <h4>EBC東森財經股市</h4>
+                                    </div>
+                                </div>
+                                <div class="single-video">
+                            <iframe src="https://www.youtube.com/embed/6YLkmv0_-EE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    <div class="video-intro">
+                                        <h4> 非凡商業台 </h4>
+                                    </div>
+                                </div>
+                                <div class="single-video">
+                            <iframe src="https://www.youtube.com/embed/6IquAgfvYmc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    <div class="video-intro">
+                                        <h4>寰宇新聞台 </h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Start youtube -->
+        <!--  Recent Articles start -->
+        <div class="recent-articles">
+            <div class="container">
+                <div class="recent-wrapper">
+                    <!-- section Tittle -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="section-tittle mb-30">
+                                <h3>Recent Articles</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="recent-active dot-style d-flex dot-style">
+                                <div class="single-recent mb-100">
+                                    <div class="what-img">
+                                        <img src="~/aznews/assets/img/news/recent1.jpg" asp-append-version="true" alt="">
+                                    </div>
+                                    <div class="what-cap">
+                                        <span class="color1">Night party</span>
+                                        <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                    </div>
+                                </div>
+                                <div class="single-recent mb-100">
+                                    <div class="what-img">
+                                        <img src="~/aznews/assets/img/news/recent2.jpg" asp-append-version="true" alt="">
+                                    </div>
+                                    <div class="what-cap">
+                                        <span class="color1">Night party</span>
+                                        <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                    </div>
+                                </div>
+                                <div class="single-recent mb-100">
+                                    <div class="what-img">
+                                        <img src="~/aznews/assets/img/news/recent3.jpg" asp-append-version="true" alt="">
+                                    </div>
+                                    <div class="what-cap">
+                                        <span class="color1">Night party</span>
+                                        <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                    </div>
+                                </div>
+                                <div class="single-recent mb-100">
+                                    <div class="what-img">
+                                        <img src="~/aznews/assets/img/news/recent2.jpg" asp-append-version="true" alt="">
+                                    </div>
+                                    <div class="what-cap">
+                                        <span class="color1">Night party</span>
+                                        <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Recent Articles End -->
+        <!--Start pagination -->
+        <div class="pagination-area pb-45 text-center">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="single-wrap d-flex justify-content-center">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-start">
+                                    <li class="page-item"><a class="page-link" href="#"><span class="flaticon-arrow roted"></span></a></li>
+                                    <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">02</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">03</a></li>
+                                    <li class="page-item"><a class="page-link" href="#"><span class="flaticon-arrow right-arrow"></span></a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End pagination  -->
+   
+
+
+    <!-- JS here -->
+    <!-- JS here -->
+    <!-- All JS Custom Plugins Link Here here -->
+<script src="~/aznews/assets/js/vendor/modernizr-3.5.0.min.js" asp-append-version="true"></script>
+
+    <!-- Jquery, Popper, Bootstrap -->
+<script src="~/aznews/assets/js/vendor/jquery-1.12.4.min.js" asp-append-version="true"></script>
+    <script src="~/aznews/assets/js/popper.min.js" asp-append-version="true"></script>
+<script src="~/aznews/assets/js/bootstrap.min.js" asp-append-version="true"></script>
+
+    <!-- Jquery Mobile Menu -->
+<script src="~/aznews/assets/js/jquery.slicknav.min.js" asp-append-version="true"></script>
+
+    <!-- Jquery Slick , Owl-Carousel Plugins -->
+<script src="~/aznews/assets/js/owl.carousel.min.js" asp-append-version="true"></script>
+<script src="~/aznews/assets/js/slick.min.js" asp-append-version="true"></script>
+
+    <!-- Date Picker -->
+<script src="~/aznews/assets/js/gijgo.min.js" asp-append-version="true"></script>
+
+    <!-- One Page, Animated-HeadLine -->
+<script src="~/aznews/assets/js/wow.min.js" asp-append-version="true"></script>
+<script src="~/aznews/assets/js/animated.headline.js" asp-append-version="true"></script>
+<script src="~/aznews/assets/js/jquery.magnific-popup.js" asp-append-version="true"></script>
+
+    <!-- Breaking News Plugin -->
+<script src="~/aznews/assets/js/jquery.ticker.js" asp-append-version="true"></script>
+<script src="~/aznews/assets/js/site.js" asp-append-version="true"></script>
+
+    <!-- Scrollup, nice-select, sticky -->
+<script src="~/aznews/assets/js/jquery.scrollUp.min.js" asp-append-version="true"></script>
+<script src="~/aznews/assets/js/jquery.nice-select.min.js" asp-append-version="true"></script>
+<script src="~/aznews/assets/js/jquery.sticky.js" asp-append-version="true"></script>
+
+    <!-- contact js -->
+<script src="~/aznews/assets/js/contact.js" asp-append-version="true"></script>
+<script src="~/aznews/assets/js/jquery.form.js" asp-append-version="true"></script>
+<script src="~/aznews/assets/js/jquery.validate.min.js" asp-append-version="true"></script>
+<script src="~/aznews/assets/js/mail-script.js" asp-append-version="true"></script>
+<script src="~/aznews/assets/js/jquery.ajaxchimp.min.js" asp-append-version="true"></script>
+
+    <!-- Jquery Plugins, main Jquery -->
+<script src="~/aznews/assets/js/plugins.js" asp-append-version="true"></script>
+<script src="~/aznews/assets/js/main.js" asp-append-version="true"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch('/data/news_data.json')
+          .then(res => res.json())
+          .then(newsList => {
+            const container = document.getElementById('dynamic-news-area');
+            if (!container) return;
+            container.innerHTML = '';
+
+            newsList.slice(0, 4).forEach(item => {
+              const imageUrl = item.image && item.image.trim() !== ''
+                ? item.image
+                : 'https://via.placeholder.com/400x250?text=News+Image';
+
+              const card = document.createElement('div');
+              card.className = 'col-lg-6 col-md-6';
+              card.innerHTML = `
+                <div class="single-what-news mb-100">
+                  <div class="what-img">
+                    <img src="${imageUrl}" alt="新聞圖片" />
+                  </div>
+                  <div class="what-cap">
+                    <span class="color1">Python新聞</span>
+                    <h4><a href="${item.link}" target="_blank">${item.title}</a></h4>
+                  </div>
+                </div>
+              `;
+              container.appendChild(card);
+            });
+          });
+    });
+</script>
+
+<script>
+    fetch("/data/news_data.json")
+        .then(res => res.json())
+        .then(data => {
+            const box = document.getElementById("hot-news-box");
+            let html = "";
+            const items = data.slice(0, 10); // 最多顯示8筆
+            items.forEach(item => {
+                const title = item.title.length > 40 ? item.title.slice(0, 40) + "..." : item.title;
+                html += `
+                    <a href="${item.link}" target="_blank" title="${item.title}">
+                        🔸 ${title}
+                    </a>`;
+            });
+            box.innerHTML = html;
+        })
+        .catch(err => console.error("❌ 載入 JSON 失敗：", err));
+</script>

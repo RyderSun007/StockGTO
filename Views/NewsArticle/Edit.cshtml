@@ -1,0 +1,73 @@
+﻿@model StockGTO.Models.NewsArticle
+
+@{
+    ViewData["Title"] = "編輯新聞文章";
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+}
+
+<h2 class="mb-4"><i class="bi bi-pencil-square"></i> 編輯新聞文章</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="Title" class="form-label">標題 *</label>
+            <input asp-for="Title" class="form-control form-control-sm" />
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Summary" class="form-label">摘要</label>
+            <input asp-for="Summary" class="form-control form-control-sm" />
+        </div>
+
+        <div class="col-md-12">
+            <label asp-for="Content" class="form-label">內容 *</label>
+            <textarea asp-for="Content" class="form-control form-control-sm" rows="4"></textarea>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="Category" class="form-label">分類</label>
+            <input asp-for="Category" class="form-control form-control-sm" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Author" class="form-label">作者</label>
+            <input asp-for="Author" class="form-control form-control-sm" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Tags" class="form-label">標籤 (用 , 分隔)</label>
+            <input asp-for="Tags" class="form-control form-control-sm" />
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="SourceName" class="form-label">來源名稱</label>
+            <input asp-for="SourceName" class="form-control form-control-sm" />
+        </div>
+        <div class="col-md-6">
+            <label asp-for="SourceUrl" class="form-label">原始連結</label>
+            <input asp-for="SourceUrl" class="form-control form-control-sm" />
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="ImageUrl" class="form-label">主圖網址</label>
+            <input asp-for="ImageUrl" class="form-control form-control-sm" />
+        </div>
+        <div class="col-md-6">
+            <label asp-for="VideoUrl" class="form-label">影片連結</label>
+            <input asp-for="VideoUrl" class="form-control form-control-sm" />
+        </div>
+
+        <div class="col-md-6 form-check mt-3">
+            <input asp-for="ShowOnHomepage" class="form-check-input" />
+            <label asp-for="ShowOnHomepage" class="form-check-label">顯示在首頁</label>
+        </div>
+
+        <div class="col-md-6 form-check mt-3">
+            <input asp-for="IsActive" class="form-check-input" />
+            <label asp-for="IsActive" class="form-check-label">啟用文章</label>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> 儲存變更</button>
+    </div>
+</form>

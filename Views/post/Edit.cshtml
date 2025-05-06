@@ -1,0 +1,45 @@
+﻿<!-- 📌 CKEditor 5 進化版 -->
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+<script>
+    ClassicEditor
+        .create(document.querySelector('#editor'), {
+            ckfinder: {
+                uploadUrl: '/Upload/Image'  // 👉 你的圖片上傳API
+            },
+            image: {
+                toolbar: ['imageTextAlternative', 'imageStyle:full', 'imageStyle:side'],
+                styles: ['full', 'side']
+            },
+            toolbar: {
+                items: [
+                    'heading', '|',
+                    'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|',
+                    'insertTable', 'blockQuote', 'undo', 'redo', '|',
+                    'uploadImage'
+                ],
+                shouldNotGroupWhenFull: true
+            }
+        })
+        .then(editor => {
+            // ✅ 自動高度調整
+            editor.editing.view.change(writer => {
+                writer.setStyle('min-height', '400px', editor.editing.view.document.getRoot());
+            });
+
+            // ✅ 當圖片插入時自動加上 alt 屬性（SEO友善）
+            editor.model.document.on('change:data', () => {
+                const imgs = editor.editing.view.document.getRoot().getElementsByTagName('img');
+                for (const img of imgs) {
+                    if (!img.getAttribute('alt')) {
+                        editor.model.change(writer => {
+                            writer.setAttribute('alt', '圖片描述', editor.editing.mapper.toModelElement(img));
+                        });
+                    }
+                }
+            });
+
+        })
+        .catch(error => {
+            console.error(error);
+        });
+</script>

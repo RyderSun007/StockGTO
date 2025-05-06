@@ -1,0 +1,32 @@
+﻿@model IEnumerable<StockGTO.Models.IndexNews>
+@{
+    ViewData["Title"] = "新增首頁新聞";
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+}
+
+
+<h2>📋 首頁新聞清單</h2>
+
+<a asp-action="Manage" class="btn btn-primary mb-3">➕ 新增首頁新聞</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>位置</th>
+            <th>標題</th>
+            <th>啟用</th>
+            <th>建立時間</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Position</td>
+                <td>@item.Title</td>
+                <td>@(item.IsActive ? "✅" : "❌")</td>
+                <td>@item.CreatedAt.ToString("yyyy-MM-dd")</td>
+            </tr>
+        }
+    </tbody>
+</table>
