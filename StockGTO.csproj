@@ -24,6 +24,11 @@
     <PackageReference Include="X.PagedList.Mvc.Core" Version="10.5.7" />
   </ItemGroup>
 
+  <!-- ✅ 靜態資源包含：CSS、JS、圖檔等 -->
+  <ItemGroup>
+    <Content Include="wwwroot\**" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <ItemGroup>
     <Folder Include="DATA\" />
   </ItemGroup>
