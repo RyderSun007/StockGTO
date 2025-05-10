@@ -1,0 +1,33 @@
+﻿@model List<StockGTO.Models.ArticlePost>
+
+@{
+    ViewData["Title"] = "股票知識教學";
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+}
+
+<main class="container pt-5">
+    <h2 class="fw-bold mb-4">📘 股票知識教學</h2>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <img src="@item.ImageUrl" class="card-img-top" alt="@item.Title">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Title</h5>
+                        <p class="card-text text-truncate">
+                            @Html.Raw(item.Content?.Length > 120 ? item.Content.Substring(0, 120) + "..." : item.Content)
+                        </p>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm">
+                            🔍 閱讀更多
+                        </a>
+                    </div>
+                    <div class="card-footer text-muted small">
+                        發佈時間：@item.CreatedAt.ToString("yyyy-MM-dd")
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</main>

@@ -1,36 +1,63 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
+using StockGTO.Data;
+using StockGTO.Models;
+using System;
+using System.Linq;
 
 namespace StockGTO.Controllers
 {
-    public class AccountController : Controller
+    public class KnowledgeArticleController : Controller
     {
-        // GET: /Account/Login
-        public IActionResult Login()
+        private readonly AppDbContext _context;
+
+        public KnowledgeArticleController(AppDbContext context)
         {
-            return View();
+            _context = context;
         }
 
-        // POST: /Account/Login
-        [HttpPost]
-        public IActionResult Login(string username, string password)
+        // ✅ 顯示全部知識文章
+        public IActionResult Index()
         {
-            // 簡單帳密比對
-            if (username == "admin" && password == "123456")
+            var articles = _context.ArticlePosts
+                .Where(a => a.Category == "股票知識" && a.Content != null)
+                .OrderByDescending(a => a.CreatedAt)
+                .ToList();
+
+            return View(articles);
+        }
+
+        // ✅ 顯示單篇文章
+        public IActionResult Details(int id)
+        {
+            var article = _context.ArticlePosts.FirstOrDefault(a => a.Id == id);
+            if (article == null || article.Category != "股票知識")
+                return NotFound();
+
+            return View(article);
+        }
+
+        // ✅ 建立新文章表單
+        public IActionResult Create()
+        {
+            return View(new ArticlePost { Category = "股票知識" });
+        }
+
+        // ✅ 提交新文章
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(ArticlePost post)
+        {
+            if (ModelState.IsValid)
             {
-                HttpContext.Session.SetString("IsLoggedIn", "true");
-                return RedirectToAction("ShowEmployee", "Employee");
+                post.CreatedAt = DateTime.Now;
+                post.Category = "股票知識"; // 固定分類
+                _context.ArticlePosts.Add(post);
+                _context.SaveChanges();
+
+                return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Error = "帳號或密碼錯誤！";
-            return View();
-        }
-
-        // 登出
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Clear();
-            return RedirectToAction("Login");
+            return View(post);
         }
     }
 }

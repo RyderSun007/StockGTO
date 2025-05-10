@@ -1,0 +1,29 @@
+﻿@model StockGTO.Models.ArticlePost
+
+@{
+    ViewData["Title"] = Model.Title;
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+}
+
+<main class="container pt-5">
+    <article class="bg-white p-4 rounded shadow-sm">
+        <h1 class="fw-bold mb-3">@Model.Title</h1>
+
+        <div class="text-muted small mb-3">
+            🕒 發佈時間：@Model.CreatedAt.ToString("yyyy-MM-dd")
+            @if (!string.IsNullOrEmpty(Model.Author))
+            {
+                <span>｜✍️ 作者：@Model.Author</span>
+            }
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" alt="文章圖片" class="img-fluid rounded mb-4" />
+        }
+
+        <section class="article-content lh-lg">
+            @Html.Raw(Model.Content)
+        </section>
+    </article>
+</main>
