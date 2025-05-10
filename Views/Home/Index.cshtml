@@ -32,90 +32,7 @@
     </marquee>
 </div>
 <!-- 🔔 跑馬燈區塊 End -->
-
-
-<!-- 🌟【首頁熱門區塊 Trending Area】Start -->
-<!-- 🌟【首頁熱門區塊 Trending Area】Start -->
-<div class="trending-area fix">
-    <div class="container">
-        <div class="trending-main">
-            <div class="row align-items-start">
-                <!-- 🔶 主圖 + 下方三卡（Position 1~4） -->
-                <div class="col-lg-8 d-flex flex-column justify-content-between" style="min-height: 600px;">
-                    <!-- 📌 主圖 Position = 1 -->
-                    @if (main != null)
-                    {
-                        <div class="trending-top mb-3">
-                            <div class="trend-top-img">
-                                <a href="@main.LinkUrl" target="_blank">
-                                    <img src="@main.ImageUrl" alt="@main.Title" class="img-fluid" style="width:100%; height:auto;" />
-                                </a>
-                                <div class="trend-top-cap">
-                                    <span class="badge bg-warning text-dark">主卡區</span>
-                                    <h2><a href="@main.LinkUrl" target="_blank">@main.Title</a></h2>
-                                </div>
-                            </div>
-                        </div>
-                    }
-
-                    <!-- 📌 下三卡 Position = 2~4 -->
-                    <div class="trending-bottom mt-auto">
-                        <div class="row">
-                            @foreach (var item in newsList.Where(n => n.Position >= 2 && n.Position <= 4 && n.IsActive))
-                            {
-                                <div class="col-lg-4 d-flex">
-                                    <div class="single-bottom mb-3 w-100">
-                                        <div class="trend-bottom-img mb-2">
-                                            <a href="@item.LinkUrl" target="_blank">
-                                                <img src="@item.ImageUrl" alt="@item.Title" class="img-fluid"
-                                                     style="width:100%; height:120px; object-fit:cover;" />
-                                            </a>
-                                        </div>
-                                        <div class="trend-bottom-cap">
-                                            <span class="badge bg-dark text-light">下面三卡顯示區</span>
-                                            <h4 style="font-size:1rem;">
-                                                <a href="@item.LinkUrl" target="_blank">@item.Title</a>
-                                            </h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 🔷 右五卡 Position = 5~9 -->
-                <div class="col-lg-4">
-                    <div class="trand-right">
-                        @foreach (var item in newsList.Where(n => n.Position >= 5 && n.Position <= 9 && n.IsActive))
-                        {
-                            <div class="trand-right-single d-flex mb-3">
-                                <div class="trand-right-img">
-                                    <a href="@item.LinkUrl" target="_blank">
-                                        <img src="@item.ImageUrl" alt="@item.Title" class="img-fluid"
-                                             style="width:100px; height:80px; object-fit:cover;" />
-                                    </a>
-                                </div>
-                                <div class="trand-right-cap ps-3">
-                                    <span class="badge bg-light text-dark mb-1">右邊五卡顯示區</span>
-                                    <h4 class="mb-0" style="font-size:1rem; line-height:1.4;">
-                                        <a href="@item.LinkUrl" target="_blank">@item.Title</a>
-                                    </h4>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div> <!-- .trending-main -->
-    </div> <!-- .container -->
-</div>
-<!-- 🌟【首頁熱門區塊 Trending Area】End -->
-
-    
-
-
-        <!-- Whats New Start -->
+ <!-- Whats New Start -->
 
         <section class="whats-news-area pt-50 pb-20">
             <div class="container">
@@ -419,51 +336,8 @@
                         </div>
                     </div>
                     <div class="col-lg-4">
-                        <!-- Section Tittle -->
-                        <div class="section-tittle mb-40">
-                            <h3>Follow Us</h3>
-                        </div>
-                        <!-- Flow Socail -->
-                        <div class="single-follow mb-45">
-                            <div class="single-box">
-                                <div class="follow-us d-flex align-items-center">
-                                    <div class="follow-social">
-                                        <a href="#"><img src="~/aznews/assets/img/news/icon-fb.png" asp-append-version="true" alt=""></a>
-                                    </div>
-                                    <div class="follow-count">
-                                        <span>8,045</span>
-                                        <p>Fans</p>
-                                    </div>
-                                </div>
-                                <div class="follow-us d-flex align-items-center">
-                                    <div class="follow-social">
-                                        <a href="#"><img src="~/aznews/assets/img/news/icon-tw.png" asp-append-version="true" alt=""></a>
-                                    </div>
-                                    <div class="follow-count">
-                                        <span>8,045</span>
-                                        <p>Fans</p>
-                                    </div>
-                                </div>
-                                <div class="follow-us d-flex align-items-center">
-                                    <div class="follow-social">
-                                        <a href="#"><img src="~/aznews/assets/img/news/icon-ins.png" asp-append-version="true" alt=""></a>
-                                    </div>
-                                    <div class="follow-count">
-                                        <span>8,045</span>
-                                        <p>Fans</p>
-                                    </div>
-                                </div>
-                                <div class="follow-us d-flex align-items-center">
-                                    <div class="follow-social">
-                                        <a href="#"><img src="~/aznews/assets/img/news/icon-yo.png" asp-append-version="true" alt=""></a>
-                                    </div>
-                                    <div class="follow-count">
-                                        <span>8,045</span>
-                                        <p>Fans</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        
+                
 
                 <!-- New Poster 
                         <div class="news-poster d-none d-lg-block">
@@ -480,6 +354,57 @@
                         <div id="hot-news-box"></div>
                     </div>
                 </div>
+                <!-- Section Tittle -->
+                <h2></h2>
+                <div class="section-tittle mb-40">
+                    <h2>  Follow Us</h2>
+                </div>
+
+                <!-- Flow Socail -->
+                <div class="single-follow mb-45">
+                    <div class="single-box">
+                        <div class="follow-us d-flex align-items-center">
+                            <div class="follow-social">
+                                <a href="#"><img src="~/aznews/assets/img/news/icon-fb.png" asp-append-version="true" alt=""></a>
+                            </div>
+                            <div class="follow-count">
+                                <span>8,045</span>
+                                <p>Fans</p>
+                            </div>
+                        </div>
+                        <div class="follow-us d-flex align-items-center">
+                            <div class="follow-social">
+                                <a href="#"><img src="~/aznews/assets/img/news/icon-tw.png" asp-append-version="true" alt=""></a>
+                            </div>
+                            <div class="follow-count">
+                                <span>8,045</span>
+                                <p>Fans</p>
+                            </div>
+                        </div>
+                        <div class="follow-us d-flex align-items-center">
+                            <div class="follow-social">
+                                <a href="#"><img src="~/aznews/assets/img/news/icon-ins.png" asp-append-version="true" alt=""></a>
+                            </div>
+                            <div class="follow-count">
+                                <span>8,045</span>
+                                <p>Fans</p>
+                            </div>
+                        </div>
+                        <div class="follow-us d-flex align-items-center">
+                            <div class="follow-social">
+                                <a href="#"><img src="~/aznews/assets/img/news/icon-yo.png" asp-append-version="true" alt=""></a>
+                            </div>
+                            <div class="follow-count">
+                                <span>8,045</span>
+                                <p>Fans</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
             </div> <!-- Div class="col-lg-4" -->
               
         </div>
@@ -490,6 +415,89 @@
 
         </section>
         <!-- Whats New End -->
+
+<!-- 🌟【首頁熱門區塊 Trending Area】Start -->
+<!-- 🌟【首頁熱門區塊 Trending Area】Start -->
+<div class="trending-area fix">
+    <div class="container">
+        <div class="trending-main">
+            <div class="row align-items-start">
+                <!-- 🔶 主圖 + 下方三卡（Position 1~4） -->
+                <div class="col-lg-8 d-flex flex-column justify-content-between" style="min-height: 600px;">
+                    <!-- 📌 主圖 Position = 1 -->
+                    @if (main != null)
+                    {
+                        <div class="trending-top mb-3">
+                            <div class="trend-top-img">
+                                <a href="@main.LinkUrl" target="_blank">
+                                    <img src="@main.ImageUrl" alt="@main.Title" class="img-fluid" style="width:100%; height:auto;" />
+                                </a>
+                                <div class="trend-top-cap">
+                                    <span class="badge bg-warning text-dark">主卡區</span>
+                                    <h2><a href="@main.LinkUrl" target="_blank">@main.Title</a></h2>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- 📌 下三卡 Position = 2~4 -->
+                    <div class="trending-bottom mt-auto">
+                        <div class="row">
+                            @foreach (var item in newsList.Where(n => n.Position >= 2 && n.Position <= 4 && n.IsActive))
+                            {
+                                <div class="col-lg-4 d-flex">
+                                    <div class="single-bottom mb-3 w-100">
+                                        <div class="trend-bottom-img mb-2">
+                                            <a href="@item.LinkUrl" target="_blank">
+                                                <img src="@item.ImageUrl" alt="@item.Title" class="img-fluid"
+                                                     style="width:100%; height:120px; object-fit:cover;" />
+                                            </a>
+                                        </div>
+                                        <div class="trend-bottom-cap">
+                                            <span class="badge bg-dark text-light">下面三卡顯示區</span>
+                                            <h4 style="font-size:1rem;">
+                                                <a href="@item.LinkUrl" target="_blank">@item.Title</a>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 🔷 右五卡 Position = 5~9 -->
+                <div class="col-lg-4">
+                    <div class="trand-right">
+                        @foreach (var item in newsList.Where(n => n.Position >= 5 && n.Position <= 9 && n.IsActive))
+                        {
+                            <div class="trand-right-single d-flex mb-3">
+                                <div class="trand-right-img">
+                                    <a href="@item.LinkUrl" target="_blank">
+                                        <img src="@item.ImageUrl" alt="@item.Title" class="img-fluid"
+                                             style="width:100px; height:80px; object-fit:cover;" />
+                                    </a>
+                                </div>
+                                <div class="trand-right-cap ps-3">
+                                    <span class="badge bg-light text-dark mb-1">右邊五卡顯示區</span>
+                                    <h4 class="mb-0" style="font-size:1rem; line-height:1.4;">
+                                        <a href="@item.LinkUrl" target="_blank">@item.Title</a>
+                                    </h4>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div> <!-- .trending-main -->
+    </div> <!-- .container -->
+</div>
+<!-- 🌟【首頁熱門區塊 Trending Area】End -->
+
+    
+
+
+       
 <!--   Weekly-News start -->
 <div class="weekly-news-area pt-50">
     <div class="container">
@@ -881,7 +889,7 @@
         .then(data => {
             const box = document.getElementById("hot-news-box");
             let html = "";
-            const items = data.slice(0, 10); // 最多顯示8筆
+            const items = data.slice(0, 11); // 最多顯示11筆
             items.forEach(item => {
                 const title = item.title.length > 40 ? item.title.slice(0, 40) + "..." : item.title;
                 html += `
