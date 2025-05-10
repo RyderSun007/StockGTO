@@ -20,6 +20,7 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="PagedList.Core" Version="1.17.4" />
+    <PackageReference Include="PagedList.Core.Mvc" Version="3.0.0" />
     <PackageReference Include="Piranha.AspNetCore" Version="10.0.0-preview.3" />
     <PackageReference Include="Piranha.AttributeBuilder" Version="10.0.0-preview.3" />
     <PackageReference Include="Piranha.ImageSharp" Version="10.0.0" />

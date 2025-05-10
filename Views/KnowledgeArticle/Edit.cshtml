@@ -1,0 +1,55 @@
+﻿@model StockGTO.Models.ArticlePost
+@{
+    ViewData["Title"] = "編輯股票知識文章";
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+}
+
+<main class="container pt-5">
+    <h2 class="fw-bold mb-4">📝 新增股票知識文章</h2>
+
+    <form asp-action="Edit" method="post" class="border p-4 bg-light rounded">
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label">文章標題</label>
+            <input asp-for="Title" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Author" class="form-label">作者</label>
+            <input asp-for="Author" class="form-control" value="老孫" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ImageUrl" class="form-label">圖片網址</label>
+            <input asp-for="ImageUrl" class="form-control" value="/images/default.jpg" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Content" class="form-label">文章內容</label>
+            <textarea asp-for="Content" class="form-control" id="summernote" rows="8">
+
+                @Html.Raw(Model.Content)
+            </textarea>
+        </div>
+
+        <div class="form-check mb-3">
+            <input asp-for="IsPinned" class="form-check-input" />
+            <label asp-for="IsPinned" class="form-check-label">置頂顯示（首頁精選）</label>
+        </div>
+
+        <input type="hidden" asp-for="Category" value="股票知識" />
+
+        <button type="submit" class="btn btn-success">✅ 發布文章</button>
+    </form>
+</main>
+
+@section Scripts {
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#summernote').summernote({
+                height: 300
+            });
+        });
+    </script>
+}

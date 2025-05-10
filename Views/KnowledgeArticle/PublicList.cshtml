@@ -1,0 +1,73 @@
+﻿@model List<StockGTO.Models.ArticlePost>
+@{
+    ViewData["Title"] = "股票知識文章總覽";
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+
+    int page = (int)ViewBag.Page;
+    int pageSize = (int)ViewBag.PageSize;
+    int totalCount = (int)ViewBag.TotalCount;
+    int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+    string keyword = ViewBag.Keyword ?? "";
+    string category = ViewBag.Category ?? "";
+}
+
+<main class="container pt-5">
+    <h2 class="fw-bold mb-4 text-center">📘 股票知識文章總覽</h2>
+
+    <form method="get" class="mb-4 row g-2">
+        <div class="col-md-5">
+            <input type="text" name="keyword" value="@keyword" class="form-control" placeholder="🔍 搜尋文章標題" />
+        </div>
+        <div class="col-md-4">
+            <select name="category" class="form-select">
+                <option value="">-- 所有分類 --</option>
+                <option value="股票知識" selected="@(category == "股票知識")">股票知識</option>
+                <option value="ETF專區" selected="@(category == "ETF專區")">ETF專區</option>
+                <option value="技術分析" selected="@(category == "技術分析")">技術分析</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-outline-primary w-100">搜尋</button>
+        </div>
+    </form>
+
+    <table class="table table-striped table-hover text-dark">
+        <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>文章標題</th>
+                <th>作者</th>
+                <th>發佈日期</th>
+                <th>分類</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var item = Model[i];
+                <tr>
+                    <td>@((page - 1) * pageSize + i + 1)</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="text-dark text-decoration-none">
+                            @item.Title
+                        </a>
+                    </td>
+                    <td>@item.Author</td>
+                    <td>@item.CreatedAt.ToString("yyyy-MM-dd")</td>
+                    <td>@item.Category</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <nav class="d-flex justify-content-center">
+        <ul class="pagination">
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item @(i == page ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("PublicList", new { page = i, keyword, category })">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+</main>

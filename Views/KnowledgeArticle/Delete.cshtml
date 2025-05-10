@@ -1,0 +1,16 @@
+﻿@model StockGTO.Models.ArticlePost
+@{
+    ViewData["Title"] = "刪除文章確認";
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+}
+
+<main class="container pt-5">
+    <h2 class="text-danger">⚠️ 確定要刪除這篇文章？</h2>
+    <p><strong>@Model.Title</strong></p>
+
+    <form asp-action="DeleteConfirmed" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">🗑️ 確定刪除</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">取消</a>
+    </form>
+</main>

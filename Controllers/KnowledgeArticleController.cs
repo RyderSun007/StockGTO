@@ -3,6 +3,9 @@ using StockGTO.Data;
 using StockGTO.Models;
 using System;
 using System.Linq;
+using PagedList.Core;
+using X.PagedList;
+
 
 namespace StockGTO.Controllers
 {
@@ -59,5 +62,84 @@ namespace StockGTO.Controllers
 
             return View(post);
         }
+
+        // 🔧 編輯表單
+        public IActionResult Edit(int id)
+        {
+            var post = _context.ArticlePosts.FirstOrDefault(p => p.Id == id && p.Category == "股票知識");
+            if (post == null) return NotFound();
+            return View(post);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(int id, ArticlePost post)
+        {
+            if (id != post.Id) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                post.Category = "股票知識"; // 確保分類不被改掉
+                _context.Update(post);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(post);
+        }
+
+
+
+        // 🗑️ 刪除確認頁面
+        public IActionResult Delete(int id)
+        {
+            var post = _context.ArticlePosts.FirstOrDefault(p => p.Id == id && p.Category == "股票知識");
+            if (post == null) return NotFound();
+            return View(post);
+        }
+
+        // ✅ 真正刪除資料
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var post = _context.ArticlePosts.Find(id);
+            if (post != null && post.Category == "股票知識")
+            {
+                _context.ArticlePosts.Remove(post);
+                _context.SaveChanges();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        // ✅ PublicList：支援搜尋 + 分類 + 分頁
+        public IActionResult PublicList(string keyword, string category, int page = 1, int pageSize = 10)
+        {
+            var query = _context.ArticlePosts.AsQueryable();
+
+            if (!string.IsNullOrEmpty(keyword))
+                query = query.Where(a => a.Title.Contains(keyword));
+
+            if (!string.IsNullOrEmpty(category))
+                query = query.Where(a => a.Category == category);
+
+            var totalCount = query.Count();
+            var articles = query
+                .OrderByDescending(a => a.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.Page = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalCount = totalCount;
+            ViewBag.Keyword = keyword;
+            ViewBag.Category = category;
+
+            return View(articles);
+        }
+
+
+
     }
 }

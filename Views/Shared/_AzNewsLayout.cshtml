@@ -54,11 +54,65 @@
                                     <nav>
                                         <ul id="navigation" class="d-flex justify-content-end align-items-center">
                                             
-                                            <li><a asp-controller="NewsArticle" asp-action="Create">管理頁Create</a></li>
-                                            <li><a asp-controller="NewsArticle" asp-action="manage">管理頁manage</a></li>
-                                            <li><a asp-controller="IndexNews" asp-action="Index">九宮格新聞清單</a></li>
-                                            <li><a asp-controller="IndexNews" asp-action="Manage">九宮格新聞管理</a></li>
+
                                             <li><a href="/viewer/news_viewer.html" target="_blank">Python新聞</a></li>
+                                            <!-- 📘 股票知識模組（下拉選單） -->
+                                            <li class="nav-item dropdown">
+                                                <a class="nav-link dropdown-toggle" href="#" id="knowledgeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    股票知識模組
+                                                </a>
+                                                <ul class="dropdown-menu" aria-labelledby="knowledgeDropdown">
+                                                    <li><a class="dropdown-item" asp-controller="KnowledgeArticle" asp-action="PublicList">股票知識總覽</a></li>
+                                                    <li><a class="dropdown-item" asp-controller="KnowledgeArticle" asp-action="Index">查看所有文章清單</a></li>
+                                                    <li><a class="dropdown-item" asp-controller="KnowledgeArticle" asp-action="Create">建立新文章</a></li>
+                                                    
+                                                </ul>
+                                            </li>
+                                            
+
+                                            <!-- 🗂 九宮格新聞（下拉選單） -->
+                                            <li class="nav-item dropdown">
+                                                <a class="nav-link dropdown-toggle" href="#" id="gridNewsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    九宮格新聞
+                                                </a>
+                                                <ul class="dropdown-menu" aria-labelledby="gridNewsDropdown">
+                                                    <li><a class="dropdown-item" asp-controller="IndexNews" asp-action="Index">新聞清單（Index）</a></li>
+                                                    <li><a class="dropdown-item" asp-controller="IndexNews" asp-action="Manage">新聞管理（Manage）</a></li>
+                                                </ul>
+                                            </li>
+
+                                            <!-- 🧾 新聞管理（下拉選單） -->
+                                            <li class="nav-item dropdown">
+                                                <a class="nav-link dropdown-toggle" href="#" id="newsManageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    新聞管理
+                                                </a>
+                                                <ul class="dropdown-menu" aria-labelledby="newsManageDropdown">
+                                                    <li><a class="dropdown-item" asp-controller="NewsArticle" asp-action="Create">新增新聞（Create）</a></li>
+                                                    <li><a class="dropdown-item" asp-controller="NewsArticle" asp-action="Manage">管理新聞（Manage）</a></li>
+                                                </ul>
+                                            </li>
+
+                                            <!-- 💬 討論區模組（下拉選單） -->
+                                            <li class="nav-item dropdown">
+                                                <a class="nav-link dropdown-toggle" href="#" id="postDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    💬 討論區模組
+                                                </a>
+                                                <ul class="dropdown-menu" aria-labelledby="postDropdown">
+                                                    <li><a class="dropdown-item" asp-controller="Post" asp-action="Post">📝 前台討論區</a></li>
+                                                    <li><a class="dropdown-item" asp-controller="Post" asp-action="Manage">🛠️ 後台管理</a></li>
+                                                </ul>
+                                            </li>
+                                            <!-- 📣 公告區模組（下拉選單） -->
+                                            <li class="nav-item dropdown">
+                                                <a class="nav-link dropdown-toggle" href="#" id="announcementDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    📣 公告區模組
+                                                </a>
+                                                <ul class="dropdown-menu" aria-labelledby="announcementDropdown">
+                                                    <li><a class="dropdown-item" asp-controller="ArticlePost" asp-action="CreateIndexPost">📋 建立公告</a></li>
+                                                    <li><a class="dropdown-item" asp-controller="ArticlePost" asp-action="ManageIndexPost">🔧 後台管理</a></li>
+                                                </ul>
+                                            </li>
+
 
                                             <!-- 🛠️ 自有程式（下拉選單） -->
                                             <li class="nav-item dropdown">
@@ -67,10 +121,7 @@
                                                 </a>
                                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="selfProgramDropdown">
                                                     <li><a class="dropdown-item" asp-controller="OldSunStock" asp-action="Index">📝老孫持股</a></li>
-                                                    <li><a class="dropdown-item" asp-controller="Post" asp-action="Post">📝 討論區</a></li>
-                                                    <li><a class="dropdown-item" asp-controller="Post" asp-action="Manage">🛠️ 討論區後台</a></li>
-                                                    <li><a class="dropdown-item" asp-controller="ArticlePost" asp-action="CreateIndexPost">📣 公告區</a></li>
-                                                    <li><a class="dropdown-item" asp-controller="ArticlePost" asp-action="ManageIndexPost">🔧 公告區後台</a></li>
+                                                 
                                                     <li><a class="dropdown-item" asp-controller="Employee" asp-action="List">👥 員工（簡易登入）</a></li>
                                                 </ul>
                                             </li>
