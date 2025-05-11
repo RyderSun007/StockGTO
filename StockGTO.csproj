@@ -9,6 +9,8 @@
   <ItemGroup>
     <Content Remove="Views\Home\Index複製20250425自改首頁.cshtml" />
     <Content Remove="Views\Home\Privacy.cshtml" />
+    <Content Remove="wwwroot\aznews\assets\css\admin-fix.css" />
+    <Content Remove="wwwroot\aznews\assets\css\animate - 複製.min.css" />
   </ItemGroup>
 
   <ItemGroup>

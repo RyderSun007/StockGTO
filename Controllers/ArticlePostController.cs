@@ -133,5 +133,7 @@ namespace StockGTO.Controllers
             var posts = _context.AjaxIndexPosts.OrderByDescending(p => p.CreatedAt).ToList();
             return Json(posts);
         }
+
+
     }
 }

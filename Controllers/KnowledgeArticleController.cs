@@ -52,8 +52,31 @@ namespace StockGTO.Controllers
         {
             if (ModelState.IsValid)
             {
+                // 1️⃣ 儲存圖片（如果有上傳）
+                if (post.ImageFile != null && post.ImageFile.Length > 0)
+                {
+                    string uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "aznews", "uploads");
+                    Directory.CreateDirectory(uploadDir); // 確保資料夾存在
+
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(post.ImageFile.FileName);
+                    string filePath = Path.Combine(uploadDir, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        post.ImageFile.CopyTo(stream);
+                    }
+
+                    post.ImageUrl = "/aznews/uploads/" + fileName;
+                }
+
+                // 2️⃣ 沒填圖片網址，也沒上傳，就給預設圖
+                if (string.IsNullOrEmpty(post.ImageUrl))
+                {
+                    post.ImageUrl = "/images/default.jpg";
+                }
+
                 post.CreatedAt = DateTime.Now;
-                post.Category = "股票知識"; // 固定分類
+                post.Category = "股票知識";
                 _context.ArticlePosts.Add(post);
                 _context.SaveChanges();
 
@@ -63,14 +86,21 @@ namespace StockGTO.Controllers
             return View(post);
         }
 
-        // 🔧 編輯表單
+
+        // ✅ 顯示編輯畫面（GET）
+        // 🔧 編輯表單（POST）
+        // ✅ 顯示編輯畫面（GET）
+        [HttpGet]
         public IActionResult Edit(int id)
         {
-            var post = _context.ArticlePosts.FirstOrDefault(p => p.Id == id && p.Category == "股票知識");
-            if (post == null) return NotFound();
-            return View(post);
+            var article = _context.ArticlePosts.FirstOrDefault(a => a.Id == id && a.Category == "股票知識");
+            if (article == null)
+                return NotFound();
+
+            return View(article);
         }
 
+        // 🔧 儲存編輯內容（POST）
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, ArticlePost post)
@@ -79,14 +109,48 @@ namespace StockGTO.Controllers
 
             if (ModelState.IsValid)
             {
-                post.Category = "股票知識"; // 確保分類不被改掉
-                _context.Update(post);
+                var existing = _context.ArticlePosts.FirstOrDefault(a => a.Id == id);
+                if (existing == null) return NotFound();
+
+                // ✅ 有上傳新圖片的話
+                if (post.ImageFile != null && post.ImageFile.Length > 0)
+                {
+                    string uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "aznews", "uploads");
+                    Directory.CreateDirectory(uploadDir);
+
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(post.ImageFile.FileName);
+                    string filePath = Path.Combine(uploadDir, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        post.ImageFile.CopyTo(stream);
+                    }
+
+                    existing.ImageUrl = "/aznews/uploads/" + fileName;
+                }
+                else
+                {
+                    // ✅ 即使沒選圖片，也更新圖片網址（使用者可能手動輸入或修改過）
+                    existing.ImageUrl = post.ImageUrl;
+                }
+
+                // ✅ 更新其餘欄位
+                existing.Title = post.Title;
+                existing.Content = post.Content;
+                existing.Author = post.Author;
+                existing.IsPinned = post.IsPinned;
+                existing.Category = post.Category;
+
                 _context.SaveChanges();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", new { id = post.Id });
             }
 
             return View(post);
         }
+
+
+
+
 
 
 
@@ -113,7 +177,7 @@ namespace StockGTO.Controllers
         }
 
         // ✅ PublicList：支援搜尋 + 分類 + 分頁
-        public IActionResult PublicList(string keyword, string category, int page = 1, int pageSize = 10)
+        public IActionResult PublicList(string keyword, string category)
         {
             var query = _context.ArticlePosts.AsQueryable();
 
@@ -123,21 +187,19 @@ namespace StockGTO.Controllers
             if (!string.IsNullOrEmpty(category))
                 query = query.Where(a => a.Category == category);
 
-            var totalCount = query.Count();
+            query = query.Where(a => a.Category == "股票知識");
+
             var articles = query
                 .OrderByDescending(a => a.CreatedAt)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
                 .ToList();
 
-            ViewBag.Page = page;
-            ViewBag.PageSize = pageSize;
-            ViewBag.TotalCount = totalCount;
             ViewBag.Keyword = keyword;
             ViewBag.Category = category;
 
             return View(articles);
         }
+
+
 
 
 

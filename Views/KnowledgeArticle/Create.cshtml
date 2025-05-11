@@ -8,7 +8,7 @@
 <main class="container pt-5">
     <h2 class="fw-bold mb-4">📝 新增股票知識文章</h2>
 
-    <form asp-action="Create" method="post" class="border p-4 bg-light rounded">
+    <form asp-action="Create" method="post" enctype="multipart/form-data" class="border p-4 bg-light rounded">
         <div class="mb-3">
             <label asp-for="Title" class="form-label">文章標題</label>
             <input asp-for="Title" class="form-control" />
@@ -16,13 +16,19 @@
 
         <div class="mb-3">
             <label asp-for="Author" class="form-label">作者</label>
-            <input asp-for="Author" class="form-control" value="StoclGTO | 股市周刊" />
+            <input asp-for="Author" class="form-control" value="StockGTO | 股市周刊" />
         </div>
 
         <div class="mb-3">
-            <label asp-for="ImageUrl" class="form-label">圖片網址</label>
-            <input asp-for="ImageUrl" class="form-control" value="/images/default.jpg" />
+            <label asp-for="ImageUrl" class="form-label">圖片網址（可選）</label>
+            <input asp-for="ImageUrl" class="form-control" placeholder="可不填，會使用預設圖片或上傳圖片" />
         </div>
+
+        <div class="mb-3">
+            <label class="form-label">或選擇上傳圖片</label>
+            <input type="file" name="ImageFile" class="form-control" />
+        </div>
+
         <div class="mb-3">
             <label asp-for="Category" class="form-label">分類</label>
             <select asp-for="Category" class="form-select">
@@ -45,10 +51,9 @@
             <label asp-for="IsPinned" class="form-check-label">置頂顯示（首頁精選）</label>
         </div>
 
-        
-
         <button type="submit" class="btn btn-success">✅ 發布文章</button>
     </form>
+
 </main>
 
 @section Scripts {

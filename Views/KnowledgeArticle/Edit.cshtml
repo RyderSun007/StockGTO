@@ -1,13 +1,16 @@
 ﻿@model StockGTO.Models.ArticlePost
+
 @{
     ViewData["Title"] = "編輯股票知識文章";
     Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
 }
 
 <main class="container pt-5">
-    <h2 class="fw-bold mb-4">📝 新增股票知識文章</h2>
+    <h2 class="fw-bold mb-4">✏️ 編輯股票知識文章</h2>
 
-    <form asp-action="Edit" method="post" class="border p-4 bg-light rounded">
+    <form asp-action="Edit" method="post" enctype="multipart/form-data" class="border p-4 bg-light rounded">
+        <input type="hidden" asp-for="Id" />
+
         <div class="mb-3">
             <label asp-for="Title" class="form-label">文章標題</label>
             <input asp-for="Title" class="form-control" />
@@ -15,20 +18,42 @@
 
         <div class="mb-3">
             <label asp-for="Author" class="form-label">作者</label>
-            <input asp-for="Author" class="form-control" value="老孫" />
+            <input asp-for="Author" class="form-control" />
         </div>
 
         <div class="mb-3">
-            <label asp-for="ImageUrl" class="form-label">圖片網址</label>
-            <input asp-for="ImageUrl" class="form-control" value="/images/default.jpg" />
+            <label asp-for="ImageUrl" class="form-label">圖片網址（可選）</label>
+            <input type="text" name="ImageUrl" value="@Model.ImageUrl" class="form-control" />
+            <!-- ✅ 加上這行隱藏欄位，確保沒上傳圖片也能傳回原本圖片網址 -->
+            <input type="hidden" name="ImageUrl" value="@Model.ImageUrl" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">或選擇上傳新圖片</label>
+            <input type="file" name="ImageFile" class="form-control" />
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <div class="mt-2">
+                    <img src="@Model.ImageUrl" alt="目前圖片" class="img-thumbnail" style="max-height:150px;" />
+                </div>
+            }
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Category" class="form-label">分類</label>
+            <select asp-for="Category" class="form-select">
+                <option value="">-- 請選擇分類 --</option>
+                <option value="股票知識">股票知識</option>
+                <option value="ETF專區">ETF專區</option>
+                <option value="技術分析">技術分析</option>
+                <option value="總經觀點">總經觀點</option>
+                <option value="基金專區">基金專區</option>
+            </select>
         </div>
 
         <div class="mb-3">
             <label asp-for="Content" class="form-label">文章內容</label>
-            <textarea asp-for="Content" class="form-control" id="summernote" rows="8">
-
-                @Html.Raw(Model.Content)
-            </textarea>
+            <textarea asp-for="Content" class="form-control" id="summernote" rows="8">@Model.Content</textarea>
         </div>
 
         <div class="form-check mb-3">
@@ -36,9 +61,7 @@
             <label asp-for="IsPinned" class="form-check-label">置頂顯示（首頁精選）</label>
         </div>
 
-        <input type="hidden" asp-for="Category" value="股票知識" />
-
-        <button type="submit" class="btn btn-success">✅ 發布文章</button>
+        <button type="submit" class="btn btn-warning">💾 儲存修改</button>
     </form>
 </main>
 

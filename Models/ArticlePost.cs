@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StockGTO.Models
 {
@@ -21,5 +22,8 @@ namespace StockGTO.Models
         public string? Slug { get; set; }
 
         public bool IsPinned { get; set; } = false;
+
+        [NotMapped] // 上傳檔案不進資料庫
+        public IFormFile ImageFile { get; set; }
     }
 }
