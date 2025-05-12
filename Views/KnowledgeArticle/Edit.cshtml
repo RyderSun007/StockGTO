@@ -23,44 +23,31 @@
 
         <div class="mb-3">
             <label asp-for="ImageUrl" class="form-label">圖片網址（可選）</label>
-            <input type="text" name="ImageUrl" value="@Model.ImageUrl" class="form-control" />
-            <!-- ✅ 加上這行隱藏欄位，確保沒上傳圖片也能傳回原本圖片網址 -->
+            <input type="text" asp-for="ImageUrl" class="form-control" />
             <input type="hidden" name="ImageUrl" value="@Model.ImageUrl" />
         </div>
 
         <div class="mb-3">
-            <label class="form-label">或選擇上傳新圖片</label>
+            <label class="form-label">或上傳新圖片</label>
             <input type="file" name="ImageFile" class="form-control" />
             @if (!string.IsNullOrEmpty(Model.ImageUrl))
             {
                 <div class="mt-2">
-                    <img src="@Model.ImageUrl" alt="目前圖片" class="img-thumbnail" style="max-height:150px;" />
+                    <img src="@Model.ImageUrl" alt="圖片預覽" class="img-thumbnail" style="max-height:150px;" />
                 </div>
             }
         </div>
 
-        <div class="mb-3">
-            <label asp-for="Category" class="form-label">分類</label>
-            <select asp-for="Category" class="form-select">
+        <div class="mb-3" style="max-width: 500px;">
+            <label asp-for="CategoryId" class="form-label">分類</label>
+            <select asp-for="CategoryId" class="form-select">
                 <option value="">-- 請選擇分類 --</option>
-                <option value="FinancialStatements">財報分析</option>
-                <option value="TechnicalAnalysis">技術分析</option>
-                <option value="FundamentalAnalysis">基本面研究</option>
-                <option value="InvestmentStrategy">投資策略</option>
-                <option value="WealthPlanning">理財規劃</option>
-                <option value="IndustryInsight">產業分析</option>
-                <option value="MarketTrends">趨勢觀察</option>
-                <option value="GlobalMarkets">國際市場</option>
-                <option value="GlobalInvesting">全球投資</option>
-                <option value="InvestorPsychology">投資心理</option>
-                <option value="BehavioralFinance">行為經濟學</option>
-                <option value="FinancialProducts">金融商品</option>
-                <option value="Derivatives">衍生性工具</option>
-                <option value="股票知識">股票知識</option>
-                <option value="ETF專區">ETF專區</option>
-                <option value="技術分析">技術分析</option>
-                <option value="總觀觀點">總觀觀點</option>
-                <option value="基金專區">基金專區</option>
+                @foreach (var cat in ViewBag.CategoryList)
+                {
+                    <option value="@cat.Id" selected="@(Model.CategoryId == cat.Id ? "selected" : null)">
+                        @cat.Name
+                    </option>
+                }
             </select>
         </div>
 

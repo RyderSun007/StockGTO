@@ -16,7 +16,11 @@ namespace StockGTO.Models
 
         public string? Author { get; set; } = "Stock | 股市周刊"; // 作者名稱，預設為管理員
 
-        public string? Category { get; set; } = "文章"; // 分類名稱（如：ETF、技術分析）
+        // ✅ 分類欄位（FK 關聯）
+        public int? CategoryId { get; set; }
+
+        [ForeignKey("CategoryId")]
+        public Category? Category { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now; // 建立時間
 

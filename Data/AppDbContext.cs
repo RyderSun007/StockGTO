@@ -61,5 +61,20 @@ namespace StockGTO.Data
 
         // 🧾 定義 NewsArticles 表格對應的資料模型2025/05/06
         public DbSet<NewsArticle> NewsArticles { get; set; }
+
+
+        // 🧾 定義 Categories 分類 表格對應的資料模型2025/05/12
+        public DbSet<Category> Categories { get; set; }
+
+
+
+
+
+
+
+
+
+
+
     }
 }

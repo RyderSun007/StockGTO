@@ -1,12 +1,12 @@
 ﻿@model StockGTO.Models.ArticlePost
 
 @{
-    ViewData["Title"] = "新增股票知識文章";
+    ViewData["Title"] = "新增文章";
     Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
 }
 
 <main class="container pt-5">
-    <h2 class="fw-bold mb-4">📝 新增股票知識文章</h2>
+    <h2 class="fw-bold mb-4">📝 新增文章</h2>
 
     <form asp-action="Create" method="post" enctype="multipart/form-data" class="border p-4 bg-light rounded">
         <div class="mb-3">
@@ -31,28 +31,18 @@
 
         <div class="mb-3" style="max-width: 500px;">
             <label asp-for="Category" class="form-label">分類</label>
-            <select asp-for="Category" class="form-select">
+            <select asp-for="CategoryId" class="form-select">
                 <option value="">-- 請選擇分類 --</option>
-                <option value="FinancialStatements">財報分析</option>
-                <option value="TechnicalAnalysis">技術分析</option>
-                <option value="FundamentalAnalysis">基本面研究</option>
-                <option value="InvestmentStrategy">投資策略</option>
-                <option value="WealthPlanning">理財規劃</option>
-                <option value="IndustryInsight">產業分析</option>
-                <option value="MarketTrends">趨勢觀察</option>
-                <option value="GlobalMarkets">國際市場</option>
-                <option value="GlobalInvesting">全球投資</option>
-                <option value="InvestorPsychology">投資心理</option>
-                <option value="BehavioralFinance">行為經濟學</option>
-                <option value="FinancialProducts">金融商品</option>
-                <option value="Derivatives">衍生性工具</option>
-                <option value="股票知識">股票知識</option>
-                <option value="ETF專區">ETF專區</option>
-                <option value="技術分析">技術分析</option>
-                <option value="總觀觀點">總觀觀點</option>
-                <option value="基金專區">基金專區</option>
+                @foreach (var cat in ViewBag.Categories)
+                {
+                    <option value="@cat.Id" selected="@(Model.CategoryId == cat.Id ? "selected" : null)">
+                        @cat.Name
+                    </option>
+                }
             </select>
+
         </div>
+
         <div class="w-100"></div>
         <div class="w-100"></div>
         <div class="mb-3" style="max-width: 800px;">

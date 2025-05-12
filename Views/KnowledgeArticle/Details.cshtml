@@ -10,24 +10,30 @@
         <h1 class="fw-bold">@Model.Title</h1>
 
         <!-- 🔹 顯示基本資訊 -->
-        <div class="text-muted small mb-2">
+        <div class="text-muted small mb-3">
             🕒 發佈時間：@Model.CreatedAt.ToString("yyyy-MM-dd")
+
             @if (!string.IsNullOrEmpty(Model.Author))
             {
                 <span>｜✍️ 作者：@Model.Author</span>
             }
-            @if (!string.IsNullOrEmpty(Model.Category))
+
+            @if (Model.Category != null)
             {
                 <span>
                     ｜📁 分類：
-                    <a href="/KnowledgeArticle/PublicList?category=@Model.Category">@Model.Category</a>
+                    <a href="/KnowledgeArticle/PublicList?categoryId=@Model.Category.Id" class="badge bg-info text-dark">
+                        @Model.Category.Name
+                    </a>
                 </span>
             }
+
             @if (Model.ViewCount > 0)
             {
                 <span>｜👁️ 瀏覽次數：@Model.ViewCount</span>
             }
         </div>
+
 
         <!-- 🔹 顯示標籤 -->
         @if (!string.IsNullOrEmpty(Model.Tags))

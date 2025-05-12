@@ -2,11 +2,6 @@
 @using System.Linq
 
 @{
-    ViewData["Title"] = "StockGTO | 股市周刊"; // 例：首頁 或 文章管理
-    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
-    
-}
-@{
     ViewData["Title"] = "StockGTO | 股市周刊";
     Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
 
@@ -17,7 +12,16 @@
         .ToList();
 
     var main = newsList.FirstOrDefault(x => x.Position == 1);
+
+
+    // 這裡加上Random
+    var random = new Random();
+    var shuffledArticles = Model.ArticlePosts.OrderBy(x => random.Next()).Take(6).ToList();
 }
+
+
+
+
 
 
 <!-- 🔔 跑馬燈區塊 Start -->
@@ -32,6 +36,96 @@
     </marquee>
 </div>
 <!-- 🔔 跑馬燈區塊 End -->
+
+
+<!-- 🌟【首頁熱門區塊 Trending Area】Start -->
+<!-- 🌟【首頁熱門區塊 Trending Area】Start -->
+<div class="trending-area fix">
+    <div class="container">
+        <div class="trending-main">
+            <div class="row align-items-start">
+                <!-- 🔶 主圖 + 下方三卡（Position 1~4） -->
+                <div class="col-lg-8 d-flex flex-column justify-content-between" style="min-height: 600px;">
+                    <!-- 📌 主圖 Position = 1 -->
+                    @if (main != null)
+                    {
+                        <div class="trending-top mb-3">
+                            <div class="trend-top-img">
+                                <a href="@main.LinkUrl" target="_blank">
+                                    <img src="@main.ImageUrl" alt="@main.Title" class="img-fluid" style="width:100%; height:auto;" />
+                                </a>
+                                <div class="trend-top-cap">
+                                    <span class="badge bg-warning text-dark">主卡區</span>
+                                    <h2><a href="@main.LinkUrl" target="_blank">@main.Title</a></h2>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- 📌 下三卡 Position = 2~4 -->
+                    <div class="trending-bottom mt-auto">
+                        <div class="row">
+                            @foreach (var item in newsList.Where(n => n.Position >= 2 && n.Position <= 4 && n.IsActive))
+                            {
+                                <div class="col-lg-4 d-flex">
+                                    <div class="single-bottom mb-3 w-100">
+                                        <div class="trend-bottom-img mb-2">
+                                            <a href="@item.LinkUrl" target="_blank">
+                                                <img src="@item.ImageUrl" alt="@item.Title" class="img-fluid"
+                                                     style="width:100%; height:120px; object-fit:cover;" />
+                                            </a>
+                                        </div>
+                                        <div class="trend-bottom-cap">
+                                            <span class="badge bg-dark text-light">下面三卡顯示區</span>
+                                            <h4 style="font-size:1rem;">
+                                                <a href="@item.LinkUrl" target="_blank">@item.Title</a>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 🔷 右五卡 Position = 5~9 -->
+                <div class="col-lg-4">
+                    <div class="trand-right">
+                        @foreach (var item in newsList.Where(n => n.Position >= 5 && n.Position <= 9 && n.IsActive))
+                        {
+                            <div class="trand-right-single d-flex mb-3">
+                                <div class="trand-right-img">
+                                    <a href="@item.LinkUrl" target="_blank">
+                                        <img src="@item.ImageUrl" alt="@item.Title" class="img-fluid"
+                                             style="width:100px; height:80px; object-fit:cover;" />
+                                    </a>
+                                </div>
+                                <div class="trand-right-cap ps-3">
+                                    <span class="badge bg-light text-dark mb-1">右邊五卡顯示區</span>
+                                    <h4 class="mb-0" style="font-size:1rem; line-height:1.4;">
+                                        <a href="@item.LinkUrl" target="_blank">@item.Title</a>
+                                    </h4>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div> <!-- .trending-main -->
+    </div> <!-- .container -->
+</div>
+<!-- 🌟【首頁熱門區塊 Trending Area】End -->
+
+
+
+
+
+
+
+
+
+
+
  <!-- Whats New Start -->
 
         <section class="whats-news-area pt-50 pb-20">
@@ -416,89 +510,72 @@
         </section>
         <!-- Whats New End -->
 
-<!-- 🌟【首頁熱門區塊 Trending Area】Start -->
-<!-- 🌟【首頁熱門區塊 Trending Area】Start -->
-<div class="trending-area fix">
-    <div class="container">
-        <div class="trending-main">
-            <div class="row align-items-start">
-                <!-- 🔶 主圖 + 下方三卡（Position 1~4） -->
-                <div class="col-lg-8 d-flex flex-column justify-content-between" style="min-height: 600px;">
-                    <!-- 📌 主圖 Position = 1 -->
-                    @if (main != null)
-                    {
-                        <div class="trending-top mb-3">
-                            <div class="trend-top-img">
-                                <a href="@main.LinkUrl" target="_blank">
-                                    <img src="@main.ImageUrl" alt="@main.Title" class="img-fluid" style="width:100%; height:auto;" />
-                                </a>
-                                <div class="trend-top-cap">
-                                    <span class="badge bg-warning text-dark">主卡區</span>
-                                    <h2><a href="@main.LinkUrl" target="_blank">@main.Title</a></h2>
-                                </div>
-                            </div>
-                        </div>
-                    }
 
-                    <!-- 📌 下三卡 Position = 2~4 -->
-                    <div class="trending-bottom mt-auto">
-                        <div class="row">
-                            @foreach (var item in newsList.Where(n => n.Position >= 2 && n.Position <= 4 && n.IsActive))
-                            {
-                                <div class="col-lg-4 d-flex">
-                                    <div class="single-bottom mb-3 w-100">
-                                        <div class="trend-bottom-img mb-2">
-                                            <a href="@item.LinkUrl" target="_blank">
-                                                <img src="@item.ImageUrl" alt="@item.Title" class="img-fluid"
-                                                     style="width:100%; height:120px; object-fit:cover;" />
-                                            </a>
-                                        </div>
-                                        <div class="trend-bottom-cap">
-                                            <span class="badge bg-dark text-light">下面三卡顯示區</span>
-                                            <h4 style="font-size:1rem;">
-                                                <a href="@item.LinkUrl" target="_blank">@item.Title</a>
-                                            </h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
+
+
+
+
+
+
+
+<!-- 🔥 熱門文章排行輪播區塊 Start -->
+
+<div class="weekly-news-area pt-50">
+    <div class="container">
+        <div class="weekly-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-tittle mb-30">
+                        <h3>🔥 熱門文章排行</h3>
                     </div>
                 </div>
-
-                <!-- 🔷 右五卡 Position = 5~9 -->
-                <div class="col-lg-4">
-                    <div class="trand-right">
-                        @foreach (var item in newsList.Where(n => n.Position >= 5 && n.Position <= 9 && n.IsActive))
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="weekly-news-active dot-style d-flex">
+                        @foreach (var article in Model.TopViewedArticles)
                         {
-                            <div class="trand-right-single d-flex mb-3">
-                                <div class="trand-right-img">
-                                    <a href="@item.LinkUrl" target="_blank">
-                                        <img src="@item.ImageUrl" alt="@item.Title" class="img-fluid"
-                                             style="width:100px; height:80px; object-fit:cover;" />
-                                    </a>
+                            <div class="weekly-single position-relative">
+                                <div class="weekly-img">
+                                    <img src="@(!string.IsNullOrEmpty(article.ImageUrl) ? article.ImageUrl : "/images/default.jpg")"
+                                         alt="@article.Title"
+                                         class="w-100"
+                                         style="object-fit: cover; height: 200px;" />
                                 </div>
-                                <div class="trand-right-cap ps-3">
-                                    <span class="badge bg-light text-dark mb-1">右邊五卡顯示區</span>
-                                    <h4 class="mb-0" style="font-size:1rem; line-height:1.4;">
-                                        <a href="@item.LinkUrl" target="_blank">@item.Title</a>
-                                    </h4>
+                                <div class="overlay-caption">
+                                    <span class="badge bg-light text-dark mb-1">@article.Category?.Name</span>
+                                    <h5 class="text-dark fw-bold mb-0" style="font-size: 1rem;">
+                                        <a asp-controller="KnowledgeArticle"
+                                           asp-action="Details"
+                                           asp-route-id="@article.Id"
+                                           class="text-dark">
+                                            @article.Title
+                                        </a>
+                                    </h5>
+                                    <small class="text-muted">👁️ 點閱 @article.ViewCount</small>
                                 </div>
                             </div>
                         }
                     </div>
                 </div>
             </div>
-        </div> <!-- .trending-main -->
-    </div> <!-- .container -->
+        </div>
+    </div>
 </div>
-<!-- 🌟【首頁熱門區塊 Trending Area】End -->
 
-    
+<!-- 🔥 熱門文章排行輪播區塊 End -->
 
 
-       
-<!--   Weekly-News start -->
+
+
+
+
+
+
+
+
+
+<!-- 🔄 Weekly Top News 改為隨機文章輪播 -->
 <div class="weekly-news-area pt-50">
     <div class="container">
         <div class="weekly-wrapper">
@@ -506,74 +583,14 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="section-tittle mb-30">
-                        <h3>Weekly Top News</h3>
+                        <h3>隨機文章輪播</h3>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-12">
                     <div class="weekly-news-active dot-style d-flex dot-style">
-                        <div class="weekly-single">
-                            <div class="weekly-img">
-                                <img src="~/aznews/assets/img/news/weeklyNews2.jpg" asp-append-version="true" alt="">
-                            </div>
-                            <div class="weekly-caption">
-                                <span class="color1">Strike</span>
-                                <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                            </div>
-                        </div>
-                        <div class="weekly-single active">
-                            <div class="weekly-img">
-                                <img src="~/aznews/assets/img/news/weeklyNews1.jpg" asp-append-version="true" alt="">
-                            </div>
-                            <div class="weekly-caption">
-                                <span class="color1">Strike</span>
-                                <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                            </div>
-                        </div>
-                        <div class="weekly-single">
-                            <div class="weekly-img">
-                                <img src="~/aznews/assets/img/news/weeklyNews3.jpg" asp-append-version="true" alt="">
-                            </div>
-                            <div class="weekly-caption">
-                                <span class="color1">Strike</span>
-                                <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                            </div>
-                        </div>
-                        <div class="weekly-single">
-                            <div class="weekly-img">
-                                <img src="~/aznews/assets/img/news/weeklyNews1.jpg" asp-append-version="true" alt="">
-                            </div>
-                            <div class="weekly-caption">
-                                <span class="color1">Strike</span>
-                                <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- End Weekly-News -->
-
-
-
-<!-- Weekly-News start  股票知識文章輪播區塊 -->
-<div class="weekly-news-area pt-50">
-    <div class="container">
-        <div class="weekly-wrapper">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="section-tittle mb-30">
-                        <h3>📘股票知識精選</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <div class="weekly-news-active dot-style d-flex">
-                        @foreach (var article in Model.ArticlePosts)
+                        @foreach (var article in shuffledArticles)
                         {
                             <div class="weekly-single">
                                 <div class="weekly-img">
@@ -582,7 +599,7 @@
                                          style="object-fit: cover; height: 200px;" />
                                 </div>
                                 <div class="weekly-caption">
-                                    <span class="color1">StockGTO 知識</span>
+                                    <span class="color1">@article.Category?.Name ?? "其他分類"</span>
                                     <h4>
                                         <a asp-controller="KnowledgeArticle"
                                            asp-action="Details"
@@ -600,92 +617,99 @@
     </div>
 </div>
 
-<!-- 股票知識文章輪播區塊END -->
 
 
 
+<!-- End Weekly-News --><!-- 🌏 GlobalMarkets 分類文章卡片區塊 Start -->
+@{
+    var hasGlobalMarkets = Model.CategoryArticles.ContainsKey("GlobalMarkets") && Model.CategoryArticles["GlobalMarkets"].Any();
+}
 
-
-
-
-
-
-        <!--   Weekly2-News start -->
-        <div class="weekly2-news-area  weekly2-pading gray-bg">
-            <div class="container">
-                <div class="weekly2-wrapper">
-                    <!-- section Tittle -->
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="section-tittle mb-30">
-                                <h3>Weekly Top News</h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="weekly2-news-active dot-style d-flex dot-style">
-                                <div class="weekly2-single">
-                                    <div class="weekly2-img">
-                                        <img src="~/aznews/assets/img/news/weekly2News1.jpg" asp-append-version="true" alt="">
-                                    </div>
-                                    <div class="weekly2-caption">
-                                        <span class="color1">Corporate</span>
-                                        <p>25 Jan 2020</p>
-                                        <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                    </div>
-                                </div>
-                                <div class="weekly2-single">
-                                    <div class="weekly2-img">
-                                        <img src="~/aznews/assets/img/news/weekly2News2.jpg" asp-append-version="true" alt="">
-                                    </div>
-                                    <div class="weekly2-caption">
-                                        <span class="color1">Event night</span>
-                                        <p>25 Jan 2020</p>
-                                        <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                    </div>
-                                </div>
-                                <div class="weekly2-single">
-                                    <div class="weekly2-img">
-                                        <img src="~/aznews/assets/img/news/weekly2News3.jpg" asp-append-version="true" alt="">
-                                    </div>
-                                    <div class="weekly2-caption">
-                                        <span class="color1">Corporate</span>
-                                        <p>25 Jan 2020</p>
-                                        <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                    </div>
-                                </div>
-                                <div class="weekly2-single">
-                                    <div class="weekly2-img">
-                                        <img src="~/aznews/assets/img/news/weekly2News4.jpg" asp-append-version="true" alt="">
-                                    </div>
-                                    <div class="weekly2-caption">
-                                        <span class="color1">Event time</span>
-                                        <p>25 Jan 2020</p>
-                                        <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                    </div>
-                                </div>
-                                <div class="weekly2-single">
-                                    <div class="weekly2-img">
-                                        <img src="~/aznews/assets/img/news/weekly2News4.jpg" asp-append-version="true" alt="">
-                                    </div>
-                                    <div class="weekly2-caption">
-                                        <span class="color1">Corporate</span>
-                                        <p>25 Jan 2020</p>
-                                        <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                    </div>
+@if (hasGlobalMarkets)
+{
+    <div class="container my-5">
+        <h3 class="fw-bold mb-4">🌏 國際新聞 Global Markets</h3>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var article in Model.CategoryArticles["GlobalMarkets"].Take(6))
+            {
+                <div class="col">
+                    <div class="card border-0 shadow-sm h-100">
+                        <a asp-controller="KnowledgeArticle"
+                           asp-action="Details"
+                           asp-route-id="@article.Id"
+                           class="text-decoration-none">
+                            <div class="position-relative">
+                                <img src="@(!string.IsNullOrEmpty(article.ImageUrl) ? article.ImageUrl : "/images/default.jpg")"
+                                     class="card-img-top"
+                                     alt="@article.Title"
+                                     style="height: 180px; object-fit: cover;" />
+                                <div class="card-img-overlay d-flex flex-column justify-content-end bg-dark bg-opacity-50 p-3">
+                                    <h5 class="card-title text-white fw-bold mb-1">@article.Title</h5>
+                                    <small class="text-white-50">👁️ @article.ViewCount 次瀏覽</small>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 </div>
-            </div>
+            }
         </div>
-        <!-- End Weekly-News -->
+    </div>
+}
+else
+{
+    <div class="text-center my-5 text-muted">
+        🌏 GlobalMarkets 分類目前尚無文章。
+    </div>
+}
+
+<!-- 🔥 熱門文章排行卡片風格 End -->
 
 
 
-        <!-- Start Youtube -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Start Youtube -->
         <div class="youtube-area video-padding">
             <div class="container">
                 <div class="row">
