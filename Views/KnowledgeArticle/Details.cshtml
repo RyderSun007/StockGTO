@@ -6,24 +6,82 @@
 }
 
 <main class="container pt-5">
-    <article class="bg-white p-4 rounded shadow-sm">
-        <h1 class="fw-bold mb-3">@Model.Title</h1>
+    <article class="p-3 mb-5">
+        <h1 class="fw-bold">@Model.Title</h1>
 
-        <div class="text-muted small mb-3">
+        <!-- 🔹 顯示基本資訊 -->
+        <div class="text-muted small mb-2">
             🕒 發佈時間：@Model.CreatedAt.ToString("yyyy-MM-dd")
             @if (!string.IsNullOrEmpty(Model.Author))
             {
                 <span>｜✍️ 作者：@Model.Author</span>
             }
+            @if (!string.IsNullOrEmpty(Model.Category))
+            {
+                <span>
+                    ｜📁 分類：
+                    <a href="/KnowledgeArticle/PublicList?category=@Model.Category">@Model.Category</a>
+                </span>
+            }
+            @if (Model.ViewCount > 0)
+            {
+                <span>｜👁️ 瀏覽次數：@Model.ViewCount</span>
+            }
         </div>
 
-        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        <!-- 🔹 顯示標籤 -->
+        @if (!string.IsNullOrEmpty(Model.Tags))
         {
-            <img src="@Model.ImageUrl" alt="文章圖片" class="img-fluid rounded mb-4" />
+            <div class="mb-3">
+                🏷️ 標籤：
+                @foreach (var tag in Model.Tags.Split(','))
+                {
+                    <span class="badge bg-secondary me-1">@tag.Trim()</span>
+                }
+            </div>
         }
 
+        <!-- 🔹 顯示圖片 -->
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" class="img-fluid rounded mb-3" alt="文章圖片" />
+        }
+
+        <!-- 🔹 顯示內文 -->
         <section class="article-content lh-lg">
             @Html.Raw(Model.Content)
         </section>
     </article>
+
+    <!-- 🔹 純文字導覽 -->
+    <div class="mt-4 d-flex justify-content-between small text-dark">
+        <div>
+            @if (ViewBag.PreviousArticle != null)
+            {
+                <span>
+                    ⬅ 上一篇：
+                    <a asp-action="Details" asp-route-id="@ViewBag.PreviousArticle.Id" class="text-dark">
+                        @ViewBag.PreviousArticle.Title
+                    </a>
+                </span>
+            }
+        </div>
+
+        <div>
+            <a href="/KnowledgeArticle/PublicList" class="text-dark">📚 回到文章總覽</a>
+        </div>
+
+        <div>
+            @if (ViewBag.NextArticle != null)
+            {
+                <span>
+                    下一篇：
+                    <a asp-action="Details" asp-route-id="@ViewBag.NextArticle.Id" class="text-dark">
+                        @ViewBag.NextArticle.Title
+                    </a>
+                </span>
+            }
+        </div>
+    </div>
+
 </main>

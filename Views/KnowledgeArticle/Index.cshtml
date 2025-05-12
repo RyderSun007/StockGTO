@@ -18,10 +18,25 @@
         <div class="col-md-4">
             <select name="category" class="form-select">
                 <option value="">-- 所有分類 --</option>
+                <option value="財報分析" selected="@(category == "財報分析" ? "selected" : null)">財報分析</option>
+                <option value="技術分析" selected="@(category == "技術分析" ? "selected" : null)">技術分析</option>
+                <option value="基本面研究" selected="@(category == "基本面研究" ? "selected" : null)">基本面研究</option>
+                <option value="投資策略" selected="@(category == "投資策略" ? "selected" : null)">投資策略</option>
+                <option value="理財規劃" selected="@(category == "理財規劃" ? "selected" : null)">理財規劃</option>
+                <option value="產業分析" selected="@(category == "產業分析" ? "selected" : null)">產業分析</option>
+                <option value="趨勢觀察" selected="@(category == "趨勢觀察" ? "selected" : null)">趨勢觀察</option>
+                <option value="國際市場" selected="@(category == "國際市場" ? "selected" : null)">國際市場</option>
+                <option value="全球投資" selected="@(category == "全球投資" ? "selected" : null)">全球投資</option>
+                <option value="投資心理" selected="@(category == "投資心理" ? "selected" : null)">投資心理</option>
+                <option value="行為經濟學" selected="@(category == "行為經濟學" ? "selected" : null)">行為經濟學</option>
+                <option value="金融商品" selected="@(category == "金融商品" ? "selected" : null)">金融商品</option>
+                <option value="衍生性工具" selected="@(category == "衍生性工具" ? "selected" : null)">衍生性工具</option>
                 <option value="股票知識" selected="@(category == "股票知識" ? "selected" : null)">股票知識</option>
                 <option value="ETF專區" selected="@(category == "ETF專區" ? "selected" : null)">ETF專區</option>
-                <option value="技術分析" selected="@(category == "技術分析" ? "selected" : null)">技術分析</option>
+                <option value="總觀觀點" selected="@(category == "總觀觀點" ? "selected" : null)">總觀觀點</option>
+                <option value="基金專區" selected="@(category == "基金專區" ? "selected" : null)">基金專區</option>
             </select>
+
         </div>
         <div class="col-md-3">
             <button type="submit" class="btn btn-danger w-100">搜尋</button>

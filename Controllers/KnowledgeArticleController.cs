@@ -19,25 +19,71 @@ namespace StockGTO.Controllers
         }
 
         // ✅ 顯示全部知識文章
-        public IActionResult Index()
+        // ✅ 後台文章總表：支援分類與標題關鍵字搜尋
+        public IActionResult Index(string keyword, string category)
         {
-            var articles = _context.ArticlePosts
-                .Where(a => a.Category == "股票知識" && a.Content != null)
+            // 1️⃣ 從資料表建立查詢（初始全部文章）
+            var query = _context.ArticlePosts.AsQueryable();
+
+            // 2️⃣ 如果有輸入關鍵字，就過濾標題含該字的文章
+            if (!string.IsNullOrEmpty(keyword))
+                query = query.Where(a => a.Title.Contains(keyword));
+
+            // 3️⃣ 如果有選擇分類，就過濾該分類文章
+            if (!string.IsNullOrEmpty(category))
+                query = query.Where(a => a.Category == category);
+
+            // 4️⃣ 排除空白內容，並依建立日期倒序排列
+            var articles = query
+                .Where(a => a.Content != null)
                 .OrderByDescending(a => a.CreatedAt)
                 .ToList();
 
+            // 5️⃣ 把搜尋條件傳回前端，讓欄位與選單記住狀態
+            ViewBag.Keyword = keyword;
+            ViewBag.Category = category;
+
+            // 6️⃣ 把結果傳給 Razor View 顯示
             return View(articles);
         }
 
+
         // ✅ 顯示單篇文章
+        // ✅ 顯示單篇文章（支援上一篇／下一篇）
         public IActionResult Details(int id)
         {
+            // 1️⃣ 找出指定 ID 的文章
             var article = _context.ArticlePosts.FirstOrDefault(a => a.Id == id);
-            if (article == null || article.Category != "股票知識")
+            if (article == null)
                 return NotFound();
 
+            // 2️⃣ 更新瀏覽次數
+            article.ViewCount++;
+            _context.SaveChanges(); // 記得儲存更新
+
+            // 3️⃣ 找出同分類下的上一篇（ID 較小）
+            ViewBag.PreviousArticle = _context.ArticlePosts
+                .Where(a => a.Category == article.Category && a.Id < article.Id)
+                .OrderByDescending(a => a.Id)
+                .FirstOrDefault();
+
+            // 4️⃣ 找出同分類下的下一篇（ID 較大）
+            ViewBag.NextArticle = _context.ArticlePosts
+                .Where(a => a.Category == article.Category && a.Id > article.Id)
+                .OrderBy(a => a.Id)
+                .FirstOrDefault();
+
+            // 5️⃣ 可選：找同分類推薦文章（排除自己）
+            ViewBag.RelatedArticles = _context.ArticlePosts
+                .Where(a => a.Category == article.Category && a.Id != article.Id)
+                .OrderByDescending(a => a.CreatedAt)
+                .Take(5)
+                .ToList();
+
+            // 6️⃣ 傳給前端
             return View(article);
         }
+
 
         // ✅ 建立新文章表單
         public IActionResult Create()
@@ -181,17 +227,23 @@ namespace StockGTO.Controllers
         {
             var query = _context.ArticlePosts.AsQueryable();
 
+
+
+
+            // 🔍 如果有輸入關鍵字，就套用模糊搜尋（LIKE）
             if (!string.IsNullOrEmpty(keyword))
                 query = query.Where(a => a.Title.Contains(keyword));
 
+            // 📂 如果有選分類，就依分類篩選，否則顯示全部
             if (!string.IsNullOrEmpty(category))
                 query = query.Where(a => a.Category == category);
 
-            query = query.Where(a => a.Category == "股票知識");
-
+            // ✅ 不再預設強制顯示「股票知識」，改為顯示所有資料
             var articles = query
                 .OrderByDescending(a => a.CreatedAt)
                 .ToList();
+
+
 
             ViewBag.Keyword = keyword;
             ViewBag.Category = category;

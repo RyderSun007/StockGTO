@@ -12,15 +12,34 @@
                 <label class="form-label">📂 分類</label>
                 <select name="category" class="form-select">
                     <option value="">-- 所有分類 --</option>
-                    <option value="股票知識" selected="@(ViewBag.Category == "股票知識" ? "selected" : null)">股票知識</option>
-                    <option value="ETF專區" selected="@(ViewBag.Category == "ETF專區" ? "selected" : null)">ETF專區</option>
-                    <option value="技術分析" selected="@(ViewBag.Category == "技術分析" ? "selected" : null)">技術分析</option>
+                    <option value="">-- 請選擇分類 --</option>
+                    <option value="FinancialStatements">財報分析</option>
+                    <option value="TechnicalAnalysis">技術分析</option>
+                    <option value="FundamentalAnalysis">基本面研究</option>
+                    <option value="InvestmentStrategy">投資策略</option>
+                    <option value="WealthPlanning">理財規劃</option>
+                    <option value="IndustryInsight">產業分析</option>
+                    <option value="MarketTrends">趨勢觀察</option>
+                    <option value="GlobalMarkets">國際市場</option>
+                    <option value="GlobalInvesting">全球投資</option>
+                    <option value="InvestorPsychology">投資心理</option>
+                    <option value="BehavioralFinance">行為經濟學</option>
+                    <option value="FinancialProducts">金融商品</option>
+                    <option value="Derivatives">衍生性工具</option>
+                    <option value="股票知識">股票知識</option>
+                    <option value="ETF專區">ETF專區</option>
+                    <option value="技術分析">技術分析（中文）</option>
+                    <option value="總觀觀點">總觀觀點</option>
+                    <option value="基金專區">基金專區</option>
+
                 </select>
             </div>
+
             <div class="col-md-4">
                 <label class="form-label">🔠 關鍵字搜尋</label>
                 <input type="text" name="keyword" class="form-control" placeholder="輸入標題" value="@ViewBag.Keyword" />
             </div>
+
             <div class="col-md-4 d-flex align-items-end">
                 <button type="submit" class="btn btn-danger w-100">🔍 搜尋文章</button>
             </div>
@@ -33,21 +52,26 @@
         </h3>
 
         <div class="row fw-bold text-center border-bottom pb-2 mb-3">
-            <div class="col-6">標題</div>
-            <div class="col-3">作者</div>
-            <div class="col-3">日期</div>
+            <div class="col-1">#</div>
+            <div class="col-5 text-start">標題</div>
+            <div class="col-2">作者</div>
+            <div class="col-2">分類</div>
+            <div class="col-2">日期</div>
         </div>
 
-        @foreach (var article in Model)
+        @for (int i = 0; i < Model.Count; i++)
         {
+            var article = Model[i];
             <div class="row text-center align-items-center border-bottom py-2">
-                <div class="col-6 text-start">
+                <div class="col-1">@(@i + 1)</div>
+                <div class="col-5 text-start">
                     <a asp-action="Details" asp-route-id="@article.Id" class="text-dark fw-semibold">
                         @article.Title
                     </a>
                 </div>
-                <div class="col-3">@article.Author</div>
-                <div class="col-3">@article.CreatedAt.ToString("MM/dd")</div>
+                <div class="col-2">@article.Author</div>
+                <div class="col-2">@article.Category</div>
+                <div class="col-2">@article.CreatedAt.ToString("MM/dd")</div>
             </div>
         }
     </section>
