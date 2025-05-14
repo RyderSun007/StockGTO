@@ -57,68 +57,58 @@
                                 <div class="main-menu d-none d-md-block">
                                     <nav>
                                         <ul id="navigation" class="d-flex justify-content-end align-items-center">
-                                            
+
                                             @if (SignInManager.IsSignedIn(User))
                                             {
                                                 var currentUser = await UserManager.GetUserAsync(User);
-                                                <li><span class="nav-link">👋 歡迎，@currentUser.DisplayName</span></li>
-                                                <li><a class="nav-link" asp-controller="Account" asp-action="Logout">登出</a></li>
-                                            }
-                                            else
-                                            {
-                                                <li><a class="nav-link" asp-controller="Account" asp-action="LoginWithGoogle">Google 登入</a></li>
-                                                <li><a class="nav-link" asp-controller="Account" asp-action="LoginWithFacebook">Facebook登入(未開發)</a></li>
-                                            }
-                                            @if (User.Identity.IsAuthenticated)
-                                            {
                                                 <li>
-                                                    <a asp-controller="Member" asp-action="Profile">
+                                                    <span class="nav-link">👋 歡迎，@currentUser.DisplayName</span>
+                                                </li>
+                                                <li>
+                                                    <a class="nav-link" asp-controller="Account" asp-action="Logout">
+                                                        <i class="fas fa-sign-out-alt text-danger"></i> 登出
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="nav-link" asp-controller="Member" asp-action="Profile">
                                                         👤 會員中心
                                                     </a>
                                                 </li>
                                             }
-                                            <li><a href="/viewer/news_viewer.html" target="_blank">Python新聞</a></li>
+                                            else
+                                            {
+                                                <li>
+                                                    <a class="nav-link" asp-controller="Account" asp-action="LoginWithGoogle">
+                                                        <i class="fab fa-google text-danger"></i> Google 登入
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="nav-link" asp-controller="Account" asp-action="LoginWithFacebook">
+                                                        <i class="fab fa-facebook text-primary"></i> Facebook 登入（未開發）
+                                                    </a>
+                                                </li>
+                                            }
+
                                             <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle" href="#" id="knowledgeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">新聞文章列表</a>
-                                                <ul class="dropdown-menu" aria-labelledby="knowledgeDropdown">
-                                                    <li><a class="dropdown-item" asp-controller="KnowledgeArticle" asp-action="Index">新聞文章後台</a></li>
-                                                    <li><a class="dropdown-item" asp-controller="KnowledgeArticle" asp-action="PublicList">新聞文章前台</a></li>
-                                                    <li><a class="dropdown-item" asp-controller="KnowledgeArticle" asp-action="Create">建立新文章</a></li>
-                                                </ul>
-                                            </li>
-                                            <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle" href="#" id="gridNewsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">首頁九格管理</a>
-                                                <ul class="dropdown-menu" aria-labelledby="gridNewsDropdown">
-                                                    <li><a class="dropdown-item" asp-controller="IndexNews" asp-action="Index">九格清單（Index）</a></li>
-                                                    <li><a class="dropdown-item" asp-controller="IndexNews" asp-action="Manage">九格管理（Manage）</a></li>
-                                                </ul>
-                                            </li>
-                                            <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle" href="#" id="postDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">筆記</a>
-                                                <ul class="dropdown-menu" aria-labelledby="postDropdown">
-                                                    <li><a class="dropdown-item" asp-controller="Post" asp-action="Manage">筆記後台</a></li>
-                                                    <li><a class="dropdown-item" asp-controller="Post" asp-action="Post">筆記前台</a></li>
-                                                </ul>
-                                            </li>
-                                            <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle" href="#" id="selfProgramDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">開發中程式</a>
+                                                <a class="nav-link dropdown-toggle" href="#" id="selfProgramDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">自有程式</a>
                                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="selfProgramDropdown">
-                                                    <li><a class="dropdown-item" asp-controller="OldSunStock" asp-action="Index">📝老孫持股</a></li>
-                                                    <li><a class="dropdown-item" asp-controller="Employee" asp-action="List">👥 員工（簡易登入）</a></li>
-                                                    <li><a class="dropdown-item" asp-controller="Leave" asp-action="Index">📋 請假清單</a></li>
-                                                    <li><a class="dropdown-item" asp-controller="Leave" asp-action="Create">➕ 新增請假</a></li>
-                                                    <li><a class="dropdown-item" asp-controller="Leave" asp-action="Review">🛠️ 審核假單</a></li>
-                                                    <li><a class="dropdown-item" asp-controller="ArticlePost" asp-action="CreateIndexPost">📋 建立公告</a></li>
-                                                    <li><a class="dropdown-item" asp-controller="ArticlePost" asp-action="ManageIndexPost">🔧 後台管理</a></li>
-                                                    <li><a class="dropdown-item" asp-controller="NewsArticle" asp-action="Create">新增新聞（Create）</a></li>
-                                                    <li><a class="dropdown-item" asp-controller="NewsArticle" asp-action="Manage">管理新聞（Manage）</a></li>
+                                                    <li><a class="dropdown-item" asp-controller="IndexNews" asp-action="Index">📋 九格清單</a></li>
+                                                    <li><a class="dropdown-item" asp-controller="IndexNews" asp-action="Manage">📋 九格管理</a></li>
+                                                    <li><a class="dropdown-item" asp-controller="Post" asp-action="Manage">📝 筆記後台</a></li>
+                                                    <li><a class="dropdown-item" asp-controller="Post" asp-action="Post">📝 筆記前台</a></li>
+                                                    <li><a class="dropdown-item" asp-controller="KnowledgeArticle" asp-action="Index">🌐 新聞後台</a></li>
+                                                    <li><a class="dropdown-item" asp-controller="KnowledgeArticle" asp-action="PublicList">🌐 新聞前台</a></li>
+                                                    <li><a class="dropdown-item" asp-controller="KnowledgeArticle" asp-action="Create">🌐 建立文章</a></li>
+                                                    <li><a class="dropdown-item" asp-controller="NewsArticle" asp-action="Create">🧪News建置(未開發)</a></li>
+                                                    <li><a class="dropdown-item" asp-controller="NewsArticle" asp-action="Manage">🧪News管理(未開發)</a></li>
                                                 </ul>
                                             </li>
-                                            <li><i class="fas fa-search special-tag"></i></li>
+
                                         </ul>
                                     </nav>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>

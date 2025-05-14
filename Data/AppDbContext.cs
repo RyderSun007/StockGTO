@@ -18,9 +18,7 @@ namespace StockGTO.Data
         {
         }
 
-        // 🧾 定義 Employees 表格對應的資料模型
-        // EF Core 會自動幫你建立對應的資料表與欄位
-        public DbSet<Employee> Employees { get; set; }
+       
 
         // 🧾 定義 Posts 表格對應的資料模型
         public DbSet<Post> Posts { get; set; }
@@ -31,30 +29,21 @@ namespace StockGTO.Data
         {
             base.OnModelCreating(modelBuilder); // ⚠️ 請記得保留這行，確保內建規則不被覆蓋
 
-            // 🧮 這裡設定 Employee 的 Salary 欄位精度為 18 位數（小數點後保留 2 位）
-            // 相當於 SQL 的 decimal(18,2)
-            modelBuilder.Entity<Employee>()
-                .Property(e => e.Salary)
-                .HasPrecision(18, 2);
+           
 
         }
         // Data/AppDbContext.cs 2025/04/22
-        //indexPost 表格對應的資料模型2025/04/22
-        public DbSet<IndexPost> IndexPosts { get; set; }
+        
 
 
-
-        // 🧾 定義 SoulQuotes 表格對應的資料模型2025/04/22
-        public DbSet<SoulQuote> SoulQuotes { get; set; }
+       
 
         // 🧾 定義 ArticlePosts 表格對應的資料模型2025/04/22
         public DbSet<ArticlePost> ArticlePosts { get; set; }
 
-        //  🧾 定義 AjaxIndexPosts 表格對應的資料模型2025/04/22
-        public DbSet<AjaxIndexPost> AjaxIndexPosts { get; set; }
+       
 
-        // 🧾 定義 OldSunStocks 表格對應的資料模型2025/04/29
-        public DbSet<OldSunStockModel> OldSunStocks { get; set; }
+        
 
         // 🧾 定義 IndexNews 表格對應的資料模型2025/04/30
         public DbSet<IndexNews> IndexNews { get; set; }

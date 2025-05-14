@@ -5,11 +5,9 @@ namespace StockGTO.ViewModels
 {
     public class HomeViewModel
     {
-        // 📰 跑馬燈公告
-        public List<IndexPost> IndexPosts { get; set; } = new();
+        
 
-        // 🧠 靈魂語錄
-        public List<SoulQuote> SoulQuotes { get; set; } = new();
+        
 
         // 📣 焦點新聞
         public List<IndexNews> IndexNews { get; set; } = new();

@@ -7,14 +7,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\Account\**" />
     <Compile Remove="Views\NewFolder1\**" />
     <Compile Remove="Views\NewFolder2\**" />
+    <Compile Remove="Views\OldSunStock\**" />
+    <Content Remove="Views\Account\**" />
     <Content Remove="Views\NewFolder1\**" />
     <Content Remove="Views\NewFolder2\**" />
+    <Content Remove="Views\OldSunStock\**" />
+    <EmbeddedResource Remove="Views\Account\**" />
     <EmbeddedResource Remove="Views\NewFolder1\**" />
     <EmbeddedResource Remove="Views\NewFolder2\**" />
+    <EmbeddedResource Remove="Views\OldSunStock\**" />
+    <None Remove="Views\Account\**" />
     <None Remove="Views\NewFolder1\**" />
     <None Remove="Views\NewFolder2\**" />
+    <None Remove="Views\OldSunStock\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\EmployeeController.cs" />
+    <Compile Remove="Controllers\OldSunStockController.cs" />
+    <Compile Remove="Models\Employee.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -52,7 +66,6 @@
   <ItemGroup>
     <Folder Include="DATA\" />
     <Folder Include="Migrations\" />
-    <Folder Include="Views\Account\" />
   </ItemGroup>
 
 </Project>

@@ -51,18 +51,7 @@ namespace StockGTO.Controllers
             // 3️⃣ 建立一個 ViewModel 傳給前端 Razor 頁面使用
             var viewModel = new HomeViewModel
             {
-                // 首頁主視覺輪播新聞（拉 3 筆）
-                IndexPosts = _context.IndexPosts
-                    .OrderByDescending(p => p.CreatedAt)
-                    .Take(3)
-                    .ToList(),
-
-                // 靈魂語錄清單（最新 3 筆）
-                SoulQuotes = _context.SoulQuotes
-                    .OrderByDescending(q => q.CreatedAt)
-                    .Take(3)
-                    .ToList(),
-
+               
                 // 首頁小快訊清單（顯示順序按 Position 排）
                 IndexNews = _context.IndexNews
                     .Where(n => n.IsActive)

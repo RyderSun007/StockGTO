@@ -39,7 +39,6 @@ namespace StockGTO.Models
         // ✅ 加入會員帳號欄位（UserId 為 AspNetUsers.Id）
         public string? UserId { get; set; }
 
-        [ForeignKey("UserId")]
-        public IdentityUser? User { get; set; } // 會員資料（可用於顯示 UserName）
+       
     }
 }
