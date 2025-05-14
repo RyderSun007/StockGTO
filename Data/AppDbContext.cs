@@ -1,8 +1,13 @@
 ﻿// 引用 EF Core 套件，提供資料庫操作功能
+
 using Microsoft.EntityFrameworkCore;
 
 // 引用模型資料夾，裡面有 Employee 與 Post 類別
 using StockGTO.Models;
+
+
+
+
 
 namespace StockGTO.Data
 {
@@ -69,9 +74,7 @@ namespace StockGTO.Data
 
 
 
-
-
-
+        public DbSet<LeaveRequest> LeaveRequests { get; set; }  // ✅ 請假資料表
 
 
 

@@ -1,0 +1,30 @@
+﻿@model IEnumerable<StockGTO.Models.LeaveRequest>
+@{
+    ViewData["Title"] = "請假紀錄清單";
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+}
+<h2 class="fw-bold mb-4">📋 請假紀錄清單</h2>
+<a asp-action="Create" class="btn btn-primary mb-3">➕ 新增請假</a>
+<table class="table table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>員工姓名</th>
+            <th>請假類型</th>
+            <th>起</th>
+            <th>迄</th>
+            <th>狀態</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var leave in Model)
+        {
+            <tr>
+                <td>@leave.EmployeeName</td>
+                <td>@leave.LeaveType</td>
+                <td>@leave.StartDate.ToString("yyyy/MM/dd")</td>
+                <td>@leave.EndDate.ToString("yyyy/MM/dd")</td>
+                <td>@leave.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>

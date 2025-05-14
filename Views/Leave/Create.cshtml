@@ -1,0 +1,75 @@
+﻿@model StockGTO.Models.LeaveRequest
+@{
+    ViewData["Title"] = "新增請假申請";
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+}
+<h2 class="fw-bold mb-4">📝 請假申請表</h2>
+<div asp-validation-summary="All" class="text-danger mb-3"></div>
+<form asp-action="Create" method="post" class="border p-4 bg-light rounded">
+    <div class="row mb-3">
+        <div class="col">
+            <label asp-for="EmployeeName" class="form-label">員工姓名</label>
+            <input asp-for="EmployeeName" class="form-control" />
+            <span asp-validation-for="EmployeeName" class="text-danger"></span>
+        </div>
+        <div class="col">
+            <label asp-for="EmployeeId" class="form-label">員工編號</label>
+            <input asp-for="EmployeeId" class="form-control" />
+            <span asp-validation-for="EmployeeId" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col">
+            <label asp-for="Department" class="form-label">部門</label>
+            <input asp-for="Department" class="form-control" />
+        </div>
+        <div class="col">
+            <label asp-for="Position" class="form-label">職稱</label>
+            <input asp-for="Position" class="form-control" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <label asp-for="LeaveType" class="form-label">請假類型</label>
+        <select asp-for="LeaveType" class="form-select">
+            <option value="">-- 請選擇 --</option>
+            <option value="事假">事假</option>
+            <option value="病假">病假</option>
+            <option value="婚假">婚假</option>
+            <option value="喪假">喪假</option>
+            <option value="產假">產假</option>
+        </select>
+        <span asp-validation-for="LeaveType" class="text-danger"></span>
+    </div>
+    <div class="row mb-3">
+        <div class="col">
+            <label asp-for="StartDate" class="form-label">開始時間</label>
+            <input asp-for="StartDate" type="datetime-local" class="form-control" />
+            <span asp-validation-for="StartDate" class="text-danger"></span>
+        </div>
+        <div class="col">
+            <label asp-for="EndDate" class="form-label">結束時間</label>
+            <input asp-for="EndDate" type="datetime-local" class="form-control" />
+            <span asp-validation-for="EndDate" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Substitute" class="form-label">代理人</label>
+        <input asp-for="Substitute" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Reason" class="form-label">請假理由</label>
+        <textarea asp-for="Reason" class="form-control" rows="3"></textarea>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Note" class="form-label">備註</label>
+        <textarea asp-for="Note" class="form-control" rows="2"></textarea>
+    </div>
+    <input type="hidden" asp-for="Approver" value="" />
+    <div class="d-flex gap-3">
+        <button type="submit" class="btn btn-success">✅ 送出</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">🔙 返回</a>
+    </div>
+</form>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

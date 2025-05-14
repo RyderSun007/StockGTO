@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;      // 資料庫 EF Core
 using StockGTO.Data;                      // 你的 DbContext 類別
-
+using StockGTO.Hubs; // ← WebSocket
 
 
 namespace StockGTO
@@ -9,6 +9,8 @@ namespace StockGTO
     {
         public static void Main(string[] args)
         {
+
+
             var builder = WebApplication.CreateBuilder(args);
 
             // =======================
@@ -28,7 +30,8 @@ namespace StockGTO
             // 加入授權機制（如果有用到 [Authorize] 屬性）
             builder.Services.AddAuthorization();
 
-            
+            //註冊 SignalR 的關鍵
+            builder.Services.AddSignalR(); // WebSocket 
 
 
             var app = builder.Build();
@@ -77,7 +80,13 @@ namespace StockGTO
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             // 啟動網站應用程式（開始接受外部請求）
+            // 🔥 ArticleHub WebSocket！
+            app.MapHub<ArticleHub>("/articleHub");
+
+
             app.Run();
+           
         }
+
     }
 }

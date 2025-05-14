@@ -1,175 +1,64 @@
-﻿@using System.Text.RegularExpressions
+﻿@model StockGTO.ViewModels.HomeViewModel
+@using System.Linq
 
 @{
-    ViewData["Title"] = "首頁";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "StockGTO | 股市周刊";
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+
+    var newsList = Model.IndexNews
+        .Where(x => x.IsActive)
+        .OrderByDescending(x => x.CreatedAt)
+        .Take(10)
+        .ToList();
+
+    var main = newsList.FirstOrDefault(x => x.Position == 1);
+
+
+    // 這裡加上Random
+    var random = new Random();
+    var shuffledArticles = Model.ArticlePosts.OrderBy(x => random.Next()).Take(6).ToList();
 }
-@section Styles {
-    <!-- ✅ 首頁專用 CSS -->
-    <link rel="stylesheet" href="~/css/homepage.css" />
-}
-
-<img src="/favicon.ico" alt="測試圖" style="width:100px;">
-
-<!-- ✅ 首頁主圖新聞區塊：包含輪播 + 小圖 + 快訊清單 -->
-<section class="container py-4">
-    <div class="home-news-grid">
-
-        <!-- 🔥 主新聞大圖輪播區塊 -->
-        <div class="news-card large carousel slide news-main" id="mainNewsCarousel" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img src="/images/news1.jpg" alt="台積電突破季線！">
-                    <div class="overlay">
-                        <h2>台積電突破季線！</h2>
-                        <p>市場樂觀看待 AI 概念股後勢</p>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="/images/news2.jpg" alt="蘋果財報優於預期">
-                    <div class="overlay">
-                        <h2>蘋果財報優於預期</h2>
-                        <p>推升美股科技股全面走強</p>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="/images/news3.jpg" alt="通膨壓力舒緩">
-                    <div class="overlay">
-                        <h2>通膨壓力舒緩</h2>
-                        <p>聯準會暫緩升息、債券市場反彈</p>
-                    </div>
-                </div>
-            </div>
-            <!-- 輪播左右控制按鈕 -->
-            <button class="carousel-control-prev" type="button" data-bs-target="#mainNewsCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#mainNewsCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            </button>
-        </div>
-
-        <!-- 🖼️ 小圖新聞一 -->
-        <div class="news-card small news-sub">
-            <img src="/images/news4.jpg" alt="富邦金單日漲幅達 5%">
-            <div class="overlay">
-                <h4>富邦金單日漲幅達 5%</h4>
-            </div>
-        </div>
-
-        <!-- 🖼️ 小圖新聞二 -->
-        <div class="news-card small news-sub">
-            <img src="/images/news5.jpg" alt="AI 再起">
-            <div class="overlay">
-                <h4>輝達領軍台股攻高</h4>
-            </div>
-        </div>
-
-        <!-- 📰 即時新聞欄位 -->
-        <div class="news-list">
-            <h6 class="text-warning fw-bold mb-3">即時新聞</h6>
-            <ul class="realtime-news">
-                <li><strong>鴻海法說會登場</strong> <span>郭董將親自說明未來布局</span></li>
-                <li><strong>AI 股續強</strong> <span>輝達再創歷史新高</span></li>
-                <li><strong>0050 配息出爐</strong> <span>殖利率逾 5%</span></li>
-                <li><strong>Google 宣布併購</strong> <span>市場熱議反壟斷問題</span></li>
-                <li><strong>台股午盤翻紅</strong> <span>電子權值撐盤</span></li>
-                <li><strong>美債殖利率回落</strong> <span>資金重返股市</span></li>
-            </ul>
-        </div>
-
-    </div>
-</section></section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- =================== 🧘‍♂️ 靈魂語錄區塊 =================== -->
-<div class="testimonial_area section_gap_bottom">
+<!-- ✅ 推播區建議 class 命名統一為 signalr-articles-wrapper + signalr-articles -->
+<section class="signalr-articles-wrapper">
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 text-center">
-                <div class="main_title text-center">
-                    <h2>資訊的巨浪中，信念定風帆；</h2>
-                    <h2>投資的黑夜裡，明燈照心安。</h2>
-                    <p class="mt-4 text-muted">
-                        In the tidal wave of information, conviction holds the helm;<br />
-                        through the dark of uncertainty, a beacon lights the calm.
-                    </p>
-                </div>
-            </div>
+        <div class="section-tittle mb-30">
+            <h3><i class="fa fa-bolt"></i> AI 推播最新文章</h3>
         </div>
-
-        <div class="row">
-            <div class="testi_slider owl-carousel">
-                <div class="testi_item">
-                    <div class="row">
-                        <div class="col-lg-4">
-                            <img src="~/images/t1.jpg" class="testimonial-img" alt="台股 達人" />
-                        </div>
-                        <div class="col-lg-8">
-                            <div class="testi_text">
-                                <h4>柳隱道人</h4>
-                                <h5>資訊的巨浪中，信念定風帆；</h5>
-                                <h5>投資的黑夜裡，明燈照心安。</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @* 你可以再加入其他語錄 *@
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- =================== ⚙️ 功能圖卡區塊 =================== -->
-<section class="features_area section_gap_top">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 text-center">
-                <div class="main_title">
-                    <h2>我拿到啦</h2>
-                    <p>
-                        Is give may shall likeness made yielding spirit a itself togeth created
-                        after sea <br />
-                        is in beast beginning signs open god you're gathering ithe
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <div class="row feature_inner">
-            @for (int i = 1; i <= 4; i++)
-            {
-                <div class="col-lg-3 col-md-6">
-                    <div class="feature_item">
-                        <img src="~/img/services/s@i.png" alt="WW@i" />
-                        <h4>WW@i</h4>
-                        <p>Creeping for female light years that lesser can't evening heaven isn't bearing tree</p>
-                    </div>
-                </div>
-            }
+        <div class="row signalr-articles gy-4">
+            <!-- SignalR 插入文章卡片 -->
         </div>
     </div>
 </section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+      .withUrl("/articleHub")
+      .build();
+
+    connection.on("ReceiveArticles", function (articles) {
+      const container = document.querySelector(".signalr-articles");
+      if (!container) return;
+      container.innerHTML = "";
+      articles.forEach(article => {
+        const html = `<div class="col-md-6 col-lg-4">
+          <div class="card shadow-sm border-0 h-100">
+              <img src="${article.imageUrl}" class="card-img-top" alt="文章封面">
+              <div class="card-body">
+                  <h6 class="text-muted mb-1">${article.categoryName}</h6>
+                  <h5 class="card-title">
+                      <a href="/KnowledgeArticle/Details/${article.id}" class="stretched-link text-dark">
+                          ${article.title}
+                      </a>
+                  </h5>
+              </div>
+          </div>
+        </div>`;
+        container.innerHTML += html;
+      });
+    });
+
+    connection.start().then(() => {
+      console.log("✅ SignalR 連線成功");
+    }).catch(err => console.error("❌ SignalR 失敗", err));
+</script>

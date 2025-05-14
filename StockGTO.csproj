@@ -7,13 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Home\IndexV2.cshtml" />
     <Content Remove="Views\Home\Index複製20250425自改首頁.cshtml" />
     <Content Remove="Views\Home\Privacy.cshtml" />
+    <Content Remove="Views\Home\Templates.cshtml" />
     <Content Remove="wwwroot\aznews\assets\css\admin-fix.css" />
     <Content Remove="wwwroot\aznews\assets\css\animate - 複製.min.css" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.4">
@@ -34,6 +37,7 @@
 
   <ItemGroup>
     <Folder Include="DATA\" />
+    <Folder Include="Migrations\" />
     <Folder Include="Views\NewFolder1\" />
     <Folder Include="Views\NewFolder\" />
   </ItemGroup>

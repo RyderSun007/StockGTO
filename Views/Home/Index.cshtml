@@ -36,8 +36,6 @@
     </marquee>
 </div>
 <!-- 🔔 跑馬燈區塊 End -->
-
-
 <!-- 🌟【首頁熱門區塊 Trending Area】Start -->
 <!-- 🌟【首頁熱門區塊 Trending Area】Start -->
 <div class="trending-area fix">
@@ -55,7 +53,7 @@
                                     <img src="@main.ImageUrl" alt="@main.Title" class="img-fluid" style="width:100%; height:auto;" />
                                 </a>
                                 <div class="trend-top-cap">
-                                    <span class="badge bg-warning text-dark">主卡區</span>
+                                    <span class="badge bg-warning text-dark">主題專欄</span>
                                     <h2><a href="@main.LinkUrl" target="_blank">@main.Title</a></h2>
                                 </div>
                             </div>
@@ -76,7 +74,7 @@
                                             </a>
                                         </div>
                                         <div class="trend-bottom-cap">
-                                            <span class="badge bg-dark text-light">下面三卡顯示區</span>
+                                            <span class="badge bg-dark text-light">主題專欄</span>
                                             <h4 style="font-size:1rem;">
                                                 <a href="@item.LinkUrl" target="_blank">@item.Title</a>
                                             </h4>
@@ -101,7 +99,7 @@
                                     </a>
                                 </div>
                                 <div class="trand-right-cap ps-3">
-                                    <span class="badge bg-light text-dark mb-1">右邊五卡顯示區</span>
+                                    <span class="badge bg-light text-dark mb-1">主題專欄</span>
                                     <h4 class="mb-0" style="font-size:1rem; line-height:1.4;">
                                         <a href="@item.LinkUrl" target="_blank">@item.Title</a>
                                     </h4>
@@ -126,367 +124,126 @@
 
 
 
- <!-- Whats New Start -->
 
-        <section class="whats-news-area pt-50 pb-20">
-            <div class="container">
+
+
+
+<!-- 右側快訊與 Follow Us 保留 -->
+<!-- 🌟 改版：熱門新聞區塊 Start -->
+<section class="whats-news-area pt-50 pb-20">
+    <div class="container">
+        <div class="row">
+            <!-- 左側新聞內容 -->
+            <div class="col-lg-8">
+                <div class="row d-flex justify-content-between">
+                    <div class="col-lg-3 col-md-3">
+                        <div class="section-tittle mb-30">
+                            <h3>熱門新聞</h3>
+                        </div>
+                    </div>
+                    <div class="col-lg-9 col-md-9">
+                        <div class="properties__button">
+                            <!-- ✅ 改名的 Nav Tabs -->
+                            <nav>
+                                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">台股</a>
+                                    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">美股</a>
+                                    <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">港股</a>
+                                    <a class="nav-item nav-link" id="nav-last-tab" data-toggle="tab" href="#nav-last" role="tab" aria-controls="nav-last" aria-selected="false">外匯</a>
+                                    <a class="nav-item nav-link" id="nav-Sports" data-toggle="tab" href="#nav-fund" role="tab" aria-controls="nav-fund" aria-selected="false">基金</a>
+                                    <a class="nav-item nav-link" id="nav-technology" data-toggle="tab" href="#nav-realestate" role="tab" aria-controls="nav-realestate" aria-selected="false">房地產</a>
+                                </div>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ✅ Tab 區塊內容（保留原有結構即可） -->
                 <div class="row">
-                    <div class="col-lg-8">
-                        <div class="row d-flex justify-content-between">
-                            <div class="col-lg-3 col-md-3">
-                                <div class="section-tittle mb-30">
-                                    <h3>熱門新聞</h3>
+                    <div class="col-12">
+                        <div class="tab-content" id="nav-tabContent">
+                            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                                <div class="whats-news-caption">
+                                    <div class="row" id="dynamic-news-area">
+                                        <!-- 對應分類代碼：TaiwanMarket 的資料插入區 -->
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-lg-9 col-md-9">
-                                <div class="properties__button">
-                                    <!--Nav Button  -->
-                                    <nav>
-                                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                            <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">重大新聞</a>
-                                            <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">地方新聞</a>
-                                            <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">社會新聞</a>
-                                            <a class="nav-item nav-link" id="nav-last-tab" data-toggle="tab" href="#nav-last" role="tab" aria-controls="nav-contact" aria-selected="false">股市</a>
-                                            <a class="nav-item nav-link" id="nav-Sports" data-toggle="tab" href="#nav-nav-Sport" role="tab" aria-controls="nav-contact" aria-selected="false">房市</a>
-                                            <a class="nav-item nav-link" id="nav-technology" data-toggle="tab" href="#nav-techno" role="tab" aria-controls="nav-contact" aria-selected="false">全球</a>
-                                        </div>
-                                    </nav>
-                                    <!--End Nav Button  -->
-                                </div>
+                            <!-- 其他 tab-pane 保留結構不動，只需改 href / id 名稱與註解 -->
+                            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                                <!-- 分類代碼：USMarket -->
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <!-- Nav Card -->
-                                <div class="tab-content" id="nav-tabContent">
-                                    <!-- card one  重大新聞 -->
-                                        <!-- card one 改為動態新聞卡片 -->
-                                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                                        <div class="whats-news-caption">
-                                            <div class="row" id="dynamic-news-area">
-                                                 <!-- Python 爬蟲資料會注入這裡 -->
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Card two 地方新聞 -->
-                                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                                        <div class="whats-news-caption">
-                                            <div class="row">
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="single-what-news mb-100">
-                                                        <div class="what-img">
-                                                            <img src="~/aznews/assets/img/news/whatNews1.jpg" asp-append-version="true" alt="">
-                                                        </div>
-                                                        <div class="what-cap">
-                                                            <span class="color1">Night party</span>
-                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="single-what-news mb-100">
-                                                        <div class="what-img">
-                                                            <img src="~/aznews/assets/img/news/whatNews2.jpg" asp-append-version="true" alt="">
-                                                        </div>
-                                                        <div class="what-cap">
-                                                            <span class="color1">Night party</span>
-                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="single-what-news mb-100">
-                                                        <div class="what-img">
-                                                            <img src="~/aznews/assets/img/news/whatNews3.jpg" asp-append-version="true" alt="">
-                                                        </div>
-                                                        <div class="what-cap">
-                                                            <span class="color1">Night party</span>
-                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="single-what-news mb-100">
-                                                        <div class="what-img">
-                                                            <img src="~/aznews/assets/img/news/whatNews4.jpg" asp-append-version="true" alt="">
-                                                        </div>
-                                                        <div class="what-cap">
-                                                            <span class="color1">Night party</span>
-                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Card three 社會新聞 -->
-                                    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-                                        <div class="whats-news-caption">
-                                            <div class="row">
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="single-what-news mb-100">
-                                                        <div class="what-img">
-                                                            <img src="~/aznews/assets/img/news/whatNews1.jpg" asp-append-version="true" alt="">
-                                                        </div>
-                                                        <div class="what-cap">
-                                                            <span class="color1">Night party</span>
-                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="single-what-news mb-100">
-                                                        <div class="what-img">
-                                                            <img src="~/aznews/assets/img/news/whatNews2.jpg" asp-append-version="true" alt="">
-                                                        </div>
-                                                        <div class="what-cap">
-                                                            <span class="color1">Night party</span>
-                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="single-what-news mb-100">
-                                                        <div class="what-img">
-                                                            <img src="~/aznews/assets/img/news/whatNews3.jpg" asp-append-version="true" alt="">
-                                                        </div>
-                                                        <div class="what-cap">
-                                                            <span class="color1">Night party</span>
-                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="single-what-news mb-100">
-                                                        <div class="what-img">
-                                                            <img src="~/aznews/assets/img/news/whatNews4.jpg" asp-append-version="true" alt="">
-                                                        </div>
-                                                        <div class="what-cap">
-                                                            <span class="color1">Night party</span>
-                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- card fure 股市 -->
-                                    <div class="tab-pane fade" id="nav-last" role="tabpanel" aria-labelledby="nav-last-tab">
-                                        <div class="whats-news-caption">
-                                            <div class="row">
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="single-what-news mb-100">
-                                                        <div class="what-img">
-                                                            <img src="~/aznews/assets/img/news/whatNews1.jpg" asp-append-version="true" alt="">
-                                                        </div>
-                                                        <div class="what-cap">
-                                                            <span class="color1">Night party</span>
-                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="single-what-news mb-100">
-                                                        <div class="what-img">
-                                                            <img src="~/aznews/assets/img/news/whatNews2.jpg" asp-append-version="true" alt="">
-                                                        </div>
-                                                        <div class="what-cap">
-                                                            <span class="color1">Night party</span>
-                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="single-what-news mb-100">
-                                                        <div class="what-img">
-                                                            <img src="~/aznews/assets/img/news/whatNews3.jpg" asp-append-version="true" alt="">
-                                                        </div>
-                                                        <div class="what-cap">
-                                                            <span class="color1">Night party</span>
-                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="single-what-news mb-100">
-                                                        <div class="what-img">
-                                                            <img src="~/aznews/assets/img/news/whatNews4.jpg" asp-append-version="true" alt="">
-                                                        </div>
-                                                        <div class="what-cap">
-                                                            <span class="color1">Night party</span>
-                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- card Five  房市-->
-                                    <div class="tab-pane fade" id="nav-nav-Sport" role="tabpanel" aria-labelledby="nav-Sports">
-                                        <div class="whats-news-caption">
-                                            <div class="row">
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="single-what-news mb-100">
-                                                        <div class="what-img">
-                                                            <img src="~/aznews/assets/img/news/whatNews1.jpg" asp-append-version="true" alt="">
-                                                        </div>
-                                                        <div class="what-cap">
-                                                            <span class="color1">Night party</span>
-                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="single-what-news mb-100">
-                                                        <div class="what-img">
-                                                            <img src="~/aznews/assets/img/news/whatNews2.jpg" asp-append-version="true" alt="">
-                                                        </div>
-                                                        <div class="what-cap">
-                                                            <span class="color1">Night party</span>
-                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="single-what-news mb-100">
-                                                        <div class="what-img">
-                                                            <img src="~/aznews/assets/img/news/whatNews3.jpg" asp-append-version="true" alt="">
-                                                        </div>
-                                                        <div class="what-cap">
-                                                            <span class="color1">Night party</span>
-                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="single-what-news mb-100">
-                                                        <div class="what-img">
-                                                            <img src="~/aznews/assets/img/news/whatNews4.jpg" asp-append-version="true" alt="">
-                                                        </div>
-                                                        <div class="what-cap">
-                                                            <span class="color1">Night party</span>
-                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- card Six 全球新聞  -->
-                                    <div class="tab-pane fade" id="nav-techno" role="tabpanel" aria-labelledby="nav-technology">
-                                        <div class="whats-news-caption">
-                                            <div class="row">
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="single-what-news mb-100">
-                                                        <div class="what-img">
-                                                            <img src="~/aznews/assets/img/news/whatNews1.jpg" asp-append-version="true" alt="">
-                                                        </div>
-                                                        <div class="what-cap">
-                                                            <span class="color1">Night party</span>
-                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="single-what-news mb-100">
-                                                        <div class="what-img">
-                                                            <img src="~/aznews/assets/img/news/whatNews2.jpg" asp-append-version="true" alt="">
-                                                        </div>
-                                                        <div class="what-cap">
-                                                            <span class="color1">Night party</span>
-                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="single-what-news mb-100">
-                                                        <div class="what-img">
-                                                            <img src="~/aznews/assets/img/news/whatNews3.jpg" asp-append-version="true" alt="">
-                                                        </div>
-                                                        <div class="what-cap">
-                                                            <span class="color1">Night party</span>
-                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="single-what-news mb-100">
-                                                        <div class="what-img">
-                                                            <img src="~/aznews/assets/img/news/whatNews4.jpg" asp-append-version="true" alt="">
-                                                        </div>
-                                                        <div class="what-cap">
-                                                            <span class="color1">Night party</span>
-                                                            <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- End Nav Card -->
+                            <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+                                <!-- 分類代碼：HKMarket -->
+                            </div>
+                            <div class="tab-pane fade" id="nav-last" role="tabpanel" aria-labelledby="nav-last-tab">
+                                <!-- 分類代碼：Forex -->
+                            </div>
+                            <div class="tab-pane fade" id="nav-fund" role="tabpanel" aria-labelledby="nav-Sports">
+                                <!-- 分類代碼：Fund -->
+                            </div>
+                            <div class="tab-pane fade" id="nav-realestate" role="tabpanel" aria-labelledby="nav-technology">
+                                <!-- 分類代碼：RealEstate -->
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-4">
-                        
-                
-
-                <!-- New Poster 
-                        <div class="news-poster d-none d-lg-block">
-                            <img src="~/aznews/assets/img/news/news_card.jpg" asp-append-version="true" alt="">
-                </div>     -->
-
-                <!-- 🔥 熱門快訊區塊 -->
-                <!-- 🔥 熱門快訊區塊 -->
-                <div class="col-lg-4">
-                    <div class="hot-news-container p-3 shadow-sm rounded bg-white">
-                        <h5 class="mb-3 fw-bold text-danger">
-                            🔥 熱門快訊 (Python)
-                        </h5>
-                        <div id="hot-news-box"></div>
                     </div>
                 </div>
-                <!-- Section Tittle -->
-                <h2></h2>
+            </div>
+
+            <!-- 右側快訊與 Follow Us 保留 -->
+            <!-- 右側快訊與 Follow Us 保留 -->
+            <div class="col-lg-4">
+
+                <!-- 🔥 熱門快訊區塊 -->
+                <div class="hot-news-container p-3 shadow-sm rounded bg-white mb-4">
+                    <h5 class="mb-3 fw-bold text-danger">
+                        🔥 熱門快訊 (Python)
+                    </h5>
+                    <div id="hot-news-box">
+                        <!-- JS 動態載入 JSON 資料 -->
+                    </div>
+                </div>
+
+                <!-- 🌐 Follow Us 區塊 -->
                 <div class="section-tittle mb-40">
-                    <h2>  Follow Us</h2>
+                    <h2>Follow Us</h2>
                 </div>
 
-                <!-- Flow Socail -->
                 <div class="single-follow mb-45">
                     <div class="single-box">
-                        <div class="follow-us d-flex align-items-center">
-                            <div class="follow-social">
-                                <a href="#"><img src="~/aznews/assets/img/news/icon-fb.png" asp-append-version="true" alt=""></a>
+                        <div class="follow-us d-flex align-items-center mb-2">
+                            <div class="follow-social me-2">
+                                <a href="#"><img src="~/aznews/assets/img/news/icon-fb.png" asp-append-version="true" alt="Facebook" /></a>
                             </div>
                             <div class="follow-count">
                                 <span>8,045</span>
                                 <p>Fans</p>
                             </div>
                         </div>
-                        <div class="follow-us d-flex align-items-center">
-                            <div class="follow-social">
-                                <a href="#"><img src="~/aznews/assets/img/news/icon-tw.png" asp-append-version="true" alt=""></a>
+
+                        <div class="follow-us d-flex align-items-center mb-2">
+                            <div class="follow-social me-2">
+                                <a href="#"><img src="~/aznews/assets/img/news/icon-tw.png" asp-append-version="true" alt="Twitter" /></a>
                             </div>
                             <div class="follow-count">
                                 <span>8,045</span>
                                 <p>Fans</p>
                             </div>
                         </div>
-                        <div class="follow-us d-flex align-items-center">
-                            <div class="follow-social">
-                                <a href="#"><img src="~/aznews/assets/img/news/icon-ins.png" asp-append-version="true" alt=""></a>
+
+                        <div class="follow-us d-flex align-items-center mb-2">
+                            <div class="follow-social me-2">
+                                <a href="#"><img src="~/aznews/assets/img/news/icon-ins.png" asp-append-version="true" alt="Instagram" /></a>
                             </div>
                             <div class="follow-count">
                                 <span>8,045</span>
                                 <p>Fans</p>
                             </div>
                         </div>
+
                         <div class="follow-us d-flex align-items-center">
-                            <div class="follow-social">
-                                <a href="#"><img src="~/aznews/assets/img/news/icon-yo.png" asp-append-version="true" alt=""></a>
+                            <div class="follow-social me-2">
+                                <a href="#"><img src="~/aznews/assets/img/news/icon-yo.png" asp-append-version="true" alt="YouTube" /></a>
                             </div>
                             <div class="follow-count">
                                 <span>8,045</span>
@@ -496,28 +253,12 @@
                     </div>
                 </div>
 
+            </div>
 
-
-
-            </div> <!-- Div class="col-lg-4" -->
-              
         </div>
- </div>
-
-
-
-
-        </section>
-        <!-- Whats New End -->
-
-
-
-
-
-
-
-
-
+    </div>
+</section>
+<!-- 🌟 改版：熱門新聞區塊 End -->
 <!-- 🔥 熱門文章排行輪播區塊 Start -->
 
 <div class="weekly-news-area pt-50">
@@ -570,11 +311,61 @@
 
 
 
+<!-- 🌍 國際新聞 GlobalNews 區塊 Start -->
+@{
+    var globalNews = Model.CategoryArticles.ContainsKey("GlobalNews")
+        ? Model.CategoryArticles["GlobalNews"].Take(8).ToList()
+        : new List<ArticlePost>();
+}
 
-
-
-
-
+<!-- 🌍 國際新聞 GlobalNews 區塊 Start -->
+<div class="weekly-news-area pt-50">
+    <div class="container">
+        <div class="weekly-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-tittle mb-30">
+                        <h3>🌍 國際新聞 GlobalNews</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="weekly-news-active dot-style d-flex">
+                        @foreach (var article in globalNews)
+                        {
+                            <div class="weekly-single position-relative">
+                                <div class="weekly-img">
+                                    <a asp-controller="KnowledgeArticle"
+                                       asp-action="Details"
+                                       asp-route-id="@article.Id">
+                                        <img src="@(!string.IsNullOrEmpty(article.ImageUrl) ? article.ImageUrl : "/images/default.jpg")"
+                                             alt="@article.Title"
+                                             class="w-100"
+                                             style="object-fit: cover; height: 200px;" />
+                                    </a>
+                                </div>
+                                <div class="overlay-caption">
+                                    <span class="badge bg-light text-dark mb-1">@article.Category?.Name</span>
+                                    <h5 class="text-dark fw-bold mb-0" style="font-size: 1rem;">
+                                        <a asp-controller="KnowledgeArticle"
+                                           asp-action="Details"
+                                           asp-route-id="@article.Id"
+                                           class="text-dark">
+                                            @article.Title
+                                        </a>
+                                    </h5>
+                                    <small class="text-muted">👁️ @article.ViewCount 次瀏覽</small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 🌍 國際新聞 GlobalNews 區塊 End -->
 <!-- 🔄 Weekly Top News 改為隨機文章輪播 -->
 <div class="weekly-news-area pt-50">
     <div class="container">
@@ -616,56 +407,6 @@
         </div>
     </div>
 </div>
-
-
-
-
-<!-- End Weekly-News --><!-- 🌏 GlobalMarkets 分類文章卡片區塊 Start -->
-@{
-    var hasGlobalMarkets = Model.CategoryArticles.ContainsKey("GlobalMarkets") && Model.CategoryArticles["GlobalMarkets"].Any();
-}
-
-@if (hasGlobalMarkets)
-{
-    <div class="container my-5">
-        <h3 class="fw-bold mb-4">🌏 國際新聞 Global Markets</h3>
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            @foreach (var article in Model.CategoryArticles["GlobalMarkets"].Take(6))
-            {
-                <div class="col">
-                    <div class="card border-0 shadow-sm h-100">
-                        <a asp-controller="KnowledgeArticle"
-                           asp-action="Details"
-                           asp-route-id="@article.Id"
-                           class="text-decoration-none">
-                            <div class="position-relative">
-                                <img src="@(!string.IsNullOrEmpty(article.ImageUrl) ? article.ImageUrl : "/images/default.jpg")"
-                                     class="card-img-top"
-                                     alt="@article.Title"
-                                     style="height: 180px; object-fit: cover;" />
-                                <div class="card-img-overlay d-flex flex-column justify-content-end bg-dark bg-opacity-50 p-3">
-                                    <h5 class="card-title text-white fw-bold mb-1">@article.Title</h5>
-                                    <small class="text-white-50">👁️ @article.ViewCount 次瀏覽</small>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            }
-        </div>
-    </div>
-}
-else
-{
-    <div class="text-center my-5 text-muted">
-        🌏 GlobalMarkets 分類目前尚無文章。
-    </div>
-}
-
-<!-- 🔥 熱門文章排行卡片風格 End -->
-
-
-
 
 
 
@@ -787,86 +528,22 @@ else
             </div>
         </div>
         <!-- End Start youtube -->
-        <!--  Recent Articles start -->
-        <div class="recent-articles">
-            <div class="container">
-                <div class="recent-wrapper">
-                    <!-- section Tittle -->
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="section-tittle mb-30">
-                                <h3>Recent Articles</h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="recent-active dot-style d-flex dot-style">
-                                <div class="single-recent mb-100">
-                                    <div class="what-img">
-                                        <img src="~/aznews/assets/img/news/recent1.jpg" asp-append-version="true" alt="">
-                                    </div>
-                                    <div class="what-cap">
-                                        <span class="color1">Night party</span>
-                                        <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                    </div>
-                                </div>
-                                <div class="single-recent mb-100">
-                                    <div class="what-img">
-                                        <img src="~/aznews/assets/img/news/recent2.jpg" asp-append-version="true" alt="">
-                                    </div>
-                                    <div class="what-cap">
-                                        <span class="color1">Night party</span>
-                                        <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                    </div>
-                                </div>
-                                <div class="single-recent mb-100">
-                                    <div class="what-img">
-                                        <img src="~/aznews/assets/img/news/recent3.jpg" asp-append-version="true" alt="">
-                                    </div>
-                                    <div class="what-cap">
-                                        <span class="color1">Night party</span>
-                                        <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                    </div>
-                                </div>
-                                <div class="single-recent mb-100">
-                                    <div class="what-img">
-                                        <img src="~/aznews/assets/img/news/recent2.jpg" asp-append-version="true" alt="">
-                                    </div>
-                                    <div class="what-cap">
-                                        <span class="color1">Night party</span>
-                                        <h4><a href="#">Welcome To The Best Model  Winner Contest</a></h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+<!-- ✅ 推播區建議 class 命名統一為 signalr-articles-wrapper + signalr-articles -->
+<section class="signalr-articles-wrapper">
+    <div class="container">
+        <div class="section-tittle mb-30">
+            <h3><i class="fa fa-bolt"></i> WebSocket推播最新文章</h3>
         </div>
-        <!--Recent Articles End -->
-        <!--Start pagination -->
-        <div class="pagination-area pb-45 text-center">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xl-12">
-                        <div class="single-wrap d-flex justify-content-center">
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-start">
-                                    <li class="page-item"><a class="page-link" href="#"><span class="flaticon-arrow roted"></span></a></li>
-                                    <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">02</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">03</a></li>
-                                    <li class="page-item"><a class="page-link" href="#"><span class="flaticon-arrow right-arrow"></span></a></li>
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="row signalr-articles gy-4">
+            <!-- SignalR 插入文章卡片 -->
         </div>
-        <!-- End pagination  -->
-   
+    </div>
+</section>
+
+
+
+
 
 
     <!-- JS here -->
@@ -964,4 +641,69 @@ else
             box.innerHTML = html;
         })
         .catch(err => console.error("❌ 載入 JSON 失敗：", err));
+</script>
+
+
+<!-- ✅ 引入 SignalR 的 JavaScript 套件 -->
+<!-- ✅ 引入 SignalR -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
+<script>
+    // 建立連線WebSocket
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/articleHub") // 要對應到你 Hub 的路徑
+        .build();
+
+    // 綁定事件：接收文章資料並動態插入卡片
+    connection.on("ReceiveArticles", function (articles) {
+        console.log("📡 接收到文章清單", articles);
+
+        const container = document.querySelector(".signalr-articles");
+        if (!container) {
+            console.warn("⚠️ 找不到 .signalr-articles");
+            return;
+        }
+
+        container.innerHTML = ""; // 清除舊的內容
+
+        articles.forEach(article => {
+            const imageUrl = article.imageUrl?.trim() || "https://via.placeholder.com/400x250?text=No+Image";
+                const html = `
+      <div class="col-md-6 col-lg-4">
+        <a href="/KnowledgeArticle/Details/${article.id}" class="text-dark text-decoration-none">
+          <div class="card shadow-sm border-0 h-100">
+            <img src="${imageUrl}" class="card-img-top" alt="文章封面"
+                 style="height: 200px; object-fit: cover;">
+            <div class="card-body">
+                <h6 class="text-muted mb-1">${article.categoryName}</h6>
+                <h5 class="card-title">${article.title}</h5>
+            </div>
+          </div>
+        </a>
+      </div>
+    `;
+            container.innerHTML += html;
+        });
+    });
+
+    // 啟動連線
+    connection.start()
+        .then(() => {
+            console.log("✅ SignalR 已成功連線");
+
+            // 每 30 秒自動觸發後端推播
+            setInterval(() => {
+                fetch("/Home/PushArticles")
+                    .then(res => res.json())
+                    .then(data => console.log("🔁 自動觸發推播成功", data))
+                    .catch(err => console.error("❌ 自動觸發推播失敗", err));
+            }, 30000); // 每 30000 毫秒 = 30 秒
+
+            // 🔁 頁面一載入就馬上觸發一次
+            fetch("/Home/PushArticles")
+                .then(res => res.json())
+                .then(data => console.log("🚀 初次推播成功", data))
+                .catch(err => console.error("❌ 初次推播失敗", err));
+        })
+        .catch(err => console.error("❌ SignalR 連線失敗", err));
 </script>
