@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;      // 資料庫 EF Core
-using StockGTO.Data;                      // 你的 DbContext 類別
-using StockGTO.Hubs; // ← WebSocket
-
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using StockGTO.Data;
+using StockGTO.Hubs;
 
 namespace StockGTO
 {
@@ -9,8 +10,6 @@ namespace StockGTO
     {
         public static void Main(string[] args)
         {
-
-
             var builder = WebApplication.CreateBuilder(args);
 
             // =======================
@@ -20,73 +19,74 @@ namespace StockGTO
             // 加入 MVC 控制器與視圖支援（標準）
             builder.Services.AddControllersWithViews();
 
-            // 加入資料庫連線服務（從 appsettings.json 抓 DefaultConnection）
+            // 加入 Session（必須早於 Authentication）
+            builder.Services.AddSession(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
+            // 加入資料庫連線服務
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            // 加入 Session 功能（伺服器記憶使用者資訊）
-            builder.Services.AddSession();
+            // 加入 Identity 使用者驗證
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
 
-            // 加入授權機制（如果有用到 [Authorize] 屬性）
+            // 註冊 Cookie + 外部登入（Google / Facebook）
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+            .AddCookie()
+            .AddGoogle(googleOptions =>
+            {
+                googleOptions.ClientId = "762222694993-36a1l93uaolhtn7jaklate0uekgagcvf.apps.googleusercontent.com";
+                googleOptions.ClientSecret = "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";
+            })
+            .AddFacebook(facebookOptions =>
+            {
+                facebookOptions.AppId = "你的 Facebook AppId";
+                facebookOptions.AppSecret = "你的 Facebook AppSecret";
+            });
+
+            // 授權驗證
             builder.Services.AddAuthorization();
 
-            //註冊 SignalR 的關鍵
-            builder.Services.AddSignalR(); // WebSocket 
-
+            // SignalR（WebSocket）
+            builder.Services.AddSignalR();
 
             var app = builder.Build();
-
-
-
-
-
 
             // =======================
             // 中介層設定區（Middleware Pipeline）
             // =======================
 
-            // 生產環境例外處理設定
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
 
-            // 強制使用 HTTPS
             app.UseHttpsRedirection();
-
-            // 啟用讀取 wwwroot 的靜態檔案（CSS、JS、圖片）
             app.UseStaticFiles();
-
-            // 啟用路由系統
             app.UseRouting();
 
-            // 啟用 Session 中介層（必須放在 UseRouting() 後面）
-            app.UseSession();
+            app.UseSession();         // ✅ Session 必須在 Routing 後，Authentication 前
+            app.UseAuthentication();  // ✅ 登入流程
+            app.UseAuthorization();   // ✅ 權限驗證
 
-            // 啟用授權驗證（如果 Controller 上有寫 [Authorize]）
-            app.UseAuthorization();
-
-
-
-            
-
-            // =======================
-            // 路由對應設定
-            // =======================
-
+            // 預設路由
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
-            // 啟動網站應用程式（開始接受外部請求）
-            // 🔥 ArticleHub WebSocket！
+            // SignalR Hub 路由
             app.MapHub<ArticleHub>("/articleHub");
 
-
             app.Run();
-           
         }
-
     }
 }

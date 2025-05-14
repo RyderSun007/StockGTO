@@ -1,11 +1,7 @@
 ﻿// 引用 EF Core 套件，提供資料庫操作功能
-
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-
-// 引用模型資料夾，裡面有 Employee 與 Post 類別
 using StockGTO.Models;
-
-
 
 
 
@@ -14,7 +10,7 @@ namespace StockGTO.Data
     // 🧱 AppDbContext 是整個應用程式「資料庫的總管」
     // 它繼承自 Entity Framework Core 的 DbContext 類別
     // 負責連線資料庫、操作資料表
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<ApplicationUser>
     {
         // 📦 建構式：DI 容器會自動注入 DbContextOptions（包含連線字串、提供者等資訊）
         public AppDbContext(DbContextOptions<AppDbContext> options)
@@ -75,7 +71,6 @@ namespace StockGTO.Data
 
 
         public DbSet<LeaveRequest> LeaveRequests { get; set; }  // ✅ 請假資料表
-
 
 
 

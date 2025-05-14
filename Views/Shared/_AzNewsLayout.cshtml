@@ -1,16 +1,28 @@
 ﻿<!DOCTYPE html>
 <html lang="zh-Hant">
+@using Microsoft.AspNetCore.Identity
+@using StockGTO.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"] - StockGTO</title>
 
-    <!-- 📜 網頁 Manifest & ICON -->
     <link rel="manifest" href="@Url.Content("~/aznews/site.webmanifest")" />
     <link rel="shortcut icon" type="image/x-icon" href="~/aznews/assets/img/favicon.ico" asp-append-version="true" />
 
-    <!-- 🎨 核心 CSS -->
     <link rel="stylesheet" href="~/aznews/assets/css/bootstrap.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/aznews/assets/css/owl.carousel.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/aznews/assets/css/ticker-style.css" asp-append-version="true" />
@@ -25,21 +37,15 @@
     <link rel="stylesheet" href="~/aznews/assets/css/style.css" asp-append-version="true" />
 
     @RenderSection("Styles", required: false)
-
 </head>
 
 <body>
-
-    <!-- 🧩 導覽列區塊 -->
     <header>
         <div class="header-area">
             <div class="main-header">
                 <div class="header-bottom header-sticky">
                     <div class="container">
-
                         <div class="row align-items-center justify-content-between">
-                                                      
-                            <!-- 🔵 Logo -->
                             <div class="col-auto">
                                 <div class="sticky-logo">
                                     <a asp-controller="Home" asp-action="Index">
@@ -47,66 +53,57 @@
                                     </a>
                                 </div>
                             </div>
-
-                            <!-- 🟠 導覽列 -->
                             <div class="col">
                                 <div class="main-menu d-none d-md-block">
                                     <nav>
                                         <ul id="navigation" class="d-flex justify-content-end align-items-center">
                                             
-
+                                            @if (SignInManager.IsSignedIn(User))
+                                            {
+                                                var currentUser = await UserManager.GetUserAsync(User);
+                                                <li><span class="nav-link">👋 歡迎，@currentUser.DisplayName</span></li>
+                                                <li><a class="nav-link" asp-controller="Account" asp-action="Logout">登出</a></li>
+                                            }
+                                            else
+                                            {
+                                                <li><a class="nav-link" asp-controller="Account" asp-action="LoginWithGoogle">Google 登入</a></li>
+                                                <li><a class="nav-link" asp-controller="Account" asp-action="LoginWithFacebook">Facebook登入(未開發)</a></li>
+                                            }
+                                            @if (User.Identity.IsAuthenticated)
+                                            {
+                                                <li>
+                                                    <a asp-controller="Member" asp-action="Profile">
+                                                        👤 會員中心
+                                                    </a>
+                                                </li>
+                                            }
                                             <li><a href="/viewer/news_viewer.html" target="_blank">Python新聞</a></li>
-                                            <!-- 📘 股票知識模組（下拉選單） -->
                                             <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle" href="#" id="knowledgeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    新聞文章列表
-                                                </a>
+                                                <a class="nav-link dropdown-toggle" href="#" id="knowledgeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">新聞文章列表</a>
                                                 <ul class="dropdown-menu" aria-labelledby="knowledgeDropdown">
-                                                    <li><a class="dropdown-item" asp-controller="KnowledgeArticle" asp-action="Index"> 新聞文章後台</a></li>
+                                                    <li><a class="dropdown-item" asp-controller="KnowledgeArticle" asp-action="Index">新聞文章後台</a></li>
                                                     <li><a class="dropdown-item" asp-controller="KnowledgeArticle" asp-action="PublicList">新聞文章前台</a></li>
                                                     <li><a class="dropdown-item" asp-controller="KnowledgeArticle" asp-action="Create">建立新文章</a></li>
-                                                    
                                                 </ul>
                                             </li>
-
-                                            
-
-                                            <!-- 🗂 九宮格新聞（下拉選單） -->
                                             <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle" href="#" id="gridNewsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    首頁九格管理
-                                                </a>
+                                                <a class="nav-link dropdown-toggle" href="#" id="gridNewsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">首頁九格管理</a>
                                                 <ul class="dropdown-menu" aria-labelledby="gridNewsDropdown">
                                                     <li><a class="dropdown-item" asp-controller="IndexNews" asp-action="Index">九格清單（Index）</a></li>
                                                     <li><a class="dropdown-item" asp-controller="IndexNews" asp-action="Manage">九格管理（Manage）</a></li>
                                                 </ul>
                                             </li>
-
-                                           
-
-                                            <!-- 💬 討論區模組（下拉選單） -->
                                             <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle" href="#" id="postDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    筆記
-                                                </a>
+                                                <a class="nav-link dropdown-toggle" href="#" id="postDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">筆記</a>
                                                 <ul class="dropdown-menu" aria-labelledby="postDropdown">
                                                     <li><a class="dropdown-item" asp-controller="Post" asp-action="Manage">筆記後台</a></li>
-
                                                     <li><a class="dropdown-item" asp-controller="Post" asp-action="Post">筆記前台</a></li>
-                                                   
                                                 </ul>
                                             </li>
-                                            
-
-
-                                            <!-- 🛠️ 自有程式（下拉選單） -->
                                             <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle" href="#" id="selfProgramDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    開發中程式
-                                                </a>
+                                                <a class="nav-link dropdown-toggle" href="#" id="selfProgramDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">開發中程式</a>
                                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="selfProgramDropdown">
                                                     <li><a class="dropdown-item" asp-controller="OldSunStock" asp-action="Index">📝老孫持股</a></li>
-                                                 
                                                     <li><a class="dropdown-item" asp-controller="Employee" asp-action="List">👥 員工（簡易登入）</a></li>
                                                     <li><a class="dropdown-item" asp-controller="Leave" asp-action="Index">📋 請假清單</a></li>
                                                     <li><a class="dropdown-item" asp-controller="Leave" asp-action="Create">➕ 新增請假</a></li>
@@ -117,43 +114,32 @@
                                                     <li><a class="dropdown-item" asp-controller="NewsArticle" asp-action="Manage">管理新聞（Manage）</a></li>
                                                 </ul>
                                             </li>
-
-                                                                                       
-                                            <!-- 🔹 搜尋按鈕 -->
-                                            <li>
-                                                <i class="fas fa-search special-tag"></i>
-                                            </li>
-
+                                            <li><i class="fas fa-search special-tag"></i></li>
                                         </ul>
                                     </nav>
                                 </div>
                             </div>
-
-                        </div> <!-- row -->
-                    </div> <!-- container -->
-                </div> <!-- header-bottom -->
-            </div> <!-- main-header -->
-        </div> <!-- header-area -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </header>
 
-    <!-- 🔥 主內容 -->
     <main class="container pt-5" style="padding-top: 120px;">
         @RenderBody()
     </main>
 
-    <!-- 🔻 頁尾區 -->
     <footer class="footer-area bg-dark text-light mt-5 py-4">
         <div class="container text-center">
             <p>&copy; 2025         StockGTO | 股市周刊  . All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- 📦 JavaScript 套件 -->
     <script src="~/aznews/assets/js/vendor/modernizr-3.5.0.min.js" asp-append-version="true"></script>
     <script src="~/aznews/assets/js/vendor/jquery-1.12.4.min.js" asp-append-version="true"></script>
     <script src="~/aznews/assets/js/popper.min.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-
     <script src="~/aznews/assets/js/owl.carousel.min.js" asp-append-version="true"></script>
     <script src="~/aznews/assets/js/slick.min.js" asp-append-version="true"></script>
     <script src="~/aznews/assets/js/jquery.slicknav.min.js" asp-append-version="true"></script>

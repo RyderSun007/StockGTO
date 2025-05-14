@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Http; // 為了支援 IFormFile
+using Microsoft.AspNetCore.Identity; // ✅ 加入 Identity 支援
 
 namespace StockGTO.Models
 {
@@ -34,5 +35,11 @@ namespace StockGTO.Models
         public int ViewCount { get; set; } = 0; // 👁️ 瀏覽次數統計
 
         public string Tags { get; set; } = string.Empty; // 🏷️ 標籤字串（用逗號分隔，例如 "ETF,技術分析,長期投資"）
+
+        // ✅ 加入會員帳號欄位（UserId 為 AspNetUsers.Id）
+        public string? UserId { get; set; }
+
+        [ForeignKey("UserId")]
+        public IdentityUser? User { get; set; } // 會員資料（可用於顯示 UserName）
     }
 }
