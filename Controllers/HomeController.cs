@@ -38,11 +38,11 @@ namespace StockGTO.Controllers
             {
                 // 每一個分類取最新 5 篇文章（包含分類資料）
                 var posts = _context.ArticlePosts
-                    .Include(a => a.Category)
-                    .Where(a => a.CategoryId == cat.Id)
-                    .OrderByDescending(a => a.CreatedAt)
-                    .Take(5)
-                    .ToList();
+                     .Include(a => a.Category)
+                     .Where(a => a.CategoryId == cat.Id && a.IsPublished && a.IsApproved)
+                     .OrderByDescending(a => a.CreatedAt)
+                     .Take(5)
+                     .ToList();
 
                 // 將結果存入 Dictionary，key 用分類代碼（cat.Code）
                 categoryArticles[cat.Code] = posts;

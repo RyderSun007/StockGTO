@@ -1,22 +1,28 @@
 ﻿@model StockGTO.Models.ArticlePost
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
 
 @{
     ViewData["Title"] = "新增文章";
     Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+
+    var currentUser = await UserManager.GetUserAsync(User);
+    var authorName = currentUser?.DisplayName ?? "未登入使用者";
 }
 
 <main class="container pt-5">
     <h2 class="fw-bold mb-4">📝 新增文章</h2>
 
+    <div class="mb-3 text-muted">
+        👤 目前作者：<strong>@authorName</strong>
+    </div>
+
     <form asp-action="Create" method="post" enctype="multipart/form-data" class="border p-4 bg-light rounded">
+        <input type="hidden" asp-for="Author" value="@authorName" />
+
         <div class="mb-3">
             <label asp-for="Title" class="form-label">文章標題</label>
             <input asp-for="Title" class="form-control" />
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="Author" class="form-label">作者</label>
-            <input asp-for="Author" class="form-control" value="StockGTO | 股市周刊" />
         </div>
 
         <div class="mb-3">
@@ -40,14 +46,13 @@
                     </option>
                 }
             </select>
-
         </div>
 
         <div class="w-100"></div>
-        <div class="w-100"></div>
+
         <div class="mb-3" style="max-width: 800px;">
             <label asp-for="Content" class="form-label">文章內容</label>
-            <textarea asp-for="Content" class="form-control" id="summernote" rows="8" style="max-width: 100%;" ></textarea>
+            <textarea asp-for="Content" class="form-control" id="summernote" rows="8" style="max-width: 100%;"></textarea>
         </div>
 
         <div class="form-check mb-3">
@@ -57,7 +62,6 @@
 
         <button type="submit" class="btn btn-success">✅ 發布文章</button>
     </form>
-
 </main>
 
 @section Scripts {

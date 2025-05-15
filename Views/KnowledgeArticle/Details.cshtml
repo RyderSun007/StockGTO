@@ -6,88 +6,75 @@
 }
 
 <main class="container pt-5">
-    <article class="p-3 mb-5">
-        <h1 class="fw-bold">@Model.Title</h1>
+    <h2 class="fw-bold mb-4">📘 @Model.Title</h2>
 
-        <!-- 🔹 顯示基本資訊 -->
-        <div class="text-muted small mb-3">
-            🕒 發佈時間：@Model.CreatedAt.ToString("yyyy-MM-dd")
-
-            @if (!string.IsNullOrEmpty(Model.Author))
-            {
-                <span>｜✍️ 作者：@Model.Author</span>
-            }
-
-            @if (Model.Category != null)
-            {
-                <span>
-                    ｜📁 分類：
-                    <a href="/KnowledgeArticle/PublicList?categoryId=@Model.Category.Id" class="badge bg-info text-dark">
-                        @Model.Category.Name
-                    </a>
-                </span>
-            }
-
-            @if (Model.ViewCount > 0)
-            {
-                <span>｜👁️ 瀏覽次數：@Model.ViewCount</span>
-            }
+    <div class="mb-4">
+        <p class="text-muted">作者：@Model.Author　發布時間：@Model.CreatedAt.ToString("yyyy-MM-dd")</p>
+        <div class="mb-3">
+            <img src="@Model.ImageUrl" alt="文章圖片" class="img-fluid" style="max-height: 300px;">
         </div>
-
-
-        <!-- 🔹 顯示標籤 -->
-        @if (!string.IsNullOrEmpty(Model.Tags))
-        {
-            <div class="mb-3">
-                🏷️ 標籤：
-                @foreach (var tag in Model.Tags.Split(','))
-                {
-                    <span class="badge bg-secondary me-1">@tag.Trim()</span>
-                }
-            </div>
-        }
-
-        <!-- 🔹 顯示圖片 -->
-        @if (!string.IsNullOrEmpty(Model.ImageUrl))
-        {
-            <img src="@Model.ImageUrl" class="img-fluid rounded mb-3" alt="文章圖片" />
-        }
-
-        <!-- 🔹 顯示內文 -->
-        <section class="article-content lh-lg">
+        <div class="border p-3 rounded bg-light">
             @Html.Raw(Model.Content)
-        </section>
-    </article>
+        </div>
+    </div>
 
-    <!-- 🔹 純文字導覽 -->
-    <div class="mt-4 d-flex justify-content-between small text-dark">
+    <!-- 🔁 上一篇 / 下一篇 -->
+    <div class="d-flex justify-content-between mb-4">
         <div>
             @if (ViewBag.PreviousArticle != null)
             {
-                <span>
-                    ⬅ 上一篇：
-                    <a asp-action="Details" asp-route-id="@ViewBag.PreviousArticle.Id" class="text-dark">
-                        @ViewBag.PreviousArticle.Title
-                    </a>
-                </span>
+                <a href="/KnowledgeArticle/Details/@ViewBag.PreviousArticle.Id" class="btn btn-outline-secondary">← 上一篇：@ViewBag.PreviousArticle.Title</a>
             }
         </div>
-
-        <div>
-            <a href="/KnowledgeArticle/PublicList" class="text-dark">📚 回到文章總覽</a>
-        </div>
-
         <div>
             @if (ViewBag.NextArticle != null)
             {
-                <span>
-                    下一篇：
-                    <a asp-action="Details" asp-route-id="@ViewBag.NextArticle.Id" class="text-dark">
-                        @ViewBag.NextArticle.Title
-                    </a>
-                </span>
+                <a href="/KnowledgeArticle/Details/@ViewBag.NextArticle.Id" class="btn btn-outline-secondary">下一篇：@ViewBag.NextArticle.Title →</a>
             }
         </div>
     </div>
 
+    <!-- 💬 留言列表 -->
+    <div class="mb-5">
+        <h4 class="fw-bold mb-3">💬 文章留言</h4>
+
+        @if (Model.Comments != null && Model.Comments.Any())
+        {
+            <div class="list-group mb-3">
+                @foreach (var comment in Model.Comments.OrderByDescending(c => c.CreatedAt))
+                {
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <span class="fw-bold">@comment.User?.DisplayName ?? "匿名"</span>
+                            <small class="text-muted">@comment.CreatedAt.ToString("yyyy-MM-dd HH:mm")</small>
+                        </div>
+                        <p class="mt-2">@comment.Content</p>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">目前尚無留言，歡迎留言分享你的想法！</p>
+        }
+
+        <!-- 📝 新增留言表單 -->
+        @if (User.Identity.IsAuthenticated)
+        {
+            <form asp-action="AddComment" method="post" class="mt-4">
+                <input type="hidden" name="articleId" value="@Model.Id" />
+                <div class="mb-3">
+                    <label for="content" class="form-label">留言內容</label>
+                    <textarea name="content" class="form-control" rows="4" placeholder="寫下你的想法..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">送出留言</button>
+            </form>
+        }
+        else
+        {
+            <div class="alert alert-warning">
+                請先 <a href="/Account/Login">登入</a> 才能留言。
+            </div>
+        }
+    </div>
 </main>

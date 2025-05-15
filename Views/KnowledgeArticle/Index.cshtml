@@ -65,7 +65,8 @@
                         <td>@item.Title</td>
                         <td>@item.Author</td>
                         <td>@item.CreatedAt.ToString("yyyy-MM-dd")</td>
-                        <td>@item.Category</td>
+                        <td>@item.Category?.Name</td>
+
                         <td class="text-end text-nowrap" style="font-size: 0.9rem;">
                             <a asp-action="Details" asp-route-id="@item.Id" class="text-primary me-2">檢視</a>
                             <a asp-action="Edit" asp-route-id="@item.Id" class="text-warning me-2">編輯</a>

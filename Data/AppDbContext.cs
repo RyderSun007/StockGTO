@@ -61,7 +61,8 @@ namespace StockGTO.Data
 
         public DbSet<LeaveRequest> LeaveRequests { get; set; }  // ✅ 請假資料表
 
-
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<ArticleFavorite> ArticleFavorites { get; set; }
 
     }
 }

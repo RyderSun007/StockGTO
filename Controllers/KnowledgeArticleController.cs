@@ -1,27 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using StockGTO.Data;
 using StockGTO.Models;
 using System;
 using System.Linq;
-using PagedList.Core;
-using X.PagedList;
-using Microsoft.EntityFrameworkCore;
-
+using System.Threading.Tasks;
 
 namespace StockGTO.Controllers
 {
     public class KnowledgeArticleController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public KnowledgeArticleController(AppDbContext context)
+        public KnowledgeArticleController(AppDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
-        // ✅ 顯示全部知識文章
-        // ✅ 後台文章總表：支援分類與標題關鍵字搜尋
-        // ✅ 顯示全部知識文章
         public IActionResult Index(string keyword, int? categoryId)
         {
             var query = _context.ArticlePosts.AsQueryable();
@@ -33,7 +31,7 @@ namespace StockGTO.Controllers
                 query = query.Where(a => a.CategoryId == categoryId);
 
             var articles = query
-                .Where(a => a.Content != null)
+                .Include(a => a.Category)
                 .OrderByDescending(a => a.CreatedAt)
                 .ToList();
 
@@ -42,22 +40,32 @@ namespace StockGTO.Controllers
             ViewBag.CategoryList = _context.Categories.Where(c => c.IsActive).ToList();
 
             return View(articles);
+
         }
+
+
+
+
+
+
+
+
+
 
         public IActionResult Details(int id)
         {
             var article = _context.ArticlePosts
                 .Include(a => a.Category)
+                //.Include(a => a.Comments)
+                //    .ThenInclude(c => c.User)
                 .FirstOrDefault(a => a.Id == id);
 
             if (article == null)
                 return NotFound();
 
-            // ✅ 增加瀏覽次數
             article.ViewCount += 1;
-            _context.SaveChanges(); // 記得儲存
+            _context.SaveChanges();
 
-            // 🔍 上一篇 / 下一篇文章（同分類）
             ViewBag.PreviousArticle = _context.ArticlePosts
                 .Where(a => a.CategoryId == article.CategoryId && a.Id < article.Id)
                 .OrderByDescending(a => a.Id)
@@ -72,6 +80,36 @@ namespace StockGTO.Controllers
         }
 
 
+
+
+        // ✅ 留言功能方法
+        [HttpPost]
+        public async Task<IActionResult> AddComment(int articleId, string content)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null || string.IsNullOrWhiteSpace(content))
+                return RedirectToAction("Details", new { id = articleId });
+
+            var comment = new Comment
+            {
+                ArticlePostId = articleId,
+                Content = content,
+                UserId = user.Id,
+                CreatedAt = DateTime.Now
+            };
+
+            _context.Comments.Add(comment);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = articleId });
+        }
+
+
+
+
+
+
+
         public IActionResult Create()
         {
             ViewBag.Categories = _context.Categories
@@ -84,7 +122,7 @@ namespace StockGTO.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(ArticlePost post)
+        public async Task<IActionResult> Create(ArticlePost post)
         {
             if (ModelState.IsValid)
             {
@@ -98,25 +136,28 @@ namespace StockGTO.Controllers
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
-                        post.ImageFile.CopyTo(stream);
+                        await post.ImageFile.CopyToAsync(stream);
                     }
 
                     post.ImageUrl = "/aznews/uploads/" + fileName;
                 }
-
-                if (string.IsNullOrEmpty(post.ImageUrl))
+                else if (!string.IsNullOrWhiteSpace(post.ImageUrl)) { }
+                else
                 {
                     post.ImageUrl = "/images/default.jpg";
                 }
 
+                var user = await _userManager.GetUserAsync(User);
+                post.Author = user?.DisplayName ?? "未命名";
+                post.UserId = user?.Id;
                 post.CreatedAt = DateTime.Now;
+
                 _context.ArticlePosts.Add(post);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
             }
 
-            // ❗修正這裡
             ViewBag.Categories = _context.Categories
                 .Where(c => c.IsActive)
                 .OrderBy(c => c.Name)
@@ -124,7 +165,6 @@ namespace StockGTO.Controllers
 
             return View(post);
         }
-
 
         [HttpGet]
         public IActionResult Edit(int id)
@@ -139,7 +179,7 @@ namespace StockGTO.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, ArticlePost post)
+        public async Task<IActionResult> Edit(int id, ArticlePost post)
         {
             if (id != post.Id) return NotFound();
 
@@ -158,14 +198,18 @@ namespace StockGTO.Controllers
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
-                        post.ImageFile.CopyTo(stream);
+                        await post.ImageFile.CopyToAsync(stream);
                     }
 
                     existing.ImageUrl = "/aznews/uploads/" + fileName;
                 }
-                else
+                else if (!string.IsNullOrWhiteSpace(post.ImageUrl))
                 {
                     existing.ImageUrl = post.ImageUrl;
+                }
+                else
+                {
+                    existing.ImageUrl = "/images/default.jpg";
                 }
 
                 existing.Title = post.Title;
@@ -174,7 +218,7 @@ namespace StockGTO.Controllers
                 existing.IsPinned = post.IsPinned;
                 existing.CategoryId = post.CategoryId;
 
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return RedirectToAction("Details", new { id = post.Id });
             }
 
@@ -205,7 +249,7 @@ namespace StockGTO.Controllers
         public IActionResult PublicList(string keyword, int? categoryId)
         {
             var query = _context.ArticlePosts
-                .Include(a => a.Category) // 🧠 記得 Include 類別名稱
+                .Include(a => a.Category)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(keyword))
@@ -228,8 +272,5 @@ namespace StockGTO.Controllers
 
             return View(articles);
         }
-
-
-
     }
 }

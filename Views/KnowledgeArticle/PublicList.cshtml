@@ -5,60 +5,71 @@
     Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
 }
 
+
 <main class="container pt-5">
-    <div class="row mb-5">
-        <form method="get" class="row g-3 align-items-center">
-            <div class="col-md-4">
-                <label class="form-label">📂 分類</label>
-                <select name="categoryId" class="form-select">
-                    <option value="">-- 所有分類 --</option>
-                    @foreach (var cat in ViewBag.Categories)
+    <h2 class="fw-bold mb-4 text-center">📘 股票知識文章總覽</h2>
+
+    <!-- 🔍 搜尋與分類表單 -->
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <label class="form-label fw-semibold">📂 分類</label>
+            <select name="categoryId" class="form-select">
+                <option value="">-- 所有分類 --</option>
+                @foreach (var cat in ViewBag.Categories)
+                {
+                    if (ViewBag.CategoryId?.ToString() == cat.Id.ToString())
                     {
-                        <option value="@cat.Id" selected="@(ViewBag.CategoryId?.ToString() == cat.Id.ToString() ? "selected" : null)">
-                            @cat.Name
-                        </option>
+                        <option value="@cat.Id" selected>@cat.Name</option>
                     }
-                </select>
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label">🔠 關鍵字搜尋</label>
-                <input type="text" name="keyword" class="form-control" placeholder="輸入標題" value="@ViewBag.Keyword" />
-            </div>
-
-            <div class="col-md-4 d-flex align-items-end">
-                <button type="submit" class="btn btn-danger w-100">🔍 搜尋文章</button>
-            </div>
-        </form>
-    </div>
-
-    <section class="article-list-wrapper mb-5">
-        <h3 class="mb-4 fw-bold">
-            📘 股票知識文章列表 ｜ 共 <span class="text-primary">@Model.Count</span> 筆
-        </h3>
-
-        <div class="row fw-bold text-center border-bottom pb-2 mb-3">
-            <div class="col-1">#</div>
-            <div class="col-5 text-start">標題</div>
-            <div class="col-2">作者</div>
-            <div class="col-2">分類</div>
-            <div class="col-2">日期</div>
+                    else
+                    {
+                        <option value="@cat.Id">@cat.Name</option>
+                    }
+                }
+            </select>
         </div>
 
-        @for (int i = 0; i < Model.Count; i++)
-        {
-            var article = Model[i];
-            <div class="row text-center align-items-center border-bottom py-2">
-                <div class="col-1">@(@i + 1)</div>
-                <div class="col-5 text-start">
-                    <a asp-action="Details" asp-route-id="@article.Id" class="text-dark fw-semibold">
-                        @article.Title
-                    </a>
-                </div>
-                <div class="col-2">@article.Author</div>
-                <div class="col-2">@article.Category?.Name</div>
-                <div class="col-2">@article.CreatedAt.ToString("MM/dd")</div>
-            </div>
-        }
-    </section>
+        <div class="col-md-4">
+            <label class="form-label fw-semibold">🔠 關鍵字搜尋</label>
+            <input type="text" name="keyword" class="form-control" placeholder="輸入標題關鍵字"
+                   value="@ViewBag.Keyword" />
+        </div>
+
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-danger w-100">🔍 搜尋文章</button>
+        </div>
+    </form>
+
+    <!-- 📄 表格文章清單 -->
+    <table class="table table-bordered table-striped text-dark">
+        <thead class="table-dark text-center">
+            <tr>
+                <th>標題</th>
+                <th>作者</th>
+                <th>分類</th>
+                <th>建立時間</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var article in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@article.Id" class="text-dark fw-bold">
+                            @article.Title
+                        </a>
+                    </td>
+                    <td>@article.Author</td>
+                    <td>@article.Category?.Name</td>
+                    <td>@article.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td class="text-center">
+                        <a asp-action="Edit" asp-route-id="@article.Id" class="text-warning">編輯</a>
+                        <span class="text-muted">|</span>
+                        <a asp-action="Delete" asp-route-id="@article.Id" class="text-danger">刪除</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </main>

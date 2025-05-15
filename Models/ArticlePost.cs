@@ -37,8 +37,19 @@ namespace StockGTO.Models
         public string Tags { get; set; } = string.Empty; // 🏷️ 標籤字串（用逗號分隔，例如 "ETF,技術分析,長期投資"）
 
         // ✅ 加入會員帳號欄位（UserId 為 AspNetUsers.Id）
-        public string? UserId { get; set; }
+        public string? UserId { get; set; }  // 會員關聯
 
-       
+
+
+
+        // ➕ 新增草稿與審核欄位
+        public bool IsPublished { get; set; } = false; // 預設未公開
+        public bool IsApproved { get; set; } = false; // 預設未審核
+
+        // ➕ 新增留言與收藏
+        public List<Comment> Comments { get; set; } = new();
+        public List<ArticleFavorite> Favorites { get; set; } = new();
+
+        
     }
 }
