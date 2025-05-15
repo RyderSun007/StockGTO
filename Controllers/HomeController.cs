@@ -78,8 +78,11 @@ namespace StockGTO.Controllers
         }
 
 
+        public IActionResult About()
+        {
+            return View();
+        }
 
-       
 
 
 

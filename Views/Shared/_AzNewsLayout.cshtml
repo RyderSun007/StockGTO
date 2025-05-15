@@ -56,8 +56,14 @@
                             <div class="col">
                                 <div class="main-menu d-none d-md-block">
                                     <nav>
-                                        <ul id="navigation" class="d-flex justify-content-end align-items-center">
 
+                                        <ul id="navigation" class="d-flex justify-content-end align-items-center">
+                                            <!-- About Link：無論登入與否都顯示 -->
+                                            <li>
+                                                <a class="nav-link" asp-controller="Home" asp-action="About">
+                                                    📖 關於我們
+                                                </a>
+                                            </li>
                                             @if (SignInManager.IsSignedIn(User))
                                             {
                                                 var currentUser = await UserManager.GetUserAsync(User);
