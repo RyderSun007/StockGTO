@@ -14,8 +14,18 @@ namespace StockGTO
 
 
             // 網站從 Linux 的外部也可以連
-            builder.WebHost.UseUrls("http://0.0.0.0:80"); 
-
+            // ✅ 支援 HTTP + HTTPS
+            builder.WebHost.ConfigureKestrel(serverOptions =>
+            {
+                serverOptions.ListenAnyIP(80); // HTTP
+                serverOptions.ListenAnyIP(443, listenOptions =>
+                {
+                    listenOptions.UseHttps(
+                        "/etc/letsencrypt/live/stockgto.com/fullchain.pem",
+                        "/etc/letsencrypt/live/stockgto.com/privkey.pem"
+                    );
+                });
+            });
 
             // =======================
             // 服務註冊區（Service Container）
