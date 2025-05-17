@@ -12,6 +12,11 @@ namespace StockGTO
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
+            // 網站從 Linux 的外部也可以連
+            builder.WebHost.UseUrls("http://0.0.0.0:5000"); 
+
+
             // =======================
             // 服務註冊區（Service Container）
             // =======================
