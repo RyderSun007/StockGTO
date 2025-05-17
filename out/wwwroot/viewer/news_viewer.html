@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>最新新聞列表</title>
+  <style>
+    body {
+      font-family: "Microsoft JhengHei", sans-serif;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    .news-card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      padding: 15px;
+      overflow: hidden;
+    }
+    .news-card img {
+      max-width: 100%;
+      height: auto;
+      margin: 10px 0;
+      border-radius: 5px;
+    }
+    .news-card h3 {
+      margin-top: 0;
+    }
+    .news-card a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    .news-card a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h2>📰 最新新聞列表</h2>
+  <div id="news-list">載入中...</div>
+
+  <script src="load_news.js"></script>
+</body>
+</html>

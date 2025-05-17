@@ -89,28 +89,32 @@ namespace StockGTO.Controllers
 
 
         // 🔄 SignalR 推播功能（可以從前端或其他 Action 呼叫來「即時送資料」）
+        // ✅ 提供文章推播功能 + 回傳給 AJAX 預先顯示
+        [HttpGet]
         public async Task<IActionResult> PushArticles()
         {
-            // 1️⃣ 從資料庫撈最新 5 篇文章（包含分類資料）
+            // 1️⃣ 從資料庫撈出最新 9 篇文章，包含分類名稱（Category.Name）
             var articles = _context.ArticlePosts
-                .Include(a => a.Category)
-                .OrderByDescending(a => a.CreatedAt)
-                .Take(5)
+                .Include(a => a.Category) // 加入分類資料
+                .OrderByDescending(a => a.CreatedAt) // 依照建立時間排序（最新優先）
+                .Take(9) // 只取 9 筆
                 .Select(a => new
                 {
                     a.Id,
                     a.Title,
                     a.ImageUrl,
-                    CategoryName = a.Category.Name
+                    CategoryName = a.Category.Name // 加入分類名稱欄位
                 })
                 .ToList();
 
-            // 2️⃣ 使用 SignalR 廣播文章資料給所有前端連線者（叫 ReceiveArticles）
+            // 2️⃣ 使用 SignalR 廣播文章清單給所有連線中的使用者（事件名稱：ReceiveArticles）
             await _hub.Clients.All.SendAsync("ReceiveArticles", articles);
 
-            // 3️⃣ 回傳 JSON 告知推送成功（可以被前端 AJAX 呼叫）
-            return Ok(new { status = "pushed", count = articles.Count });
+            // 3️⃣ 回傳 JSON 內容給 fetch("/Home/PushArticles") 用來「馬上顯示畫面」
+            // ✅ 如果前端有接 renderSignalRCards() 就能立即插入畫面
+            return Json(articles);
         }
+    
 
         // 🔐 內建的隱私頁面（不影響主流程）
         public IActionResult Privacy()
