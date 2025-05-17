@@ -14,7 +14,7 @@ namespace StockGTO
 
 
             // 網站從 Linux 的外部也可以連
-            builder.WebHost.UseUrls("http://0.0.0.0:5000"); 
+            builder.WebHost.UseUrls("http://0.0.0.0:80"); 
 
 
             // =======================
