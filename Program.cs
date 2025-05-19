@@ -14,17 +14,10 @@ namespace StockGTO
 
 
             // 網站從 Linux 的外部也可以連
-            // ✅ 支援 HTTP + HTTPS
+            
             builder.WebHost.ConfigureKestrel(serverOptions =>
             {
-                serverOptions.ListenAnyIP(80); // HTTP
-                serverOptions.ListenAnyIP(443, listenOptions =>
-                {
-                    listenOptions.UseHttps(
-                        "/etc/letsencrypt/live/stockgto.com/fullchain.pem",
-                        "/etc/letsencrypt/live/stockgto.com/privkey.pem"
-                    );
-                });
+                serverOptions.ListenLocalhost(5000); // ✅ 只開放給 Nginx 內部連線用
             });
 
             // =======================
@@ -58,8 +51,9 @@ namespace StockGTO
             .AddCookie()
             .AddGoogle(googleOptions =>
             {
-                googleOptions.ClientId = "762222694993-36a1l93uaolhtn7jaklate0uekgagcvf.apps.googleusercontent.com";
-                googleOptions.ClientSecret = "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";
+                googleOptions.ClientId = "你的 ClientId";
+                googleOptions.ClientSecret = "你的 ClientSecret";
+                googleOptions.CallbackPath = "/signin-google";  // ⬅️ 這行一定要有
             })
             .AddFacebook(facebookOptions =>
             {
