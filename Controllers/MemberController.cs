@@ -1,5 +1,4 @@
-﻿// ✅ MemberController.cs：會員中心 - 我的文章列表
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StockGTO.Data;
@@ -20,15 +19,17 @@ namespace StockGTO.Controllers
             _userManager = userManager;
         }
 
-        // 🧠 顯示目前使用者的所有文章
+        // 🧠 顯示目前使用者的所有文章（未登入也可瀏覽）
         public async Task<IActionResult> Profile(string keyword, int? categoryId)
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null) return RedirectToAction("Login", "Account");
 
-            var query = _context.ArticlePosts
-                .Include(a => a.Category)
-                .Where(a => a.UserId == user.Id);
+            IQueryable<ArticlePost> query = _context.ArticlePosts;
+
+            if (user != null)
+            {
+                query = query.Where(a => a.UserId == user.Id);
+            }
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {
@@ -37,9 +38,12 @@ namespace StockGTO.Controllers
             }
 
             if (categoryId.HasValue)
+            {
                 query = query.Where(a => a.CategoryId == categoryId);
+            }
 
             var articles = await query
+                .Include(a => a.Category) // 👉 放在最後，才不會型別錯誤
                 .OrderByDescending(a => a.CreatedAt)
                 .ToListAsync();
 

@@ -64,6 +64,13 @@
                                                     📖 關於我們
                                                 </a>
                                             </li>
+
+                                            <li>
+    <a class="nav-link" asp-controller="Member" asp-action="Profile">
+        👤 會員中心
+    </a>
+</li>
+
                                             @if (SignInManager.IsSignedIn(User))
                                             {
                                                 var currentUser = await UserManager.GetUserAsync(User);
@@ -84,9 +91,7 @@
                                             else
                                             {
                                                 <li>
-                                                    <a class="nav-link" asp-controller="Account" asp-action="LoginWithGoogle">
-                                                        <i class="fab fa-google text-danger"></i> Google 登入
-                                                    </a>
+                                                    
                                                 </li>
                                                 <li>
                                                     <a class="nav-link" asp-controller="Account" asp-action="LoginWithFacebook">

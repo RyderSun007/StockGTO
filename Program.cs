@@ -17,7 +17,7 @@ namespace StockGTO
             
             builder.WebHost.ConfigureKestrel(serverOptions =>
             {
-                serverOptions.ListenLocalhost(5000); // ✅ 只開放給 Nginx 內部連線用
+                serverOptions.ListenLocalhost(5000); // ✅ 只開放給 Nginx 內部連線用 不開 80/443，交給 Nginx
             });
 
             // =======================
@@ -49,12 +49,17 @@ namespace StockGTO
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
             .AddCookie()
-            .AddGoogle(googleOptions =>
-            {
-                googleOptions.ClientId = "你的 ClientId";
-                googleOptions.ClientSecret = "你的 ClientSecret";
-                googleOptions.CallbackPath = "/signin-google";  // ⬅️ 這行一定要有
-            })
+
+
+            //.AddGoogle(googleOptions =>
+            //{
+            //     googleOptions.ClientId = "你的 ClientId";
+            //    googleOptions.ClientSecret = "你的 ClientSecret";
+            //    googleOptions.CallbackPath = "/signin-google";  // ⬅️ 這行一定要有
+            //})
+
+
+
             .AddFacebook(facebookOptions =>
             {
                 facebookOptions.AppId = "你的 Facebook AppId";
