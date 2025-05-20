@@ -17,17 +17,24 @@ namespace StockGTO
 
             var builder = WebApplication.CreateBuilder(args);
 
-            // ✅ 僅在本機開發模式下綁定 5000 / 7045 port，避免 VM 上炸 port
+            // ✅ 僅在「本機開發模式」才綁定 5000 / 7045 Port，避免 VM 上炸 port
             if (builder.Environment.IsDevelopment())
             {
                 builder.WebHost.ConfigureKestrel(serverOptions =>
                 {
-                    serverOptions.ListenLocalhost(5000); // HTTP 測試用
+                    serverOptions.ListenLocalhost(5000); // 本機 HTTP 測試
                     serverOptions.ListenLocalhost(7045, listenOptions =>
                     {
-                        listenOptions.UseHttps(); // HTTPS 測試用
+                        listenOptions.UseHttps(); // 本機 HTTPS 測試
                     });
                 });
+
+                // ✅ 顯示目前環境狀態（方便偵錯）
+                Console.WriteLine("✅ 開發環境：開啟 5000/7045 Port for Localhost");
+            }
+            else
+            {
+                Console.WriteLine("🚀 生產環境（VM）：由 Nginx 接管 Port");
             }
 
             // ✅ 加入 JSON + 環境變數設定來源（環境變數優先）
