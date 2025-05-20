@@ -9,9 +9,14 @@ obj/
 .vscode/
 *.code-workspace
 
-# ✅ 不要推 wwwroot（如果內容是產出檔）
-wwwroot/
+# 忽略所有 wwwroot
+wwwroot/*
 
+# 但允許這些重要資料夾與檔案
+!wwwroot/aznews/
+!wwwroot/aznews/assets/
+!wwwroot/aznews/assets/css/
+!wwwroot/aznews/assets/css/style.css
 # ✅ 機密設定與開發設定檔
 .env
 appsettings.Development.json
@@ -30,3 +35,28 @@ package-lock.json
 # ✅ 其他特定公司或歷史遺留結構（依實際需要調整）
 Upload/
 HSNPortal/wwwroot/assets/vendor/tinymce/package-lock.json
+
+
+方案 B（進階）：從 .gitignore 中允許推特定 CSS
+如果你希望 CSS 也能透過 Git 自動同步，那你要「解除忽略某個子資料夾」，這樣做：
+
+修改 .gitignore：
+gitignore
+Copy
+Edit
+# 忽略所有 wwwroot
+wwwroot/*
+
+# 但允許這些重要資料夾與檔案
+!wwwroot/aznews/
+!wwwroot/aznews/assets/
+!wwwroot/aznews/assets/css/
+!wwwroot/aznews/assets/css/style.css
+然後：
+
+bash
+Copy
+Edit
+git add wwwroot/aznews/assets/css/style.css
+git commit -m "🔐 include style.css for VM deployment"
+git push

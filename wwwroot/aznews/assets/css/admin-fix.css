@@ -1,0 +1,20 @@
+/* admin-fix.css：修正後台表格操作欄按鈕大小 */
+
+.btn-group-sm > .btn {
+    font-size: 0.75rem !important;
+    padding: 0.25rem 0.4rem !important;
+    line-height: 1.2;
+    border-radius: 4px;
+}
+
+/* 不讓按鈕撐爆表格 */
+.table td .btn-group-sm {
+    flex-wrap: nowrap;
+}
+
+/* 可選：統一按鈕字體、減少 padding */
+.btn {
+    font-family: inherit;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+}
