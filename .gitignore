@@ -9,20 +9,7 @@ obj/
 .vscode/
 *.code-workspace
 
-# 忽略所有 wwwroot
-wwwroot/*
 
-# 但允許這些重要資料夾與檔案
-!wwwroot/aznews/
-!wwwroot/aznews/assets/
-!wwwroot/aznews/assets/css/
-!wwwroot/aznews/assets/css/style.css
-# ✅ 機密設定與開發設定檔
-.env
-appsettings.Development.json
-appsettings.Production.json
-client_secret_*.json
-Properties/launchSettings.json
 
 # ✅ 發佈設定與 NuGet 套件快取（視專案狀況可留）
 Properties/PublishProfiles/
