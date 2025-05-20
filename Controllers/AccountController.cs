@@ -22,13 +22,13 @@ namespace StockGTO.Controllers
         }
 
         // 啟動 Google 登入流程
-        //[HttpGet("LoginWithGoogle")]
-        //public IActionResult LoginWithGoogle()
-        //{
-        //    var redirectUrl = Url.Action("ExternalLoginCallback", "Account");
-        //    var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
-        //    return Challenge(properties, "Google");
-        //}
+        [HttpGet("LoginWithGoogle")]
+        public IActionResult LoginWithGoogle()
+        {
+            var redirectUrl = Url.Action("ExternalLoginCallback", "Account");
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
+            return Challenge(properties, "Google");
+        }
 
         // 啟動 Facebook 登入流程
         [HttpGet("LoginWithFacebook")]
