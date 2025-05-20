@@ -18,8 +18,8 @@ namespace StockGTO
 
             var builder = WebApplication.CreateBuilder(args);
 
-            // ✅ 強制指定 URL，避免 fallback 到 launchSettings.json 的 7045
-            builder.WebHost.UseUrls("http://localhost:5000");
+             //✅ 強制指定 URL，避免 fallback 到 launchSettings.json 的 7045
+            builder.WebHost.UseUrls("http://0.0.0.0:5000");
 
             // ✅ 根據環境選擇要綁定的 port
             if (builder.Environment.IsDevelopment())
