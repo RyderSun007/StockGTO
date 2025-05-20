@@ -17,33 +17,41 @@ namespace StockGTO
 
             var builder = WebApplication.CreateBuilder(args);
 
-            // ✅ 僅在「本機開發模式」才綁定 5000 / 7045 Port，避免 VM 上炸 port
+            // ✅ 強制指定 URL，避免 fallback 到 launchSettings.json 的 7045
+            builder.WebHost.UseUrls("http://localhost:5000");
+
+            // ✅ 僅在本機開發模式下綁定 5000 / 7045 Port（含 HTTPS）
             if (builder.Environment.IsDevelopment())
             {
                 builder.WebHost.ConfigureKestrel(serverOptions =>
                 {
-                    serverOptions.ListenLocalhost(5000); // 本機 HTTP 測試
+                    serverOptions.ListenLocalhost(5000); // HTTP 測試
                     serverOptions.ListenLocalhost(7045, listenOptions =>
                     {
-                        listenOptions.UseHttps(); // 本機 HTTPS 測試
+                        listenOptions.UseHttps(); // HTTPS 測試
                     });
                 });
 
-                // ✅ 顯示目前環境狀態（方便偵錯）
                 Console.WriteLine("✅ 開發環境：開啟 5000/7045 Port for Localhost");
             }
             else
             {
+                // ✅ 生產環境不綁 port，由 Nginx Proxy 負責處理
+                builder.WebHost.ConfigureKestrel(serverOptions =>
+                {
+                    serverOptions.ListenAnyIP(5000); // Nginx 代理 HTTP
+                });
+
                 Console.WriteLine("🚀 生產環境（VM）：由 Nginx 接管 Port");
             }
 
-            // ✅ 加入 JSON + 環境變數設定來源（環境變數優先）
+            // ✅ 加入 JSON + 環境變數設定來源
             builder.Configuration
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddEnvironmentVariables(); // 環境變數機制
+                .AddEnvironmentVariables();
 
-            // ✅ 從環境變數取得連線字串（可切換環境）
+            // ✅ 從環境變數取得連線字串
             var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
 
             // =======================
@@ -60,7 +68,7 @@ namespace StockGTO
 
             builder.Services.AddSignalR(); // ✅ 加入 SignalR for WebSocket
 
-            // ✅ Cookie 驗證 + Google 登入（支援多平台驗證）
+            // ✅ Cookie 驗證 + Google 登入
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
