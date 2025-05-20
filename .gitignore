@@ -1,49 +1,48 @@
-# ✅ Visual Studio build artifacts
+# ================================
+# 📦 Visual Studio 產物
+# ================================
 bin/
 obj/
 .vs/
 *.user
 *.suo
 
-# ✅ VSCode 設定（如有）
+# ================================
+# 🧠 VSCode 設定（可選擇保留）
+# ================================
 .vscode/
 *.code-workspace
 
+# ================================
+# 💣 機密設定檔（千萬別上傳）
+# ================================
+.env
+appsettings.Development.json
+appsettings.Production.json
+client_secret_*.json
+Properties/launchSettings.json
 
-
-# ✅ 發佈設定與 NuGet 套件快取（視專案狀況可留）
+# ================================
+# 🔌 NuGet / 發佈設定
+# ================================
 Properties/PublishProfiles/
 NuGetPackages/
 
-# ✅ node.js、前端相關快取（如有用前端工具）
+# ================================
+# 🌐 前端相關快取 / node 專案產物
+# ================================
 node_modules/
 package-lock.json
 
-# ✅ 其他特定公司或歷史遺留結構（依實際需要調整）
+# ================================
+# 📁 其他特定結構（依實際調整）
+# ================================
 Upload/
 HSNPortal/wwwroot/assets/vendor/tinymce/package-lock.json
 
-
-方案 B（進階）：從 .gitignore 中允許推特定 CSS
-如果你希望 CSS 也能透過 Git 自動同步，那你要「解除忽略某個子資料夾」，這樣做：
-
-修改 .gitignore：
-gitignore
-Copy
-Edit
-# 忽略所有 wwwroot
-wwwroot/*
-
-# 但允許這些重要資料夾與檔案
-!wwwroot/aznews/
-!wwwroot/aznews/assets/
-!wwwroot/aznews/assets/css/
-!wwwroot/aznews/assets/css/style.css
-然後：
-
-bash
-Copy
-Edit
-git add wwwroot/aznews/assets/css/style.css
-git commit -m "🔐 include style.css for VM deployment"
-git push
+# ================================
+# 🚫 不忽略 wwwroot（全面上傳）
+# ================================
+# 原本這行會擋住所有靜態檔案：
+# wwwroot/*
+# 🔥 現在整包放行，不擋任何 css/js/img
