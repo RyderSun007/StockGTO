@@ -54,57 +54,51 @@
                                 </div>
                             </div>
                             <div class="col">
-                                <div class="main-menu d-none d-md-block">
-                                    <nav>
+                                <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top border-bottom">
+                                    <div class="container">
+                                        <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                                            <img src="@Url.Content("~/aznews/assets/img/logo/logo.png")" alt="StockGTO" style="width: 150px;" />
+                                        </a>
+                                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                                            <span class="navbar-toggler-icon"></span>
+                                        </button>
 
-                                        <ul id="navigation" class="d-flex justify-content-end align-items-center">
-                                            <!-- About Link：無論登入與否都顯示 -->
-                                            <li>
-                                                <a class="nav-link" asp-controller="Home" asp-action="About">
-                                                    📖 關於我們
-                                                </a>
-                                            </li>
+                                        <div class="collapse navbar-collapse" id="navbarContent">
+                                            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                                                <li class="nav-item">
+                                                    <a class="nav-link" asp-controller="Home" asp-action="About">📖 關於我們</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" asp-controller="Post" asp-action="Post">投資文章</a>
+                                                </li>
+                                                @if (SignInManager.IsSignedIn(User))
+                                                {
+                                                    var currentUser = await UserManager.GetUserAsync(User);
+                                                    <li class="nav-item">
+                                                        <a class="nav-link text-success">👋 @currentUser.DisplayName</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" asp-controller="Member" asp-action="Profile">會員中心</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link text-danger" asp-controller="Account" asp-action="Logout">
+                                                            <i class="fas fa-sign-out-alt"></i> 登出
+                                                        </a>
+                                                    </li>
+                                                }
+                                                else
+                                                {
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" asp-controller="Account" asp-action="Login">
+                                                            <i class="fas fa-user"></i> 登入
+                                                        </a>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </nav>
 
-                                            <li>
-                                                <a class="nav-link" asp-controller="Member" asp-action="Profile">
-                                                    👤 會員中心
-                                                </a>
-                                            </li>
-
-                                            @if (SignInManager.IsSignedIn(User))
-                                            {
-                                                var currentUser = await UserManager.GetUserAsync(User);
-                                                <li>
-                                                    <span class="nav-link">👋 歡迎，@currentUser.DisplayName</span>
-                                                </li>
-                                                <li>
-                                                    <a class="nav-link" asp-controller="Account" asp-action="Logout">
-                                                        <i class="fas fa-sign-out-alt text-danger"></i> 登出
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="nav-link" asp-controller="Member" asp-action="Profile">
-                                                        👤 會員中心
-                                                    </a>
-                                                </li>
-                                            }
-                                            else
-                                            {
-                                                <li>
-                                                    
-                                                </li>
-                                                <li>
-                                                    <a class="nav-link" asp-controller="Account" asp-action="LoginWithFacebook">
-                                                        <i class="fab fa-facebook text-primary"></i> Facebook 登入（未開發）
-                                                    </a>
-                                                </li>
-                                            }
-
-                                           
-
-                                        </ul>
-                                    </nav>
-                                </div>
                             </div>
 
                         </div>

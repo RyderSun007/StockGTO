@@ -1,13 +1,32 @@
-/.vs
-/.config
-/bin
-/obj
-/wwwroot
-/Properties/PublishProfiles
-/Upload
-/NuGetPackages
+# ✅ Visual Studio build artifacts
+bin/
+obj/
+.vs/
+*.user
+*.suo
+
+# ✅ VSCode 設定（如有）
+.vscode/
+*.code-workspace
+
+# ✅ 不要推 wwwroot（如果內容是產出檔）
+wwwroot/
+
+# ✅ 機密設定與開發設定檔
+.env
+appsettings.Development.json
+appsettings.Production.json
+client_secret_*.json
+Properties/launchSettings.json
+
+# ✅ 發佈設定與 NuGet 套件快取（視專案狀況可留）
+Properties/PublishProfiles/
+NuGetPackages/
+
+# ✅ node.js、前端相關快取（如有用前端工具）
+node_modules/
+package-lock.json
+
+# ✅ 其他特定公司或歷史遺留結構（依實際需要調整）
+Upload/
 HSNPortal/wwwroot/assets/vendor/tinymce/package-lock.json
-.vscode/launch.json
-.vscode/tasks.json
-/node_modules
-.fake
