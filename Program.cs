@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -20,15 +21,15 @@ namespace StockGTO
             // ✅ 強制指定 URL，避免 fallback 到 launchSettings.json 的 7045
             builder.WebHost.UseUrls("http://localhost:5000");
 
-            // ✅ 僅在本機開發模式下綁定 5000 / 7045 Port（含 HTTPS）
+            // ✅ 根據環境選擇要綁定的 port
             if (builder.Environment.IsDevelopment())
             {
                 builder.WebHost.ConfigureKestrel(serverOptions =>
                 {
-                    serverOptions.ListenLocalhost(5000); // HTTP 測試
+                    serverOptions.ListenLocalhost(5000); // 本機 HTTP 測試
                     serverOptions.ListenLocalhost(7045, listenOptions =>
                     {
-                        listenOptions.UseHttps(); // HTTPS 測試
+                        listenOptions.UseHttps(); // 本機 HTTPS 測試
                     });
                 });
 
@@ -36,27 +37,24 @@ namespace StockGTO
             }
             else
             {
-                // ✅ 生產環境不綁 port，由 Nginx Proxy 負責處理
                 builder.WebHost.ConfigureKestrel(serverOptions =>
                 {
-                    serverOptions.ListenAnyIP(5000); // Nginx 代理 HTTP
+                    serverOptions.ListenAnyIP(5000); // VM 用 Nginx Proxy
                 });
 
-                Console.WriteLine("🚀 生產環境（VM）：由 Nginx 接管 Port");
+                Console.WriteLine("🚀 生產環境：Nginx Proxy 接管，Kestrel 綁定 5000");
             }
 
-            // ✅ 加入 JSON + 環境變數設定來源
+            // ✅ 設定組態
             builder.Configuration
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
 
-            // ✅ 從環境變數取得連線字串
+            // ✅ 資料庫連線字串
             var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
 
-            // =======================
-            // 服務註冊區（Service Container）
-            // =======================
+            // ✅ 註冊服務（依需求加入）
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddDbContext<AppDbContext>(options =>
@@ -66,9 +64,8 @@ namespace StockGTO
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
-            builder.Services.AddSignalR(); // ✅ 加入 SignalR for WebSocket
+            builder.Services.AddSignalR();
 
-            // ✅ Cookie 驗證 + Google 登入
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -79,6 +76,14 @@ namespace StockGTO
             {
                 options.ClientId = Environment.GetEnvironmentVariable("Authentication__Google__ClientId");
                 options.ClientSecret = Environment.GetEnvironmentVariable("Authentication__Google__ClientSecret");
+            });
+
+            // ✅ ForwardedHeaders 支援：讓 ASP.NET Core 知道外面是 HTTPS
+            builder.Services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;
+                options.RequireHeaderSymmetry = false;
+                options.KnownProxies.Clear(); // 如果你有特定 Proxy IP 可加進來
             });
 
             var app = builder.Build();
@@ -92,6 +97,9 @@ namespace StockGTO
                 app.UseHsts();
             }
 
+            // ✅ 最重要：處理 Nginx 傳進來的 HTTPS 代理頭
+            app.UseForwardedHeaders();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -103,7 +111,7 @@ namespace StockGTO
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
-            app.MapHub<ArticleHub>("/ArticleHub"); // ✅ SignalR 路由
+            app.MapHub<ArticleHub>("/ArticleHub");
 
             app.Run();
         }
