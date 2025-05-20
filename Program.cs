@@ -17,15 +17,18 @@ namespace StockGTO
 
             var builder = WebApplication.CreateBuilder(args);
 
-            // ✅ 允許從外部（VM/雲端）連線
-            builder.WebHost.ConfigureKestrel(serverOptions =>
+            // ✅ 僅在本機開發模式下綁定 5000 / 7045 port，避免 VM 上炸 port
+            if (builder.Environment.IsDevelopment())
             {
-                serverOptions.ListenLocalhost(5000); // HTTP for local test
-                serverOptions.ListenLocalhost(7045, listenOptions =>
+                builder.WebHost.ConfigureKestrel(serverOptions =>
                 {
-                    listenOptions.UseHttps(); // 開發用 HTTPS 憑證
+                    serverOptions.ListenLocalhost(5000); // HTTP 測試用
+                    serverOptions.ListenLocalhost(7045, listenOptions =>
+                    {
+                        listenOptions.UseHttps(); // HTTPS 測試用
+                    });
                 });
-            });
+            }
 
             // ✅ 加入 JSON + 環境變數設定來源（環境變數優先）
             builder.Configuration
