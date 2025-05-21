@@ -1,40 +1,53 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StockGTO.Controllers
 {
+    // ✅ 限登入使用者才能上傳圖片
+    [Authorize]
     public class UploadController : Controller
     {
+        // ✅ 上傳圖片（給 CKEditor 用）
         [HttpPost]
         public async Task<IActionResult> Image(IFormFile upload)
         {
+            // 🧱 驗證是否有檔案
             if (upload == null || upload.Length == 0)
             {
-                return Json(new { uploaded = false, error = new { message = "沒有上傳任何檔案" } });
+                return Json(new
+                {
+                    uploaded = false,
+                    error = new { message = "沒有上傳任何檔案。" }
+                });
             }
 
-            // 👉 取得檔案名稱
-            var fileName = Path.GetFileName(upload.FileName);
+            // ✅ 產生唯一檔名（避免同名覆蓋）
+            var fileExt = Path.GetExtension(upload.FileName);
+            var fileName = $"{Guid.NewGuid()}{fileExt}";
 
-            // 👉 組成儲存路徑 (把檔案存到 wwwroot/uploads/)
-            var savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileName);
+            // ✅ 設定儲存資料夾與檔案路徑
+            var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            var savePath = Path.Combine(uploadFolder, fileName);
 
-            // 👉 確保 uploads 資料夾存在
-            if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads")))
+            // ✅ 如果資料夾不存在就自動建立
+            if (!Directory.Exists(uploadFolder))
             {
-                Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads"));
+                Directory.CreateDirectory(uploadFolder);
             }
 
-            // 👉 寫入檔案
+            // ✅ 儲存檔案到 wwwroot/uploads
             using (var stream = new FileStream(savePath, FileMode.Create))
             {
                 await upload.CopyToAsync(stream);
             }
 
-            // 👉 組成圖片的公開網址
+            // ✅ 回傳圖片 URL 給 CKEditor
             var fileUrl = Url.Content($"~/uploads/{fileName}");
-
-            // 👉 回傳給 CKEditor 的格式
-            return Json(new { uploaded = true, url = fileUrl });
+            return Json(new
+            {
+                uploaded = true,
+                url = fileUrl
+            });
         }
     }
 }

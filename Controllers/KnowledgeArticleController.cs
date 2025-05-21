@@ -4,8 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using StockGTO.Data;
 using StockGTO.Models;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StockGTO.Controllers
 {
@@ -20,44 +22,59 @@ namespace StockGTO.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Index(string keyword, int? categoryId)
+        // ✅ 後台管理列表頁
+        [Authorize]
+        public async Task<IActionResult> Manage(string keyword, int? categoryId)
         {
             var query = _context.ArticlePosts.AsQueryable();
 
-            if (!string.IsNullOrEmpty(keyword))
+            if (!string.IsNullOrWhiteSpace(keyword))
                 query = query.Where(a => a.Title.Contains(keyword));
 
             if (categoryId.HasValue)
                 query = query.Where(a => a.CategoryId == categoryId);
 
-            var articles = query
+            var articles = await query
                 .Include(a => a.Category)
                 .OrderByDescending(a => a.CreatedAt)
-                .ToList();
+                .ToListAsync();
 
             ViewBag.Keyword = keyword;
             ViewBag.CategoryId = categoryId;
-            ViewBag.CategoryList = _context.Categories.Where(c => c.IsActive).ToList();
+            ViewBag.Categories = _context.Categories.Where(c => c.IsActive).ToList();
 
-            return View(articles);
-
+            return View("Manage", articles);
         }
 
+        // ✅ 前台公開列表頁
+        [AllowAnonymous]
+        public async Task<IActionResult> Browse(string keyword, int? categoryId)
+        {
+            var query = _context.ArticlePosts.AsQueryable();
 
+            if (!string.IsNullOrWhiteSpace(keyword))
+                query = query.Where(a => a.Title.Contains(keyword));
 
+            if (categoryId.HasValue)
+                query = query.Where(a => a.CategoryId == categoryId);
 
+            var articles = await query
+                .Include(a => a.Category)
+                //.Where(a => a.IsPublished)
+                .OrderByDescending(a => a.CreatedAt)
+                .ToListAsync();
 
+            ViewBag.Keyword = keyword;
+            ViewBag.CategoryId = categoryId;
+            ViewBag.Categories = _context.Categories.Where(c => c.IsActive).ToList();
 
-
-
-
+            return View("Browse", articles);
+        }
 
         public IActionResult Details(int id)
         {
             var article = _context.ArticlePosts
                 .Include(a => a.Category)
-                //.Include(a => a.Comments)
-                //    .ThenInclude(c => c.User)
                 .FirstOrDefault(a => a.Id == id);
 
             if (article == null)
@@ -79,10 +96,6 @@ namespace StockGTO.Controllers
             return View(article);
         }
 
-
-
-
-        // ✅ 留言功能方法
         [HttpPost]
         public async Task<IActionResult> AddComment(int articleId, string content)
         {
@@ -104,12 +117,7 @@ namespace StockGTO.Controllers
             return RedirectToAction("Details", new { id = articleId });
         }
 
-
-
-
-
-
-
+        [Authorize]
         public IActionResult Create()
         {
             ViewBag.Categories = _context.Categories
@@ -121,6 +129,7 @@ namespace StockGTO.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ArticlePost post)
         {
@@ -141,8 +150,7 @@ namespace StockGTO.Controllers
 
                     post.ImageUrl = "/aznews/uploads/" + fileName;
                 }
-                else if (!string.IsNullOrWhiteSpace(post.ImageUrl)) { }
-                else
+                else if (string.IsNullOrWhiteSpace(post.ImageUrl))
                 {
                     post.ImageUrl = "/images/default.jpg";
                 }
@@ -155,7 +163,7 @@ namespace StockGTO.Controllers
                 _context.ArticlePosts.Add(post);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Manage");
             }
 
             ViewBag.Categories = _context.Categories
@@ -166,6 +174,7 @@ namespace StockGTO.Controllers
             return View(post);
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult Edit(int id)
         {
@@ -178,6 +187,7 @@ namespace StockGTO.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ArticlePost post)
         {
@@ -226,6 +236,7 @@ namespace StockGTO.Controllers
             return View(post);
         }
 
+        [Authorize]
         public IActionResult Delete(int id)
         {
             var post = _context.ArticlePosts.FirstOrDefault(p => p.Id == id);
@@ -234,6 +245,7 @@ namespace StockGTO.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
@@ -243,34 +255,7 @@ namespace StockGTO.Controllers
                 _context.ArticlePosts.Remove(post);
                 _context.SaveChanges();
             }
-            return RedirectToAction(nameof(Index));
-        }
-
-        public IActionResult PublicList(string keyword, int? categoryId)
-        {
-            var query = _context.ArticlePosts
-                .Include(a => a.Category)
-                .AsQueryable();
-
-            if (!string.IsNullOrEmpty(keyword))
-                query = query.Where(a => a.Title.Contains(keyword));
-
-            if (categoryId.HasValue)
-                query = query.Where(a => a.CategoryId == categoryId.Value);
-
-            var articles = query
-                .OrderByDescending(a => a.CreatedAt)
-                .ToList();
-
-            ViewBag.Keyword = keyword;
-            ViewBag.CategoryId = categoryId;
-
-            ViewBag.Categories = _context.Categories
-                .Where(c => c.IsActive)
-                .OrderBy(c => c.SortOrder)
-                .ToList();
-
-            return View(articles);
+            return RedirectToAction("Manage");
         }
     }
 }

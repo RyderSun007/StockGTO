@@ -1,5 +1,6 @@
 ﻿// PostController.cs
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using StockGTO.Data;
 using StockGTO.Models;
 using StockGTO.Models.ViewModels;
@@ -17,7 +18,8 @@ namespace StockGTO.Controllers
             _context = context;
         }
 
-        // ✅ 主頁：可篩選分類與關鍵字搜尋 + 分頁
+        // ✅ 前台：文章瀏覽頁（含搜尋與分類）允許匿名訪問
+        [AllowAnonymous]
         public IActionResult Post(string category, string search, int page = 1)
         {
             int pageSize = 10;
@@ -47,7 +49,8 @@ namespace StockGTO.Controllers
             return View(pagedPosts);
         }
 
-        // ✅ 管理介面（CRUD 管理頁）
+        // ✅ 後台：文章管理介面（登入限定）
+        [Authorize]
         public IActionResult Manage(int page = 1)
         {
             int pageSize = 10;
@@ -63,7 +66,8 @@ namespace StockGTO.Controllers
             return View(viewModel);
         }
 
-        // ✅ 單篇詳細頁
+        // ✅ 單篇詳細頁（公開）
+        [AllowAnonymous]
         public IActionResult Details(int id)
         {
             var post = _context.Posts.FirstOrDefault(p => p.Id == id);
@@ -71,14 +75,16 @@ namespace StockGTO.Controllers
             return View(post);
         }
 
-        // ✅ 新增文章頁
+        // ✅ 建立頁（登入限定）
         [HttpGet]
+        [Authorize]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Create(Post post)
         {
             if (ModelState.IsValid)
@@ -91,8 +97,9 @@ namespace StockGTO.Controllers
             return View(post);
         }
 
-        // ✅ 編輯文章
+        // ✅ 編輯文章（登入限定）
         [HttpGet]
+        [Authorize]
         public IActionResult Edit(int id)
         {
             var post = _context.Posts.FirstOrDefault(p => p.Id == id);
@@ -101,6 +108,7 @@ namespace StockGTO.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Edit(Post post)
         {
             if (!ModelState.IsValid) return View(post);
@@ -118,8 +126,9 @@ namespace StockGTO.Controllers
             return RedirectToAction("Manage");
         }
 
-        // ✅ 刪除文章
+        // ✅ 刪除文章（登入限定）
         [HttpPost]
+        [Authorize]
         public IActionResult Delete(int id)
         {
             var post = _context.Posts.FirstOrDefault(p => p.Id == id);
@@ -130,8 +139,9 @@ namespace StockGTO.Controllers
             return RedirectToAction("Manage");
         }
 
-        // ✅ AJAX 新增文章
+        // ✅ AJAX 建立（登入限定）
         [HttpPost]
+        [Authorize]
         public IActionResult CreateFromAjax([FromBody] Post post)
         {
             if (string.IsNullOrEmpty(post.Title) || string.IsNullOrEmpty(post.Content))
@@ -144,8 +154,9 @@ namespace StockGTO.Controllers
             return Json(new { success = true });
         }
 
-        // ✅ 取得文章 JSON（預備編輯用）
+        // ✅ 取得 JSON（登入限定，預備前端編輯）
         [HttpGet]
+        [Authorize]
         public IActionResult GetContent(int id)
         {
             var post = _context.Posts.FirstOrDefault(p => p.Id == id);
@@ -160,14 +171,16 @@ namespace StockGTO.Controllers
             });
         }
 
-        // ✅ CreateManage 取代傳統 Create 功能（表單在 Post/Manage 裡）
+        // ✅ 新版建立頁（整合至 Manage）登入限定
         [HttpGet]
+        [Authorize]
         public IActionResult CreateManage()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult CreateManage(Post post)
         {
             if (ModelState.IsValid)

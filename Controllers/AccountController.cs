@@ -21,8 +21,9 @@ namespace StockGTO.Controllers
             _signInManager = signInManager;
         }
 
-        // 啟動 Google 登入流程
+        // ✅ 啟動 Google 登入流程
         [HttpGet("LoginWithGoogle")]
+        [AllowAnonymous]
         public IActionResult LoginWithGoogle()
         {
             var redirectUrl = Url.Action("ExternalLoginCallback", "Account");
@@ -30,8 +31,9 @@ namespace StockGTO.Controllers
             return Challenge(properties, "Google");
         }
 
-        // 啟動 Facebook 登入流程
+        // ✅ 啟動 Facebook 登入流程
         [HttpGet("LoginWithFacebook")]
+        [AllowAnonymous]
         public IActionResult LoginWithFacebook()
         {
             var redirectUrl = Url.Action("ExternalLoginCallback", "Account");
@@ -39,7 +41,8 @@ namespace StockGTO.Controllers
             return Challenge(properties, "Facebook");
         }
 
-        // 通用登入完成後的回呼處理
+        // ✅ 第三方登入回呼處理
+        [AllowAnonymous]
         public async Task<IActionResult> ExternalLoginCallback()
         {
             var info = await _signInManager.GetExternalLoginInfoAsync();
@@ -49,36 +52,27 @@ namespace StockGTO.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            // 已經登入過就直接登入
-            var signInResult = await _signInManager.ExternalLoginSignInAsync(
-                info.LoginProvider,
-                info.ProviderKey,
-                isPersistent: false);
-
+            // 已註冊帳號者直接登入
+            var signInResult = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
             if (signInResult.Succeeded)
             {
                 TempData["Message"] = $"歡迎回來，{info.Principal.FindFirstValue(ClaimTypes.Name)}！";
                 return RedirectToAction("Profile", "Member");
             }
 
-            // 第一次登入，建立帳號
+            // 👉 第一次登入，建立帳號
             var email = info.Principal.FindFirstValue(ClaimTypes.Email);
             var name = info.Principal.FindFirstValue(ClaimTypes.Name);
-
-            // ✅ 圖片抓法多平台 fallback
             var img = info.Principal.FindFirstValue("picture")
                    ?? info.Principal.FindFirstValue("urn:google:picture")
-                   ?? info.Principal.FindFirstValue("urn:facebook:picture")
-                   ?? "";
+                   ?? info.Principal.FindFirstValue("urn:facebook:picture") ?? "";
 
-            // 🔐 Email 防呆機制
             if (string.IsNullOrEmpty(email))
             {
-                TempData["Error"] = "無法從第三方登入取得 Email，請改用其他登入方式";
+                TempData["Error"] = "無法取得 Email，請改用其他登入方式。";
                 return RedirectToAction("Index", "Home");
             }
 
-            // 建立新使用者
             var user = new ApplicationUser
             {
                 UserName = email,
@@ -102,19 +96,19 @@ namespace StockGTO.Controllers
             {
                 if (createResult.Errors.Any(e => e.Code == "DuplicateUserName"))
                 {
-                    TempData["Error"] = "這個 Email 已經註冊過，請改用登入方式。";
+                    TempData["Error"] = "這個 Email 已經註冊過，請改用登入。";
                 }
                 else
                 {
-                    TempData["Error"] = "註冊失敗，請聯絡系統管理員。";
+                    TempData["Error"] = "註冊失敗，請聯絡管理員。";
                 }
             }
 
             return RedirectToAction("Index", "Home");
         }
 
-
-        // 登出
+        // ✅ 登出（需登入才能登出）
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();

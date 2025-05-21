@@ -1,0 +1,62 @@
+﻿@model List<StockGTO.Models.ArticlePost>
+
+@{
+    ViewData["Title"] = "投資教學文章 | 股票知識庫 - StockGTO";
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+}
+
+<main class="container py-5">
+    <h2 class="fw-bold text-start mb-4">文章總覽</h2>
+
+    <!-- 🔍 搜尋區塊 -->
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-5">
+            <label class="form-label fw-semibold">文章分類</label>
+            <select name="categoryId" class="form-select" style="max-width: 100px;">
+                <option value="">-- 所有分類 --</option>
+                @foreach (var cat in ViewBag.Categories)
+                {
+                    var selected = ViewBag.CategoryId?.ToString() == cat.Id.ToString() ? "selected" : "";
+                    <option value="@cat.Id" selected="@selected">@cat.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-5">
+            <label class="form-label fw-semibold">關鍵字搜尋</label>
+            <input type="text" name="keyword" class="form-control" placeholder="輸入關鍵字..." value="@ViewBag.Keyword" />
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" style="color: black; background-color: transparent; border: none;">搜尋</button>
+        </div>
+    </form>
+
+    <!-- 📘 文章卡片列表 -->
+    <div class="row">
+        @if (!Model.Any())
+        {
+            <div class="col-12 text-center text-muted py-5">
+                <p class="fs-5">🚫 找不到符合條件的文章，請重新搜尋</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var article in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border shadow-sm">
+                        <a asp-controller="KnowledgeArticle" asp-action="Details" asp-route-id="@article.Id">
+                            <img src="@(!string.IsNullOrEmpty(article.ImageUrl) ? article.ImageUrl : "/images/default.jpg")"
+                                 class="card-img-top" style="height: 200px; object-fit: cover;" alt="@article.Title" />
+                        </a>
+                        <div class="card-body">
+                            <a asp-controller="KnowledgeArticle" asp-action="Details" asp-route-id="@article.Id" class="text-dark text-decoration-none">
+                                <h5 class="card-title">@article.Title</h5>
+                            </a>
+                            <p class="card-text text-muted">@article.CreatedAt.ToString("yyyy-MM-dd") · @article.Category?.Name</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</main>

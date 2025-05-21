@@ -5,9 +5,12 @@ using StockGTO.Data;
 using StockGTO.Models;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace StockGTO.Controllers
 {
+    [Authorize] // ✅ 加在這裡：整個 MemberController 都需要登入
     public class MemberController : Controller
     {
         private readonly AppDbContext _context;

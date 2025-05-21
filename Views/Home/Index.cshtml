@@ -118,6 +118,99 @@
     </div> <!-- .container -->
 </div>
 <!-- 🌟【首頁熱門區塊 Trending Area】End -->
+<!-- 🔥 熱門文章排行輪播區塊 Start -->
+
+<div class="weekly-news-area pt-50">
+    <div class="container">
+        <div class="weekly-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-tittle mb-30">
+                        <h3>🔥 熱門文章排行</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="weekly-news-active dot-style d-flex">
+                        @foreach (var article in Model.TopViewedArticles)
+                        {
+                            <div class="weekly-single position-relative">
+                                <div class="weekly-img">
+                                    <img src="@(!string.IsNullOrEmpty(article.ImageUrl) ? article.ImageUrl : "/images/default.jpg")"
+                                         alt="@article.Title"
+                                         class="w-100"
+                                         style="object-fit: cover; height: 200px;" />
+                                </div>
+                                <div class="overlay-caption">
+                                    <span class="badge bg-light text-dark mb-1">@article.Category?.Name</span>
+                                    <h5 class="text-dark fw-bold mb-0" style="font-size: 1rem;">
+                                        <a asp-controller="KnowledgeArticle"
+                                           asp-action="Details"
+                                           asp-route-id="@article.Id"
+                                           class="text-dark">
+                                            @article.Title
+                                        </a>
+                                    </h5>
+                                    <small class="text-muted">👁️ 點閱 @article.ViewCount</small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 🔥 熱門文章排行輪播區塊 End -->
+<!-- 🔄 Weekly Top News 改為隨機文章輪播 -->
+<div class="weekly-news-area pt-50">
+    <div class="container">
+        <div class="weekly-wrapper">
+            <!-- section Tittle -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-tittle mb-30">
+                        <h3>隨機文章輪播</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="weekly-news-active dot-style d-flex dot-style">
+                        @foreach (var article in shuffledArticles)
+                        {
+                            <div class="weekly-single">
+                                <div class="weekly-img">
+                                    <img src="@(!string.IsNullOrEmpty(article.ImageUrl) ? article.ImageUrl : "/images/default.jpg")"
+                                         alt="@article.Title"
+                                         style="object-fit: cover; height: 200px;" />
+                                </div>
+                                <div class="weekly-caption">
+                                    <span class="color1">@article.Category?.Name ?? "其他分類"</span>
+                                    <h4>
+                                        <a asp-controller="KnowledgeArticle"
+                                           asp-action="Details"
+                                           asp-route-id="@article.Id">
+                                            @article.Title
+                                        </a>
+                                    </h4>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
 <!-- ✅ 推播區建議 class 命名統一為 signalr-articles-wrapper + signalr-articles -->
 <section class="signalr-articles-wrapper">
     <div class="container">
@@ -273,52 +366,7 @@
     </div>
 </section>
 <!-- 🌟 改版：熱門新聞區塊 End -->
-<!-- 🔥 熱門文章排行輪播區塊 Start -->
 
-<div class="weekly-news-area pt-50">
-    <div class="container">
-        <div class="weekly-wrapper">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="section-tittle mb-30">
-                        <h3>🔥 熱門文章排行</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <div class="weekly-news-active dot-style d-flex">
-                        @foreach (var article in Model.TopViewedArticles)
-                        {
-                            <div class="weekly-single position-relative">
-                                <div class="weekly-img">
-                                    <img src="@(!string.IsNullOrEmpty(article.ImageUrl) ? article.ImageUrl : "/images/default.jpg")"
-                                         alt="@article.Title"
-                                         class="w-100"
-                                         style="object-fit: cover; height: 200px;" />
-                                </div>
-                                <div class="overlay-caption">
-                                    <span class="badge bg-light text-dark mb-1">@article.Category?.Name</span>
-                                    <h5 class="text-dark fw-bold mb-0" style="font-size: 1rem;">
-                                        <a asp-controller="KnowledgeArticle"
-                                           asp-action="Details"
-                                           asp-route-id="@article.Id"
-                                           class="text-dark">
-                                            @article.Title
-                                        </a>
-                                    </h5>
-                                    <small class="text-muted">👁️ 點閱 @article.ViewCount</small>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- 🔥 熱門文章排行輪播區塊 End -->
 
 <!-- 📈 台股新聞 TaiwanMarket 區塊 Start -->
 @{
@@ -374,48 +422,73 @@
     </div>
 </div>
 <!-- 📈 台股新聞 TaiwanMarket 區塊 End -->
-<!-- 🔄 Weekly Top News 改為隨機文章輪播 -->
-<div class="weekly-news-area pt-50">
-    <div class="container">
-        <div class="weekly-wrapper">
-            <!-- section Tittle -->
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="section-tittle mb-30">
-                        <h3>隨機文章輪播</h3>
+<!-- 台股 國際 ETF區塊  -->
+@{
+    var sections = new Dictionary<string, string>
+    {
+        { "台股", "📈 台股新聞 TaiwanMarket" },
+        { "國際", "🌍 國際新聞 GlobalMarket" },
+        { "ETF", "📊 ETF 精選專欄" }
+    };
+}
+
+@foreach (var section in sections)
+{
+    var code = section.Key;
+    var title = section.Value;
+
+    var articles = Model.CategoryArticles.ContainsKey(code)
+        ? Model.CategoryArticles[code].Take(8).ToList()
+        : new List<ArticlePost>();
+
+    <div class="weekly-news-area pt-50">
+        <div class="container">
+            <div class="weekly-wrapper">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="section-tittle mb-30">
+                            <h3>@title</h3>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <div class="weekly-news-active dot-style d-flex dot-style">
-                        @foreach (var article in shuffledArticles)
-                        {
-                            <div class="weekly-single">
-                                <div class="weekly-img">
-                                    <img src="@(!string.IsNullOrEmpty(article.ImageUrl) ? article.ImageUrl : "/images/default.jpg")"
-                                         alt="@article.Title"
-                                         style="object-fit: cover; height: 200px;" />
-                                </div>
-                                <div class="weekly-caption">
-                                    <span class="color1">@article.Category?.Name ?? "其他分類"</span>
-                                    <h4>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="weekly-news-active dot-style d-flex">
+                            @foreach (var article in articles)
+                            {
+                                <div class="weekly-single position-relative">
+                                    <div class="weekly-img">
                                         <a asp-controller="KnowledgeArticle"
                                            asp-action="Details"
                                            asp-route-id="@article.Id">
-                                            @article.Title
+                                            <img src="@(!string.IsNullOrEmpty(article.ImageUrl) ? article.ImageUrl : "/images/default.jpg")"
+                                                 alt="@article.Title"
+                                                 class="w-100"
+                                                 style="object-fit: cover; height: 200px;" />
                                         </a>
-                                    </h4>
+                                    </div>
+                                    <div class="overlay-caption">
+                                        <span class="badge bg-light text-dark mb-1">@article.Category?.Name</span>
+                                        <h5 class="text-dark fw-bold mb-0" style="font-size: 1rem;">
+                                            <a asp-controller="KnowledgeArticle"
+                                               asp-action="Details"
+                                               asp-route-id="@article.Id"
+                                               class="text-dark">
+                                                @article.Title
+                                            </a>
+                                        </h5>
+                                        <small class="text-muted">👁️ @article.ViewCount 次瀏覽</small>
+                                    </div>
                                 </div>
-                            </div>
-                        }
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
+}
+<!-- 台股 國際 ETF區塊 End -->
 
 
 
@@ -558,7 +631,7 @@
 
     <!-- Jquery, Popper, Bootstrap -->
 <script src="~/aznews/assets/js/vendor/jquery-1.12.4.min.js" asp-append-version="true"></script>
-    <script src="~/aznews/assets/js/popper.min.js" asp-append-version="true"></script>
+    
 <script src="~/aznews/assets/js/bootstrap.min.js" asp-append-version="true"></script>
 
     <!-- Jquery Mobile Menu -->

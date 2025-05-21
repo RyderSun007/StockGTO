@@ -1,13 +1,17 @@
 ﻿@model List<StockGTO.Models.ArticlePost>
 
 @{
-    ViewData["Title"] = "股票知識文章總覽";
+    ViewData["Title"] = "股票知識文章總覽（後台）";
     Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
 }
 
-
 <main class="container pt-5">
-    <h2 class="fw-bold mb-4 text-center">📘 股票知識文章總覽</h2>
+    <h2 class="fw-bold mb-4 text-center">文章（後台管理）</h2>
+
+    <!-- ➕ 新增文章按鈕 -->
+    <div class="text-end mb-3">
+        <a asp-action="Create" class="btn btn-success">➕ 新增文章</a>
+    </div>
 
     <!-- 🔍 搜尋與分類表單 -->
     <form method="get" class="row g-3 mb-4">
@@ -17,22 +21,14 @@
                 <option value="">-- 所有分類 --</option>
                 @foreach (var cat in ViewBag.Categories)
                 {
-                    if (ViewBag.CategoryId?.ToString() == cat.Id.ToString())
-                    {
-                        <option value="@cat.Id" selected>@cat.Name</option>
-                    }
-                    else
-                    {
-                        <option value="@cat.Id">@cat.Name</option>
-                    }
+                    <option value="@cat.Id" selected="@(ViewBag.CategoryId?.ToString() == cat.Id.ToString())">@cat.Name</option>
                 }
             </select>
         </div>
 
         <div class="col-md-4">
             <label class="form-label fw-semibold">🔠 關鍵字搜尋</label>
-            <input type="text" name="keyword" class="form-control" placeholder="輸入標題關鍵字"
-                   value="@ViewBag.Keyword" />
+            <input type="text" name="keyword" class="form-control" value="@ViewBag.Keyword" />
         </div>
 
         <div class="col-md-4 d-flex align-items-end">
@@ -47,6 +43,7 @@
                 <th>標題</th>
                 <th>作者</th>
                 <th>分類</th>
+                
                 <th>建立時間</th>
                 <th>操作</th>
             </tr>
@@ -61,11 +58,13 @@
                         </a>
                     </td>
                     <td>@article.Author</td>
-                    <td>@article.Category?.Name</td>
+                    <td>@article.Category?.Name</td>                    
                     <td>@article.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
                     <td class="text-center">
+                        <a asp-action="Details" asp-route-id="@article.Id" class="text-primary">檢視</a>
+                        <span class="mx-1">|</span>
                         <a asp-action="Edit" asp-route-id="@article.Id" class="text-warning">編輯</a>
-                        <span class="text-muted">|</span>
+                        <span class="mx-1">|</span>
                         <a asp-action="Delete" asp-route-id="@article.Id" class="text-danger">刪除</a>
                     </td>
                 </tr>
