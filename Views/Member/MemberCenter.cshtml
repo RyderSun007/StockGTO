@@ -1,0 +1,136 @@
+﻿@model (List<StockGTO.Models.ArticlePost>, StockGTO.Models.ApplicationUser)
+@{
+    ViewData["Title"] = "會員中心";
+    Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
+    var posts = Model.Item1;
+    var user = Model.Item2;
+}
+
+<div class="container-fluid py-5">
+    <div class="row">
+        <!-- 左側選單 -->
+        <div class="col-md-3">
+            <div class="border rounded p-3 bg-light">
+                <h5 class="fw-bold mb-3">👤 會員功能選單</h5>
+                <ul class="nav flex-column nav-pills" id="memberTab" role="tablist">
+                    <li class="nav-item mb-2">
+                        <a class="nav-link @(ViewBag.ActiveTab == "my-posts" ? "active text-dark fw-bold" : "text-dark")" data-bs-toggle="pill" href="#tab-my-posts" role="tab">📝 我的文章</a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link @(ViewBag.ActiveTab == "settings" ? "active text-dark fw-bold" : "text-dark")" data-bs-toggle="pill" href="#tab-settings" role="tab">⚙️ 帳號設定</a>
+                    </li>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item mb-2">
+                            <a class="nav-link text-dark" href="/KnowledgeArticle/Manage">🔍 文章查詢管理</a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link text-dark" href="/Post/Post">📓 筆記清單</a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link text-dark" href="/Post/Manage">📓 筆記管理</a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link text-dark" href="/IndexNews">📰 9格廣告清單</a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link text-dark" href="/IndexNews/Manage">📰 9格廣告管理</a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link text-dark" href="/NewsArticle/Create">🆕 新聞新增 (開發中)</a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link text-dark" href="/NewsArticle/Manage">🆕 新聞管理 (開發中)</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+        <!-- 右側內容 -->
+        <div class="col-md-9">
+            <div class="tab-content" id="memberTabContent">
+
+                <!-- 我的文章 -->
+                <div class="tab-pane fade show active" id="tab-my-posts" role="tabpanel">
+                    <div class="alert alert-info text-center mb-4">
+                        🎉 歡迎回來，<strong>@(user?.DisplayName ?? "會員")</strong>！這是你的發表文章中心 ✍️
+                    </div>
+                    <div class="mb-3 text-end">
+                        <a href="/KnowledgeArticle/Create" class="btn btn-sm btn-primary">
+                            <i class="fas fa-plus me-1"></i> 新增文章
+                        </a>
+                    </div>
+                    @if (!posts.Any())
+                    {
+                        <div class="text-center text-muted">尚無文章，快來新增一篇吧！</div>
+                    }
+                    else
+                    {
+                        <table class="table table-bordered table-striped text-dark">
+                            <thead class="table-dark text-center">
+                                <tr>
+                                    <th>標題</th>
+                                    <th>分類</th>
+                                    <th>建立時間</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var post in posts)
+                                {
+                                    <tr>
+                                        <td>@post.Title</td>
+                                        <td>@(post.Category?.Name ?? "未分類")</td>
+                                        <td>@post.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                        <td class="text-center">
+                                            <a asp-controller="KnowledgeArticle" asp-action="Details" asp-route-id="@post.Id" class="text-primary">檢視</a>
+                                            @if (User.IsInRole("Admin") || post.UserId == user.Id)
+                                            {
+                                                <span class="text-muted">|</span>
+                                                <a asp-controller="KnowledgeArticle" asp-action="Edit" asp-route-id="@post.Id" class="text-warning">編輯</a>
+                                                <span class="text-muted">|</span>
+                                                <a asp-controller="KnowledgeArticle" asp-action="Delete" asp-route-id="@post.Id" class="text-danger">刪除</a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+
+                <!-- 帳號設定 -->
+                <div class="tab-pane fade" id="tab-settings" role="tabpanel">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="@user.ProfileImage" class="rounded-circle border" width="80" height="80" alt="頭像" />
+                                <div class="ms-3">
+                                    <h4 class="mb-0">@user.DisplayName</h4>
+                                    <div class="text-muted">@user.Email</div>
+                                </div>
+                            </div>
+                            <hr />
+                            <h5>個人備註</h5>
+                            <p>@user.UserNote ?? "尚未設定個人備註。"</p>
+
+                            <h5 class="mt-4">登入方式</h5>
+                            <p class="text-muted">@user.RegisterSource 登入</p>
+
+                            <a href="#" class="btn btn-outline-secondary disabled">✏️ 修改個人資料（尚未實作）</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin 專屬 Tab 區塊（之後可整合） -->
+                @* 這區目前暫留文字，未來可套 SPA tab 模組 *@
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+}

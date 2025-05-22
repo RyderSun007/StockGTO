@@ -1,126 +1,62 @@
 ﻿@model List<StockGTO.Models.ArticlePost>
 @{
-    ViewData["Title"] = "會員中心 - 我的文章";
+    ViewData["Title"] = "我的文章總覽";
     Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
 }
-@using Microsoft.AspNetCore.Identity
-@inject UserManager<ApplicationUser> UserManager
-@{
-    var user = await UserManager.GetUserAsync(User);
-    var displayName = user?.DisplayName ?? user?.UserName ?? "會員";
-}
 
-<div class="container-fluid py-5">
-    <div class="row">
+<div class="container py-5">
+    <h2 class="mb-4">📝 我的文章總覽</h2>
 
-        <!-- Sidebar 左邊選單 -->
-        <div class="col-md-3">
-            <div class="border rounded p-3 bg-light">
-
-                <!-- 📂 分類 -->
-                <h5 class="fw-bold mb-3">📂 分類</h5>
-                <form method="get">
-                    <select class="form-select mb-3" name="categoryId">
-                        <option value="">-- 所有分類 --</option>
-                        @foreach (var cat in ViewBag.Categories)
-                        {
-                            var selected = ViewBag.CategoryId?.ToString() == cat.Id.ToString();
-                            <option value="@cat.Id" selected="@(selected ? "selected" : null)">@cat.Name</option>
-                        }
-                    </select>
-
-                    <!-- 🔃 排序 -->
-                    <h6 class="fw-bold mb-2">🔃 排序</h6>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="radio" name="sort" id="sortName" value="name" checked />
-                        <label class="form-check-label" for="sortName">依標題</label>
-                    </div>
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="radio" name="sort" id="sortDate" value="date" />
-                        <label class="form-check-label" for="sortDate">依建立時間</label>
-                    </div>
-
-                    <!-- 🔠 標題搜尋 -->
-                    <label class="form-label fw-semibold mb-1">🔠 標題搜尋</label>
-                    <input type="text" name="keyword" class="form-control mb-2" placeholder="輸入關鍵字" value="@ViewBag.Keyword" />
-
-                    <button type="submit" style="color: black; background-color: white; border: 1px solid black; width: 100%;">🔍 搜尋我的文章</button>
-                </form>
-
-                <!-- 📁 功能分組 -->
-                <div class="mt-4">
-                    <div class="bg-dark text-white fw-bold p-2 mb-2 rounded">新聞頁面</div>
-                    <ul class="list-unstyled">
-                        <li class="mb-1"><a class="text-dark text-decoration-none" asp-controller="KnowledgeArticle" asp-action="Browse">📰 公開文章瀏覽</a></li>
-                        <li class="mb-1"><a class="text-dark text-decoration-none" asp-controller="KnowledgeArticle" asp-action="Manage">🌐 文章後台管理</a></li>
-                        <li class="mb-1"><a class="text-dark text-decoration-none" asp-controller="KnowledgeArticle" asp-action="Create">✍️ 建立文章</a></li>
-                    </ul>
-
-
-                    <div class="bg-dark text-white fw-bold p-2 mb-2 rounded">首頁九格廣告區</div>
-                    <ul class="list-unstyled">
-                        <li class="mb-1"><a class="text-dark text-decoration-none" asp-controller="IndexNews" asp-action="Index">首頁九格廣告區</a></li>
-                        <li class="mb-1"><a class="text-dark text-decoration-none" asp-controller="IndexNews" asp-action="Manage">首頁九格廣告區管理</a></li>
-                    </ul>
-
-                    <div class="bg-dark text-white fw-bold p-2 mb-2 rounded">筆記本區</div>
-                    <ul class="list-unstyled">
-                        <li class="mb-1"><a class="text-dark text-decoration-none" asp-controller="Post" asp-action="Post">筆記清單</a></li>
-                        <li class="mb-1"><a class="text-dark text-decoration-none" asp-controller="Post" asp-action="Manage">筆記管理</a></li>
-                    </ul>
-
-                    <div class="bg-dark text-white fw-bold p-2 mb-2 rounded">開發中程式</div>
-                    <ul class="list-unstyled">
-                        <li class="mb-1"><a class="text-success text-decoration-none" asp-controller="NewsArticle" asp-action="Create">🧪 News建置（未開發）</a></li>
-                        <li><a class="text-success text-decoration-none" asp-controller="NewsArticle" asp-action="Manage">🧪 News管理（未開發）</a></li>
-                    </ul>
-                </div>
-
-            </div>
+    <!-- 🔍 搜尋表單 -->
+    <form method="get" class="row mb-4">
+        <div class="col-md-4">
+            <input type="text" name="keyword" value="@ViewBag.Keyword" class="form-control" placeholder="輸入關鍵字搜尋..." />
         </div>
-
-        <!-- 主要內容區 -->
-        <div class="col-md-9">
-            <div class="alert alert-info text-center">
-                🎉 歡迎回來，<strong>@displayName</strong>！這裡是你的發表文章中心，請盡情發揮 ✍️
-            </div>
-
-            <h4 class="fw-bold mb-3 text-center">👨‍💻 我的發表文章</h4>
-
-            @if (!Model.Any())
-            {
-                <div class="text-center text-muted">尚無文章，快來新增一篇吧！</div>
-            }
-            else
-            {
-                <table class="table table-bordered table-striped text-dark">
-                    <thead class="table-dark text-center">
-                        <tr>
-                            <th>標題</th>
-                            <th>分類</th>
-                            <th>建立時間</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var post in Model)
-                        {
-                            <tr>
-                                <td>@post.Title</td>
-                                <td>@post.Category?.Name</td>
-                                <td>@post.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
-                                <td class="text-center">
-                                    <a asp-controller="KnowledgeArticle" asp-action="Details" asp-route-id="@post.Id" class="text-primary">檢視</a>
-                                    <span class="text-muted">|</span>
-                                    <a asp-controller="KnowledgeArticle" asp-action="Edit" asp-route-id="@post.Id" class="text-warning">編輯</a>
-                                    <span class="text-muted">|</span>
-                                    <a asp-controller="KnowledgeArticle" asp-action="Delete" asp-route-id="@post.Id" class="text-danger">刪除</a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
+        <div class="col-md-4">
+            <select name="categoryId" class="form-select">
+                <option value="">-- 所有分類 --</option>
+                @foreach (var cat in ViewBag.Categories)
+                {
+                    <option value="@cat.Id" selected="@(ViewBag.CategoryId?.ToString() == cat.Id.ToString() ? "selected" : "")">@cat.Name</option>
+                }
+            </select>
         </div>
-    </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-dark w-100">🔍 搜尋</button>
+        </div>
+    </form>
+
+    <!-- 📝 文章清單 -->
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning">目前沒有符合條件的文章。</div>
+    }
+    else
+    {
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>標題</th>
+                    <th>分類</th>
+                    <th>建立時間</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var post in Model)
+                {
+                    <tr>
+                        <td>@post.Title</td>
+                        <td>@(post.Category?.Name ?? "未分類")</td>
+                        <td>@post.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>
+                            <a asp-controller="KnowledgeArticle" asp-action="Details" asp-route-id="@post.Id" class="text-primary">檢視</a> |
+                            <a asp-controller="KnowledgeArticle" asp-action="Edit" asp-route-id="@post.Id" class="text-warning">編輯</a> |
+                            <a asp-controller="KnowledgeArticle" asp-action="Delete" asp-route-id="@post.Id" class="text-danger">刪除</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 </div>

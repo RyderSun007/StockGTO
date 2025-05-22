@@ -26,7 +26,14 @@ namespace StockGTO.Controllers
         [Authorize]
         public async Task<IActionResult> Manage(string keyword, int? categoryId)
         {
+            var user = await _userManager.GetUserAsync(User);
             var query = _context.ArticlePosts.AsQueryable();
+
+            // ✅ 如果不是 Admin，只能看自己的文章
+            if (!User.IsInRole("Admin"))
+            {
+                query = query.Where(a => a.UserId == user.Id);
+            }
 
             if (!string.IsNullOrWhiteSpace(keyword))
                 query = query.Where(a => a.Title.Contains(keyword));
@@ -46,6 +53,7 @@ namespace StockGTO.Controllers
             return View("Manage", articles);
         }
 
+
         // ✅ 前台公開列表頁
         [AllowAnonymous]
         public async Task<IActionResult> Browse(string keyword, int? categoryId)
@@ -60,7 +68,6 @@ namespace StockGTO.Controllers
 
             var articles = await query
                 .Include(a => a.Category)
-                //.Where(a => a.IsPublished)
                 .OrderByDescending(a => a.CreatedAt)
                 .ToListAsync();
 
@@ -131,78 +138,66 @@ namespace StockGTO.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ArticlePost post)
+        public async Task<IActionResult> Create(ArticlePost post, string keyword, int? categoryId)
         {
             if (ModelState.IsValid)
             {
-                if (post.ImageFile != null && post.ImageFile.Length > 0)
-                {
-                    string uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "aznews", "uploads");
-                    Directory.CreateDirectory(uploadDir);
-
-                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(post.ImageFile.FileName);
-                    string filePath = Path.Combine(uploadDir, fileName);
-
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await post.ImageFile.CopyToAsync(stream);
-                    }
-
-                    post.ImageUrl = "/aznews/uploads/" + fileName;
-                }
-                else if (string.IsNullOrWhiteSpace(post.ImageUrl))
-                {
-                    post.ImageUrl = "/images/default.jpg";
-                }
-
-                var user = await _userManager.GetUserAsync(User);
-                post.Author = user?.DisplayName ?? "未命名";
-                post.UserId = user?.Id;
-                post.CreatedAt = DateTime.Now;
-
                 _context.ArticlePosts.Add(post);
                 await _context.SaveChangesAsync();
-
-                return RedirectToAction("Manage");
+                return RedirectToAction("Manage", new { keyword, categoryId });
             }
 
-            ViewBag.Categories = _context.Categories
-                .Where(c => c.IsActive)
-                .OrderBy(c => c.Name)
-                .ToList();
-
+            ViewBag.Categories = _context.Categories.Where(c => c.IsActive).ToList();
             return View(post);
         }
 
-        [Authorize]
-        [HttpGet]
-        public IActionResult Edit(int id)
-        {
-            var article = _context.ArticlePosts.FirstOrDefault(a => a.Id == id);
-            if (article == null)
-                return NotFound();
 
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var post = await _context.ArticlePosts
+                .Include(p => p.Category)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (post == null) return NotFound();
+
+            if (post.UserId != user.Id && !User.IsInRole("Admin"))
+            {
+                return Forbid();
+            }
             ViewBag.CategoryList = _context.Categories.Where(c => c.IsActive).ToList();
-            return View(article);
+        
+            return View(post);
         }
 
         [HttpPost]
-        [Authorize]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, ArticlePost post)
         {
-            if (id != post.Id) return NotFound();
+            var user = await _userManager.GetUserAsync(User);
+            var existing = await _context.ArticlePosts.FirstOrDefaultAsync(a => a.Id == id);
+
+            if (existing == null) return NotFound();
+
+            if (existing.UserId != user.Id && !User.IsInRole("Admin"))
+            {
+                return Forbid();
+            }
 
             if (ModelState.IsValid)
             {
-                var existing = _context.ArticlePosts.FirstOrDefault(a => a.Id == id);
-                if (existing == null) return NotFound();
+                existing.Title = post.Title;
+                existing.Content = post.Content;
+                existing.CategoryId = post.CategoryId;
 
+                // ✅ 無論有沒有選圖，都保留或更新圖片網址
                 if (post.ImageFile != null && post.ImageFile.Length > 0)
                 {
-                    string uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "aznews", "uploads");
+                    string uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "aznews", "assets", "img", "posts");
                     Directory.CreateDirectory(uploadDir);
-
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(post.ImageFile.FileName);
                     string filePath = Path.Combine(uploadDir, fileName);
 
@@ -211,51 +206,63 @@ namespace StockGTO.Controllers
                         await post.ImageFile.CopyToAsync(stream);
                     }
 
-                    existing.ImageUrl = "/aznews/uploads/" + fileName;
-                }
-                else if (!string.IsNullOrWhiteSpace(post.ImageUrl))
-                {
-                    existing.ImageUrl = post.ImageUrl;
+                    existing.ImageUrl = "/aznews/assets/img/posts/" + fileName;
                 }
                 else
                 {
-                    existing.ImageUrl = "/images/default.jpg";
+                    // ✅ 沒選圖就保留原來網址（表單要有 <input type="hidden" asp-for="ImageUrl" />）
+                    existing.ImageUrl = post.ImageUrl;
                 }
 
-                existing.Title = post.Title;
-                existing.Content = post.Content;
-                existing.Author = post.Author;
-                existing.IsPinned = post.IsPinned;
-                existing.CategoryId = post.CategoryId;
-
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Details", new { id = post.Id });
+                return RedirectToAction("MemberCenter", "Member");
             }
 
+            // ⛑ 防止 ViewBag null 錯誤
             ViewBag.CategoryList = _context.Categories.Where(c => c.IsActive).ToList();
             return View(post);
         }
 
+
+
         [Authorize]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var post = _context.ArticlePosts.FirstOrDefault(p => p.Id == id);
+            var post = await _context.ArticlePosts
+                .Include(p => p.Category)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
             if (post == null) return NotFound();
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if (post.UserId != user.Id && !User.IsInRole("Admin"))
+            {
+                return Forbid();
+            }
+
             return View(post);
         }
 
-        [HttpPost]
-        [Authorize]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        [Authorize]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var post = _context.ArticlePosts.Find(id);
-            if (post != null)
+            var post = await _context.ArticlePosts.FindAsync(id);
+            if (post == null) return NotFound();
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if (post.UserId != user.Id && !User.IsInRole("Admin"))
             {
-                _context.ArticlePosts.Remove(post);
-                _context.SaveChanges();
+                return Forbid();
             }
-            return RedirectToAction("Manage");
+
+            _context.ArticlePosts.Remove(post);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("MemberCenter", "Member");
         }
     }
 }

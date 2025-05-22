@@ -1,16 +1,16 @@
 ﻿@model StockGTO.Models.ArticlePost
 
 @{
-    ViewData["Title"] = "編輯股票知識文章";
+    ViewData["Title"] = "編輯文章";
     Layout = "~/Views/Shared/_AzNewsLayout.cshtml";
 }
 
 <main class="container pt-5">
-    <h2 class="fw-bold mb-4">✏️ 編輯股票知識文章</h2>
+    <h2 class="fw-bold mb-4">✏️ 編輯文章(重新編輯需上傳原圖片)</h2>
 
     <form asp-action="Edit" method="post" enctype="multipart/form-data" class="border p-4 bg-light rounded">
         <input type="hidden" asp-for="Id" />
-
+        <input type="hidden" asp-for="ImageUrl" /> <!-- ✅ 加這行保留圖片網址 -->
         <!-- 標題 -->
         <div class="mb-3">
             <label asp-for="Title" class="form-label">文章標題</label>
@@ -31,7 +31,7 @@
 
         <!-- 上傳圖片 -->
         <div class="mb-3">
-            <label class="form-label">或上傳新圖片</label>
+            <label class="form-label">或上傳新圖片(重新編輯需上傳原圖片)</label>
             <input type="file" name="ImageFile" class="form-control" />
             @if (!string.IsNullOrEmpty(Model.ImageUrl))
             {
@@ -41,7 +41,7 @@
             }
         </div>
 
-        <!-- 分類選擇 -->
+        <!-- 分類 -->
         <div class="mb-3" style="max-width: 500px;">
             <label asp-for="CategoryId" class="form-label">分類</label>
             <select asp-for="CategoryId" class="form-select">

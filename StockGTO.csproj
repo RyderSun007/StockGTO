@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\ArticlePostController.cs" />
     <Compile Remove="Controllers\EmployeeController.cs" />
     <Compile Remove="Controllers\OldSunStockController.cs" />
     <Compile Remove="Models\Employee.cs" />

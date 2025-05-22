@@ -59,7 +59,68 @@ namespace StockGTO.Controllers
             ViewBag.CategoryId = categoryId;
 
             return View(articles);
+
+
+
         }
 
+
+        // /Member/MyPosts
+        [Authorize]
+        public async Task<IActionResult> MyPosts()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var posts = await _context.ArticlePosts
+                .Include(a => a.Category)
+                .Where(a => a.UserId == user.Id)
+                .OrderByDescending(a => a.CreatedAt)
+                .ToListAsync();
+
+            return View(posts);
+        }
+
+        // /Member/Favorites
+        public IActionResult Favorites()
+        {
+            var demoList = new List<ArticlePost>
+    {
+        new ArticlePost
+        {
+            Id = 1,
+            Title = "台股技術面全解析",
+            CreatedAt = DateTime.Now.AddDays(-2),
+            Category = new Category { Name = "台股" }
+        },
+        new ArticlePost
+        {
+            Id = 2,
+            Title = "美股財報週預測",
+            CreatedAt = DateTime.Now.AddDays(-5),
+            Category = new Category { Name = "美股" }
+        }
+    };
+
+            return View(demoList);
+        }
+
+        // /Member/Settings
+        public async Task<IActionResult> Settings()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return View(user);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> MemberCenter()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var posts = await _context.ArticlePosts
+                .Include(a => a.Category)
+                .Where(a => a.UserId == user.Id)
+                .OrderByDescending(a => a.CreatedAt)
+                .ToListAsync();
+
+            return View("MemberCenter", (posts, user));
+        }
     }
 }

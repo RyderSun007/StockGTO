@@ -40,47 +40,86 @@
 </head>
 
 <body>
-    <header class="bg-white border-bottom sticky-top">
+    <header class="bg-white border-bottom sticky-top shadow-sm">
         <div class="container">
             <nav class="navbar navbar-expand-lg navbar-light">
                 <!-- Logo -->
                 <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
                     <img src="~/aznews/assets/img/logo/logo.png" style="width: 150px;" alt="StockGTO" />
                 </a>
-             
-                <!-- 漢堡選單 -->
+
+                <!-- 漢堡按鈕（RWD） -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
+                <!-- 導覽內容 -->
                 <div class="collapse navbar-collapse" id="navbarContent">
-                    <!-- 左側選單 -->
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <!-- 🔗 文章總覽 -->
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="KnowledgeArticle" asp-action="Browse">📚 文章總覽</a>
-                        </li>
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
 
-                        <!-- 🔽 分類下拉 -->
+                        <!-- 主分類：市場行情 -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="newsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                📰 分類
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="newsDropdown">
-                                <li><a class="dropdown-item" asp-controller="KnowledgeArticle" asp-action="PublicList" asp-route-category="台股">台股</a></li>
-                                <li><a class="dropdown-item" asp-controller="KnowledgeArticle" asp-action="PublicList" asp-route-category="美股">美股</a></li>
-                                <li><a class="dropdown-item" asp-controller="KnowledgeArticle" asp-action="PublicList" asp-route-category="ETF">ETF</a></li>
-                                <li><a class="dropdown-item" asp-controller="KnowledgeArticle" asp-action="PublicList" asp-route-category="Python">Python</a></li>
+                            <a class="nav-link dropdown-toggle" href="#" id="marketDropdown" data-bs-toggle="dropdown">市場行情</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse?category=FinancialStatements">財報分析</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">熱門</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">外匯</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">商品</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">股票</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">指數</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">加密</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">ETFs</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">債券</a></li>
                             </ul>
                         </li>
 
-                        <!-- 🔗 關於我們 -->
+                        <!-- 主分類：快訊 -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="newsDropdown" data-bs-toggle="dropdown">快訊</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">全部</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">外匯</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">商品</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">股票</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">指數</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">加密貨幣</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">技術分析</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">財經指標</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- 主分類：頭條 -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="headlineDropdown" data-bs-toggle="dropdown">News</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">外匯</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">商品</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">股票</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">指數</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">加密</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">ETFs</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">債券</a></li>
+                            </ul>
+                        </li>
+                        <!-- 主分類：投資學習 -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="headlineDropdown" data-bs-toggle="dropdown">投資學習</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">初學入門</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">技術面</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">財報面 </a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">籌碼面 </a></li>
+                            </ul>
+                        </li>
+                        
+
+                        <!-- 關於我們 -->
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="About">📖 關於我們</a>
+                            <a class="nav-link" asp-controller="Home" asp-action="About">About</a>
                         </li>
                     </ul>
 
-                    <!-- 右側使用者登入狀態區 -->
+                    <!-- 右側登入狀態 -->
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         @if (SignInManager.IsSignedIn(User))
                         {
@@ -90,15 +129,15 @@
                             : "/images/default-profile.png";
 
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img src="@imgSrc" class="rounded-circle me-2 border" width="32" height="32" alt="頭像" />
+                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                    <img src="@imgSrc" class="rounded-circle me-2 border" width="30" height="30" />
                                     <span>@currentUser.DisplayName</span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                    <li><a class="dropdown-item" href="/Member/Profile">👤 會員中心</a></li>
-                                    <li><a class="dropdown-item" href="/Member/MyPosts">📝 我的文章</a></li>
+                                    <li><a class="dropdown-item" href="/Member/MemberCenter">👤 會員中心</a></li>
+                                    <li><a class="dropdown-item" href="/KnowledgeArticle/Manage">🗂 我的文章</a></li>
                                     <li><a class="dropdown-item" href="/Member/Favorites">⭐ 我的收藏</a></li>
-                                    <li><a class="dropdown-item" href="/Member/Settings">⚙️ 帳號設定</a></li>
+                                    <li><a class="dropdown-item" href="/Member/MemberCenter#settings">⚙️ 帳號設定</a></li>
                                     <li><hr class="dropdown-divider" /></li>
                                     <li><a class="dropdown-item text-danger" href="/Logout">🚪 登出</a></li>
                                 </ul>
@@ -107,22 +146,18 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-danger d-flex align-items-center" href="/LoginWithGoogle">
+                                <a class="nav-link text-danger" href="/LoginWithGoogle">
                                     <i class="fab fa-google me-1"></i> 使用 Google 登入
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-primary d-flex align-items-center" href="/LoginWithFacebook">
-                                    <i class="fab fa-facebook me-1"></i> Facebook 登入（未開發）
-                                </a>
-                            </li>
+                            
                         }
                     </ul>
                 </div>
-
             </nav>
         </div>
     </header>
+
 
 
 
@@ -153,8 +188,7 @@
                     <ul class="list-unstyled">
                         <li><a href="/">首頁</a></li>
                         <li><a href="/Home/About">關於我們</a></li>
-                        <li><a href="/Post/Post">投資文章</a></li>
-                        <li><a href="/Member/Profile" class="text-green">會員中心</a></li>
+                                  
                     </ul>
                 </div>
 
@@ -192,7 +226,6 @@
 
 
     <script src="~/aznews/assets/js/vendor/modernizr-3.5.0.min.js" asp-append-version="true"></script>
-    <script src="~/aznews/assets/js/vendor/jquery-1.12.4.min.js" asp-append-version="true"></script>
    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="~/aznews/assets/js/owl.carousel.min.js" asp-append-version="true"></script>
@@ -205,7 +238,6 @@
     <script src="~/aznews/assets/js/waypoints.min.js" asp-append-version="true"></script>
     <script src="~/aznews/assets/js/main.js" asp-append-version="true"></script>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

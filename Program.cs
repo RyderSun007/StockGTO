@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using StockGTO.Data;
 using StockGTO.Hubs;
 using DotNetEnv;
+using StockGTO.Models;
 
 namespace StockGTO
 {
@@ -88,6 +89,14 @@ namespace StockGTO
 
             var app = builder.Build();
 
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                SeedRoles.InitializeAsync(services).GetAwaiter().GetResult(); // 🪛 用同步呼叫 await
+            }
+
+
             // =======================
             // 中介層 Pipeline 設定區
             // =======================
@@ -110,6 +119,11 @@ namespace StockGTO
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+            // 🔥 額外手動註冊 /Logout → 對應 AccountController.Logout()
+            app.MapControllerRoute(
+                name: "logout",
+                pattern: "Logout",
+                defaults: new { controller = "Account", action = "Logout" });
 
             app.MapHub<ArticleHub>("/ArticleHub");
 
