@@ -13,28 +13,41 @@
 <main class="container pt-5">
     <h2 class="fw-bold mb-4">📝 新增文章</h2>
 
+    <!-- 顯示作者名稱 -->
     <div class="mb-3 text-muted">
         👤 目前作者：<strong>@authorName</strong>
     </div>
 
     <form asp-action="Create" method="post" enctype="multipart/form-data" class="border p-4 bg-light rounded">
+        <!-- 🛠 傳遞作者資訊 -->
         <input type="hidden" asp-for="Author" value="@authorName" />
 
+        <!-- 標題 -->
         <div class="mb-3">
             <label asp-for="Title" class="form-label">文章標題</label>
             <input asp-for="Title" class="form-control" />
         </div>
 
+        <!-- 圖片網址（readonly 顯示 + hidden 保留） -->
+        <input type="hidden" asp-for="ImageUrl" />
         <div class="mb-3">
-            <label asp-for="ImageUrl" class="form-label">圖片網址（可選）</label>
-            <input asp-for="ImageUrl" class="form-control" placeholder="可不填，會使用預設圖片或上傳圖片" />
+            <label class="form-label">目前圖片網址（系統會自動處理）</label>
+            <input class="form-control" value="@Model.ImageUrl" readonly />
         </div>
 
+        <!-- 圖片上傳 -->
         <div class="mb-3">
-            <label class="form-label">或選擇上傳圖片</label>
+            <label class="form-label">或上傳圖片</label>
             <input type="file" name="ImageFile" class="form-control" />
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <div class="mt-2">
+                    <img src="@Model.ImageUrl" alt="圖片預覽" class="img-thumbnail" style="max-height:150px;" />
+                </div>
+            }
         </div>
 
+        <!-- 分類 -->
         <div class="mb-3" style="max-width: 500px;">
             <label asp-for="Category" class="form-label">分類</label>
             <select asp-for="CategoryId" class="form-select">
@@ -48,13 +61,13 @@
             </select>
         </div>
 
-        <div class="w-100"></div>
-
+        <!-- 內容 -->
         <div class="mb-3" style="max-width: 800px;">
             <label asp-for="Content" class="form-label">文章內容</label>
-            <textarea asp-for="Content" class="form-control" id="summernote" rows="8" style="max-width: 100%;"></textarea>
+            <textarea asp-for="Content" class="form-control" id="summernote" rows="8"></textarea>
         </div>
 
+        <!-- 置頂 -->
         <div class="form-check mb-3">
             <input asp-for="IsPinned" class="form-check-input" />
             <label asp-for="IsPinned" class="form-check-label">置頂顯示（首頁精選）</label>

@@ -53,6 +53,8 @@
                                 <h5 class="card-title">@article.Title</h5>
                             </a>
                             <p class="card-text text-muted">@article.CreatedAt.ToString("yyyy-MM-dd") · @article.Category?.Name</p>
+                            <p class="card-text text-muted">作者：@article.User?.DisplayName ?? article.Author</p>
+
                         </div>
                     </div>
                 </div>

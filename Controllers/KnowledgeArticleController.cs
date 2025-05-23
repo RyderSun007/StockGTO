@@ -43,6 +43,8 @@ namespace StockGTO.Controllers
 
             var articles = await query
                 .Include(a => a.Category)
+                 .Include(a => a.User)
+
                 .OrderByDescending(a => a.CreatedAt)
                 .ToListAsync();
 
@@ -67,6 +69,7 @@ namespace StockGTO.Controllers
                 query = query.Where(a => a.CategoryId == categoryId);
 
             var articles = await query
+                 .Include(a => a.User)
                 .Include(a => a.Category)
                 .OrderByDescending(a => a.CreatedAt)
                 .ToListAsync();
@@ -81,8 +84,9 @@ namespace StockGTO.Controllers
         public IActionResult Details(int id)
         {
             var article = _context.ArticlePosts
-                .Include(a => a.Category)
-                .FirstOrDefault(a => a.Id == id);
+        .Include(a => a.Category)
+        .Include(a => a.User) // 帶出作者
+        .FirstOrDefault(a => a.Id == id);
 
             if (article == null)
                 return NotFound();
@@ -99,6 +103,14 @@ namespace StockGTO.Controllers
                 .Where(a => a.CategoryId == article.CategoryId && a.Id > article.Id)
                 .OrderBy(a => a.Id)
                 .FirstOrDefault();
+
+            // ✅ 加上相關文章邏輯（最多4篇，同分類，排除自己）
+            ViewBag.RelatedArticles = _context.ArticlePosts
+                .Include(a => a.User) // ✅ 帶出作者
+                .Where(a => a.CategoryId == article.CategoryId && a.Id != article.Id)
+                .OrderByDescending(a => a.CreatedAt)
+                .Take(4)
+                .ToList();
 
             return View(article);
         }
@@ -138,18 +150,46 @@ namespace StockGTO.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ArticlePost post, string keyword, int? categoryId)
+        public async Task<IActionResult> Create(ArticlePost post, IFormFile? ImageFile)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.ArticlePosts.Add(post);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Manage", new { keyword, categoryId });
+                ViewBag.Categories = _context.Categories.Where(c => c.IsActive).ToList();
+                return View(post);
             }
 
-            ViewBag.Categories = _context.Categories.Where(c => c.IsActive).ToList();
-            return View(post);
+            // 加上目前使用者 ID
+            var user = await _userManager.GetUserAsync(User);
+            post.UserId = user.Id;
+            post.CreatedAt = DateTime.Now;
+
+            // 處理圖片上傳
+            if (ImageFile != null && ImageFile.Length > 0)
+            {
+                string uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "aznews", "assets", "img", "posts");
+                Directory.CreateDirectory(uploadDir);
+                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(ImageFile.FileName);
+                string filePath = Path.Combine(uploadDir, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await ImageFile.CopyToAsync(stream);
+                }
+
+                post.ImageUrl = "/aznews/assets/img/posts/" + fileName;
+            }
+            else if (string.IsNullOrEmpty(post.ImageUrl))
+            {
+                // 如果沒填網址也沒上傳檔案，給預設圖
+                post.ImageUrl = "/images/default.jpg";
+            }
+
+            _context.ArticlePosts.Add(post);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Manage");
         }
+
 
 
         [HttpGet]

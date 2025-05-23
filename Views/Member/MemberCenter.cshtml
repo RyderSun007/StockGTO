@@ -22,27 +22,13 @@
 
                     @if (User.IsInRole("Admin"))
                     {
-                        <li class="nav-item mb-2">
-                            <a class="nav-link text-dark" href="/KnowledgeArticle/Manage">🔍 文章查詢管理</a>
-                        </li>
-                        <li class="nav-item mb-2">
-                            <a class="nav-link text-dark" href="/Post/Post">📓 筆記清單</a>
-                        </li>
-                        <li class="nav-item mb-2">
-                            <a class="nav-link text-dark" href="/Post/Manage">📓 筆記管理</a>
-                        </li>
-                        <li class="nav-item mb-2">
-                            <a class="nav-link text-dark" href="/IndexNews">📰 9格廣告清單</a>
-                        </li>
-                        <li class="nav-item mb-2">
-                            <a class="nav-link text-dark" href="/IndexNews/Manage">📰 9格廣告管理</a>
-                        </li>
-                        <li class="nav-item mb-2">
-                            <a class="nav-link text-dark" href="/NewsArticle/Create">🆕 新聞新增 (開發中)</a>
-                        </li>
-                        <li class="nav-item mb-2">
-                            <a class="nav-link text-dark" href="/NewsArticle/Manage">🆕 新聞管理 (開發中)</a>
-                        </li>
+                        <li class="nav-item mb-2"><a class="nav-link text-dark" href="/KnowledgeArticle/Manage">🔍 文章查詢管理</a></li>
+                        <li class="nav-item mb-2"><a class="nav-link text-dark" href="/Post/Post">📓 筆記清單</a></li>
+                        <li class="nav-item mb-2"><a class="nav-link text-dark" href="/Post/Manage">📓 筆記管理</a></li>
+                        <li class="nav-item mb-2"><a class="nav-link text-dark" href="/IndexNews">📰 9格廣告清單</a></li>
+                        <li class="nav-item mb-2"><a class="nav-link text-dark" href="/IndexNews/Manage">📰 9格廣告管理</a></li>
+                        <li class="nav-item mb-2"><a class="nav-link text-dark" href="/NewsArticle/Create">🆕 新聞新增 (開發中)</a></li>
+                        <li class="nav-item mb-2"><a class="nav-link text-dark" href="/NewsArticle/Manage">🆕 新聞管理 (開發中)</a></li>
                     }
                 </ul>
             </div>
@@ -51,7 +37,6 @@
         <!-- 右側內容 -->
         <div class="col-md-9">
             <div class="tab-content" id="memberTabContent">
-
                 <!-- 我的文章 -->
                 <div class="tab-pane fade show active" id="tab-my-posts" role="tabpanel">
                     <div class="alert alert-info text-center mb-4">
@@ -124,13 +109,14 @@
                     </div>
                 </div>
 
-                <!-- Admin 專屬 Tab 區塊（之後可整合） -->
-                @* 這區目前暫留文字，未來可套 SPA tab 模組 *@
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- ⚠️ 不再載入 Bootstrap，避免 dropdown 壞掉 -->
+    <script>
+        // 如果要加會員中心的其他互動功能可以寫在這裡
+    </script>
 }

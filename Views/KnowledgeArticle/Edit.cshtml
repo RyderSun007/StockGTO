@@ -6,11 +6,11 @@
 }
 
 <main class="container pt-5">
-    <h2 class="fw-bold mb-4">✏️ 編輯文章(重新編輯需上傳原圖片)</h2>
+    <h2 class="fw-bold mb-4">✏️ 編輯文章 (請重新上傳原圖片)</h2>
 
     <form asp-action="Edit" method="post" enctype="multipart/form-data" class="border p-4 bg-light rounded">
         <input type="hidden" asp-for="Id" />
-        <input type="hidden" asp-for="ImageUrl" /> <!-- ✅ 加這行保留圖片網址 -->
+        <input type="hidden" asp-for="ImageUrl" /> <!-- ✅ 保留圖片網址給後端 -->
         <!-- 標題 -->
         <div class="mb-3">
             <label asp-for="Title" class="form-label">文章標題</label>
@@ -23,15 +23,15 @@
             <input asp-for="Author" class="form-control" readonly />
         </div>
 
-        <!-- 圖片網址 -->
+        <!-- 圖片網址（唯讀顯示） -->
         <div class="mb-3">
-            <label asp-for="ImageUrl" class="form-label">圖片網址（可選）</label>
-            <input asp-for="ImageUrl" class="form-control" />
+            <label class="form-label">目前圖片網址（系統自動處理）</label>
+            <input class="form-control" value="@Model.ImageUrl" readonly />
         </div>
 
         <!-- 上傳圖片 -->
         <div class="mb-3">
-            <label class="form-label">或上傳新圖片(重新編輯需上傳原圖片)</label>
+            <label class="form-label">或上傳新圖片（請重新上傳原圖）</label>
             <input type="file" name="ImageFile" class="form-control" />
             @if (!string.IsNullOrEmpty(Model.ImageUrl))
             {

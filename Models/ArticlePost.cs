@@ -39,6 +39,8 @@ namespace StockGTO.Models
         // ✅ 加入會員帳號欄位（UserId 為 AspNetUsers.Id）
         public string? UserId { get; set; }  // 會員關聯
 
+        [ForeignKey("UserId")]
+        public ApplicationUser? User { get; set; }  // ✅ EF Core 會自動連到 AspNetUsers
 
 
 

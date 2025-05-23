@@ -9,7 +9,10 @@
     <h2 class="fw-bold mb-4">📘 @Model.Title</h2>
 
     <div class="mb-4">
-        <p class="text-muted">作者：@Model.Author　發布時間：@Model.CreatedAt.ToString("yyyy-MM-dd")</p>
+        <p class="text-muted">
+            作者：@(Model.User != null ? Model.User.DisplayName : Model.Author) ｜ 發佈時間：@Model.CreatedAt.ToString("yyyy-MM-dd")
+
+        </p>
         <div class="mb-3">
             <img src="@Model.ImageUrl" alt="文章圖片" class="img-fluid" style="max-height: 300px;">
         </div>
@@ -19,17 +22,17 @@
     </div>
 
     <!-- 🔁 上一篇 / 下一篇 -->
-    <div class="d-flex justify-content-between mb-4">
-        <div>
+    <div class="d-flex justify-content-between mb-4 border-top border-bottom py-3">
+        <div class="text-start">
             @if (ViewBag.PreviousArticle != null)
             {
-                <a href="/KnowledgeArticle/Details/@ViewBag.PreviousArticle.Id" class="btn btn-outline-secondary">← 上一篇：@ViewBag.PreviousArticle.Title</a>
+                <a href="/KnowledgeArticle/Details/@ViewBag.PreviousArticle.Id" class="text-decoration-none text-dark fw-bold">← 上一篇</a>
             }
         </div>
-        <div>
+        <div class="text-end">
             @if (ViewBag.NextArticle != null)
             {
-                <a href="/KnowledgeArticle/Details/@ViewBag.NextArticle.Id" class="btn btn-outline-secondary">下一篇：@ViewBag.NextArticle.Title →</a>
+                <a href="/KnowledgeArticle/Details/@ViewBag.NextArticle.Id" class="text-decoration-none text-dark fw-bold">下一篇 →</a>
             }
         </div>
     </div>
@@ -77,4 +80,26 @@
             </div>
         }
     </div>
+
+    <!-- 📚 相關文章區塊 Start -->
+    <h4 class="fw-bold mt-5 mb-3">相關文章</h4>
+    <div class="row row-cols-1 row-cols-md-2 g-3">
+        @foreach (var related in ViewBag.RelatedArticles as List<StockGTO.Models.ArticlePost>)
+        {
+            <div class="col">
+                <a href="/KnowledgeArticle/Details/@related.Id" class="text-decoration-none text-dark">
+                    <div class="d-flex border rounded p-2 hover-shadow">
+                        <img src="@related.ImageUrl" alt="文章圖片" style="width: 100px; height: 70px; object-fit: cover; border-radius: 4px;" />
+                        <div class="ms-3">
+                            <h6 class="fw-semibold mb-1">@related.Title</h6>
+                            <small class="text-muted">
+                                @related.User?.DisplayName ?? related.Author ｜ @related.CreatedAt.ToString("yyyy-MM-dd")
+                            </small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+    <!-- 📚 相關文章區塊 End -->
 </main>

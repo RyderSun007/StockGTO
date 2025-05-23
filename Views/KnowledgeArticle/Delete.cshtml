@@ -8,9 +8,10 @@
     <h2 class="text-danger">⚠️ 確定要刪除這篇文章？</h2>
     <p><strong>@Model.Title</strong></p>
 
-    <form asp-action="DeleteConfirmed" method="post">
-        <input type="hidden" asp-for="Id" />
+    <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+        @Html.AntiForgeryToken()
         <button type="submit" class="btn btn-danger">🗑️ 確定刪除</button>
-        <a asp-action="Index" class="btn btn-secondary ms-2">取消</a>
+
     </form>
+    
 </main>
