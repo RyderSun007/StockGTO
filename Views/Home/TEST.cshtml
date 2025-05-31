@@ -1,0 +1,22 @@
+﻿<!-- Hover 卡片區塊 -->
+<div class="vue-cards-section">
+    <h1 class="title">Hover over the cards</h1>
+    <div id="app" class="vue-card-container">
+        <card :dataImage="'https://stockgto.com/aznews/uploads/bdfef62c-6c6d-4771-b50a-cccc3ceff239.jpg'">
+            <h1 slot="header">投資思維</h1>
+            <p slot="content">穩健是勝利的起點。</p>
+        </card>
+        <card :dataImage="'https://stockgto.com/aznews/uploads/bdfef62c-6c6d-4771-b50a-cccc3ceff239.jpg'">
+            <h1 slot="header">風險控管</h1>
+            <p slot="content">止損不是失敗，是自保。</p>
+        </card>
+        <card :dataImage="'https://stockgto.com/aznews/uploads/bdfef62c-6c6d-4771-b50a-cccc3ceff239.jpg'">
+            <h1 slot="header">趨勢交易</h1>
+            <p slot="content">跟著大勢，才不孤軍奮戰。</p>
+        </card>
+    </div>
+</div>
+
+<!-- Vue 套件 + Hover JS -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+<script src="~/js/hover-card.js" asp-append-version="true"></script>

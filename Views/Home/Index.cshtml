@@ -18,6 +18,51 @@
     var random = new Random();
     var shuffledArticles = Model.ArticlePosts.OrderBy(x => random.Next()).Take(6).ToList();
 }
+<div class="text-center my-5">
+    <h1 class="fw-bold display-5 mb-3">Market Leaders at a Glance</h1>
+    <p class="text-muted fs-5 mb-2">Smart Stock Selection for Strategic Investors</p>
+    <p class="text-secondary fs-6 mb-1">Stay ahead with curated picks from leading markets.</p>
+    <p class="text-secondary fs-6">Handpicked stocks to sharpen your edge.</p>
+</div>
+
+<div id="app">
+    <div class="vue-cards-section">
+        
+        <div class="vue-card-container">
+
+            <a href="/" class="card-link">
+                <card data-image="/aznews/assets/img/stock01.JPG">
+                    <h1 slot="header">台積電 TSMC</h1>
+                    <p slot="content">半導體護國神山</p>
+                </card>
+            </a>
+
+            <a href="/" class="card-link">
+                <card data-image="/aznews/assets/img/stock02.JPG">
+                    <h1 slot="header">鴻海 Hon Hai</h1>
+                    <p slot="content">電子製造霸主</p>
+                </card>
+            </a>
+
+            <a href="/" class="card-link">
+                <card data-image="/aznews/assets/img/stock03.JPG">
+                    <h1 slot="header">聯發科 MediaTek</h1>
+                    <p slot="content">IC 設計的巨人</p>
+                </card>
+            </a>
+
+            <a href="/" class="card-link">
+                <card data-image="/aznews/assets/img/stock04.JPG">
+                    <h1 slot="header">玉山金 E.Sun</h1>
+                    <p slot="content">金融穩健代表</p>
+                </card>
+            </a>
+
+        </div>
+    </div>
+</div>
+
+
 
 
 
@@ -113,6 +158,13 @@
     </div> <!-- .container -->
 </div>
 <!-- 🌟【首頁熱門區塊 Trending Area】End -->
+
+
+
+
+
+
+
 <!-- 🔥 熱門文章排行輪播區塊 Start -->
 
 <div class="weekly-news-area pt-50">
@@ -205,327 +257,6 @@
 
 
 
-
-<!-- ✅ 推播區建議 class 命名統一為 signalr-articles-wrapper + signalr-articles -->
-<section class="signalr-articles-wrapper">
-    <div class="container">
-        <div class="section-tittle mb-30">
-            <h3><i class="fa fa-bolt"></i> WebSocket推播最新文章</h3>
-        </div>
-        <div class="row signalr-articles gy-4">
-            <!-- SignalR 插入文章卡片 -->
-        </div>
-    </div>
-</section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- 右側快訊與 Follow Us 保留 -->
-<!-- 🌟 改版：熱門新聞區塊 Start -->
-<section class="whats-news-area pt-50 pb-20">
-    <div class="container">
-        <div class="row">
-            <!-- 左側新聞內容 -->
-            <div class="col-lg-8">
-                <div class="row d-flex justify-content-between">
-                    <div class="col-lg-3 col-md-3">
-                        <div class="section-tittle mb-30">
-                            <h3>熱門新聞</h3>
-                        </div>
-                    </div>
-                    <div class="col-lg-9 col-md-9">
-                        <div class="properties__button">
-                            <!-- ✅ 改名的 Nav Tabs -->
-                            <nav>
-                                <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">台股</a>
-                                    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">美股</a>
-                                    <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">港股</a>
-                                    <a class="nav-item nav-link" id="nav-last-tab" data-toggle="tab" href="#nav-last" role="tab" aria-controls="nav-last" aria-selected="false">外匯</a>
-                                    <a class="nav-item nav-link" id="nav-Sports" data-toggle="tab" href="#nav-fund" role="tab" aria-controls="nav-fund" aria-selected="false">基金</a>
-                                    <a class="nav-item nav-link" id="nav-technology" data-toggle="tab" href="#nav-realestate" role="tab" aria-controls="nav-realestate" aria-selected="false">房地產</a>
-                                </div>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ✅ Tab 區塊內容（保留原有結構即可） -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="tab-content" id="nav-tabContent">
-                            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                                <div class="whats-news-caption">
-                                    <div class="row" id="dynamic-news-area">
-                                        <!-- 對應分類代碼：TaiwanMarket 的資料插入區 -->
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- 其他 tab-pane 保留結構不動，只需改 href / id 名稱與註解 -->
-                            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                                <!-- 分類代碼：USMarket -->
-                            </div>
-                            <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-                                <!-- 分類代碼：HKMarket -->
-                            </div>
-                            <div class="tab-pane fade" id="nav-last" role="tabpanel" aria-labelledby="nav-last-tab">
-                                <!-- 分類代碼：Forex -->
-                            </div>
-                            <div class="tab-pane fade" id="nav-fund" role="tabpanel" aria-labelledby="nav-Sports">
-                                <!-- 分類代碼：Fund -->
-                            </div>
-                            <div class="tab-pane fade" id="nav-realestate" role="tabpanel" aria-labelledby="nav-technology">
-                                <!-- 分類代碼：RealEstate -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 右側快訊與 Follow Us 保留 -->
-            <!-- 右側快訊與 Follow Us 保留 -->
-            <div class="col-lg-4">
-
-                <!-- 🔥 熱門快訊區塊 -->
-                <div class="hot-news-container p-3 shadow-sm rounded bg-white mb-4">
-                    <h5 class="mb-3 fw-bold text-danger">
-                        🔥 熱門快訊 (Python)
-                    </h5>
-                    <div id="hot-news-box">
-                        <!-- JS 動態載入 JSON 資料 -->
-                    </div>
-                </div>
-
-                <!-- 🌐 Follow Us 區塊 -->
-                <div class="section-tittle mb-40">
-                    <h2>Follow Us</h2>
-                </div>
-
-                <div class="single-follow mb-45">
-                    <div class="single-box">
-                        <div class="follow-us d-flex align-items-center mb-2">
-                            <div class="follow-social me-2">
-                                <a href="#"><img src="~/aznews/assets/img/news/icon-fb.png" asp-append-version="true" alt="Facebook" /></a>
-                            </div>
-                            <div class="follow-count">
-                                <span>8,045</span>
-                                <p>Fans</p>
-                            </div>
-                        </div>
-
-                        <div class="follow-us d-flex align-items-center mb-2">
-                            <div class="follow-social me-2">
-                                <a href="#"><img src="~/aznews/assets/img/news/icon-tw.png" asp-append-version="true" alt="Twitter" /></a>
-                            </div>
-                            <div class="follow-count">
-                                <span>8,045</span>
-                                <p>Fans</p>
-                            </div>
-                        </div>
-
-                        <div class="follow-us d-flex align-items-center mb-2">
-                            <div class="follow-social me-2">
-                                <a href="#"><img src="~/aznews/assets/img/news/icon-ins.png" asp-append-version="true" alt="Instagram" /></a>
-                            </div>
-                            <div class="follow-count">
-                                <span>8,045</span>
-                                <p>Fans</p>
-                            </div>
-                        </div>
-
-                        <div class="follow-us d-flex align-items-center">
-                            <div class="follow-social me-2">
-                                <a href="#"><img src="~/aznews/assets/img/news/icon-yo.png" asp-append-version="true" alt="YouTube" /></a>
-                            </div>
-                            <div class="follow-count">
-                                <span>8,045</span>
-                                <p>Fans</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-    </div>
-</section>
-<!-- 🌟 改版：熱門新聞區塊 End -->
-
-
-<!-- 📈 台股新聞 TaiwanMarket 區塊 Start -->
-@{
-    var taiwanNews = Model.CategoryArticles.ContainsKey("台股")
-        ? Model.CategoryArticles["台股"].Take(8).ToList()
-        : new List<ArticlePost>();
-}
-
-<div class="weekly-news-area pt-50">
-    <div class="container">
-        <div class="weekly-wrapper">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="section-tittle mb-30">
-                        <h3>📈 台股新聞 TaiwanMarket</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <div class="weekly-news-active dot-style d-flex">
-                        @foreach (var article in taiwanNews)
-                        {
-                            <div class="weekly-single position-relative">
-                                <div class="weekly-img">
-                                    <a asp-controller="KnowledgeArticle"
-                                       asp-action="Details"
-                                       asp-route-id="@article.Id">
-                                        <img src="@(!string.IsNullOrEmpty(article.ImageUrl) ? article.ImageUrl : "/images/default.jpg")"
-                                             alt="@article.Title"
-                                             class="w-100"
-                                             style="object-fit: cover; height: 200px;" />
-                                    </a>
-                                </div>
-                                <div class="overlay-caption">
-                                    <span class="badge bg-light text-dark mb-1">@article.Category?.Name</span>
-                                    <h5 class="text-dark fw-bold mb-0" style="font-size: 1rem;">
-                                        <a asp-controller="KnowledgeArticle"
-                                           asp-action="Details"
-                                           asp-route-id="@article.Id"
-                                           class="text-dark">
-                                            @article.Title
-                                        </a>
-                                    </h5>
-                                    <small class="text-muted">👁️ @article.ViewCount 次瀏覽</small>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- 📈 台股新聞 TaiwanMarket 區塊 End -->
-<!-- 台股 國際 ETF區塊  -->
-@{
-    var sections = new Dictionary<string, string>
-    {
-        { "台股", "📈 台股新聞 TaiwanMarket" },
-        { "國際", "🌍 國際新聞 GlobalMarket" },
-        { "ETF", "📊 ETF 精選專欄" }
-    };
-}
-
-@foreach (var section in sections)
-{
-    var code = section.Key;
-    var title = section.Value;
-
-    var articles = Model.CategoryArticles.ContainsKey(code)
-        ? Model.CategoryArticles[code].Take(8).ToList()
-        : new List<ArticlePost>();
-
-    <div class="weekly-news-area pt-50">
-        <div class="container">
-            <div class="weekly-wrapper">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="section-tittle mb-30">
-                            <h3>@title</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <div class="weekly-news-active dot-style d-flex">
-                            @foreach (var article in articles)
-                            {
-                                <div class="weekly-single position-relative">
-                                    <div class="weekly-img">
-                                        <a asp-controller="KnowledgeArticle"
-                                           asp-action="Details"
-                                           asp-route-id="@article.Id">
-                                            <img src="@(!string.IsNullOrEmpty(article.ImageUrl) ? article.ImageUrl : "/images/default.jpg")"
-                                                 alt="@article.Title"
-                                                 class="w-100"
-                                                 style="object-fit: cover; height: 200px;" />
-                                        </a>
-                                    </div>
-                                    <div class="overlay-caption">
-                                        <span class="badge bg-light text-dark mb-1">@article.Category?.Name</span>
-                                        <h5 class="text-dark fw-bold mb-0" style="font-size: 1rem;">
-                                            <a asp-controller="KnowledgeArticle"
-                                               asp-action="Details"
-                                               asp-route-id="@article.Id"
-                                               class="text-dark">
-                                                @article.Title
-                                            </a>
-                                        </h5>
-                                        <small class="text-muted">👁️ @article.ViewCount 次瀏覽</small>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-}
-<!-- 台股 國際 ETF區塊 End -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- Start Youtube -->
         <div class="youtube-area video-padding">
             <div class="container">
@@ -605,211 +336,90 @@
         </div>
         <!-- End Start youtube -->
 
-<!-- ✅ 推播區建議 class 命名統一為 signalr-articles-wrapper + signalr-articles -->
-<section class="signalr-articles-wrapper">
-    <div class="container">
-        <div class="section-tittle mb-30">
-            <h3><i class="fa fa-bolt"></i> WebSocket推播最新文章</h3>
-        </div>
-        <div class="row signalr-articles gy-4">
-            <!-- SignalR 插入文章卡片 -->
+
+
+
+
+<div class="container my-4">
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+            <h4 class="fw-bold text-primary mb-4">📈 即時股價列表</h4>
+            <table class="table table-hover text-center">
+                <thead class="table-light">
+                    <tr>
+                        <th>代號</th>
+                        <th>即時價格</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var symbol in new[] { "AAPL", "NVDA", "TSLA", "ORCL", "AMD", "MSFT", "META", "GOOGL", "INTC", "NFLX", "BABA", "T", "V", "DIS", "IBM" })
+                    {
+                        <tr>
+                            <td class="fw-bold">@symbol</td>
+                            <td id="price-@symbol">載入中...</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
-</section>
+</div>
 
 
 
-    <!-- JS here -->
-    <!-- JS here -->
-    <!-- All JS Custom Plugins Link Here here -->
-<script src="~/aznews/assets/js/vendor/modernizr-3.5.0.min.js" asp-append-version="true"></script>
 
-    <!-- Jquery, Popper, Bootstrap -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ✅ Jquery + Bootstrap 必要核心 -->
 <script src="~/aznews/assets/js/vendor/jquery-1.12.4.min.js" asp-append-version="true"></script>
-    
 <script src="~/aznews/assets/js/bootstrap.min.js" asp-append-version="true"></script>
 
-    <!-- Jquery Mobile Menu -->
+<!-- ✅ 選單 + 輪播 -->
 <script src="~/aznews/assets/js/jquery.slicknav.min.js" asp-append-version="true"></script>
-
-    <!-- Jquery Slick , Owl-Carousel Plugins -->
 <script src="~/aznews/assets/js/owl.carousel.min.js" asp-append-version="true"></script>
 <script src="~/aznews/assets/js/slick.min.js" asp-append-version="true"></script>
 
-    <!-- Date Picker -->
-<script src="~/aznews/assets/js/gijgo.min.js" asp-append-version="true"></script>
-
-    <!-- One Page, Animated-HeadLine -->
-<script src="~/aznews/assets/js/wow.min.js" asp-append-version="true"></script>
-<script src="~/aznews/assets/js/animated.headline.js" asp-append-version="true"></script>
-<script src="~/aznews/assets/js/jquery.magnific-popup.js" asp-append-version="true"></script>
-
-    <!-- Breaking News Plugin -->
-<script src="~/aznews/assets/js/jquery.ticker.js" asp-append-version="true"></script>
-<script src="~/aznews/assets/js/site.js" asp-append-version="true"></script>
-
-    <!-- Scrollup, nice-select, sticky -->
-<script src="~/aznews/assets/js/jquery.scrollUp.min.js" asp-append-version="true"></script>
+<!-- ✅ 美化 + 吸附 + 滑動回頂部 -->
 <script src="~/aznews/assets/js/jquery.nice-select.min.js" asp-append-version="true"></script>
 <script src="~/aznews/assets/js/jquery.sticky.js" asp-append-version="true"></script>
+<script src="~/aznews/assets/js/jquery.scrollUp.min.js" asp-append-version="true"></script>
 
-    <!-- contact js -->
-<script src="~/aznews/assets/js/contact.js" asp-append-version="true"></script>
-<script src="~/aznews/assets/js/jquery.form.js" asp-append-version="true"></script>
-<script src="~/aznews/assets/js/jquery.validate.min.js" asp-append-version="true"></script>
-<script src="~/aznews/assets/js/mail-script.js" asp-append-version="true"></script>
-<script src="~/aznews/assets/js/jquery.ajaxchimp.min.js" asp-append-version="true"></script>
+<!-- ✅ 你自訂的功能 -->
+<script src="~/aznews/assets/js/site.js" asp-append-version="true"></script>
 
-    <!-- Jquery Plugins, main Jquery -->
-<script src="~/aznews/assets/js/plugins.js" asp-append-version="true"></script>
-<script src="~/aznews/assets/js/main.js" asp-append-version="true"></script>
-<!-- ✅ 1. 頁面載入後：讀取 JSON 檔案，顯示前 4 筆 Python 新聞卡片 -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        fetch('/data/news_data.json') // 讀取本地 JSON 資料
-          .then(res => res.json())
-          .then(newsList => {
-            const container = document.getElementById('dynamic-news-area'); // 對應 ID 區塊
-            if (!container) return;
-
-            container.innerHTML = ''; // 清空舊內容
-
-            // 顯示前 4 筆新聞（左側 Tab 內容）
-            newsList.slice(0, 4).forEach(item => {
-              const imageUrl = item.image && item.image.trim() !== ''
-                ? item.image
-                : 'https://via.placeholder.com/400x250?text=News+Image';
-
-              const card = document.createElement('div');
-              card.className = 'col-lg-6 col-md-6'; // 每欄兩張
-              card.innerHTML = `
-                <div class="single-what-news mb-100">
-                  <div class="what-img">
-                    <img src="${imageUrl}" alt="新聞圖片" />
-                  </div>
-                  <div class="what-cap">
-                    <span class="color1">Python新聞</span>
-                    <h4><a href="${item.link}" target="_blank">${item.title}</a></h4>
-                  </div>
-                </div>
-              `;
-              container.appendChild(card);
-            });
-          });
-    });
-</script>
-
-<!-- ✅ 2. 載入右側「熱門快訊」：最多顯示 11 筆文字清單 -->
-<script>
-    fetch("/data/news_data.json")
-        .then(res => res.json())
-        .then(data => {
-            const box = document.getElementById("hot-news-box"); // 右側區塊容器
-            let html = "";
-            const items = data.slice(0, 11); // 顯示最多 11 筆
-
-            items.forEach(item => {
-                const title = item.title.length > 40 ? item.title.slice(0, 40) + "..." : item.title;
-                html += `
-                    <a href="${item.link}" target="_blank" title="${item.title}">
-                        🔸 ${title}
-                    </a>`;
-            });
-            box.innerHTML = html;
-        })
-        .catch(err => console.error("❌ 載入 JSON 失敗：", err));
-</script>
-
-<!-- ✅ 3. 引入 SignalR 套件（WebSocket 支援） -->
+<!-- ✅ 引入 SignalR 套件（只要一次） -->
+<!-- ✅ SignalR JS 套件 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
-<!-- 🔁 自動插入文章卡片的函式 -->
 <script>
-    function renderSignalRCards(articles) {
-        const container = document.querySelector(".signalr-articles");
-        if (!container) return;
-
-        container.innerHTML = "";
-
-        articles.slice(0, 9).forEach(article => {
-            const imageUrl = article.imageUrl?.trim() || "https://via.placeholder.com/400x250?text=No+Image";
-            const html = `
-          <div class="col-md-6 col-lg-4">
-            <a href="/KnowledgeArticle/Details/${article.id}" class="text-dark text-decoration-none">
-              <div class="card signalr-card h-100">
-                <img src="${imageUrl}" class="card-img-top" alt="文章封面" style="height: 200px; object-fit: cover;">
-                <div class="card-body">
-                    <h6 class="text-muted mb-1">${article.categoryName}</h6>
-                    <h5 class="card-title">${article.title}</h5>
-                </div>
-              </div>
-            </a>
-          </div>`;
-            container.innerHTML += html;
-        });
-    }
-</script>
-
-
-
-
-<!-- ✅ 4. 使用 SignalR 即時推播文章區塊（卡片樣式） -->
-<script>
-    // 建立 WebSocket 連線
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/articleHub") // 必須對應後端的 Hub 路徑
+        .withUrl("/stockHub")
         .build();
 
-    // 監聽後端的推播事件 "ReceiveArticles"
-    connection.on("ReceiveArticles", function (articles) {
-        console.log("📡 接收到文章清單", articles);
-
-        const container = document.querySelector(".signalr-articles");
-        if (!container) return console.warn("⚠️ 找不到 .signalr-articles");
-
-        container.innerHTML = ""; // 清空舊內容
-
-        // 顯示 9 筆 SignalR 推播文章
-        articles.slice(0, 9).forEach(article => {
-            const imageUrl = article.imageUrl?.trim() || "https://via.placeholder.com/400x250?text=No+Image";
-            const html = `
-      <div class="col-md-6 col-lg-4">
-        <a href="/KnowledgeArticle/Details/${article.id}" class="text-dark text-decoration-none">
-          <div class="card signalr-card h-100">
-            <img src="${imageUrl}" class="card-img-top" alt="文章封面"
-                 style="height: 200px; object-fit: cover;">
-            <div class="card-body">
-                <h6 class="text-muted mb-1">${article.categoryName}</h6>
-                <h5 class="card-title">${article.title}</h5>
-            </div>
-          </div>
-        </a>
-      </div>
-    `;
-            container.innerHTML += html;
-        });
+    connection.on("ReceiveStockPrices", function (data) {
+        for (const symbol in data) {
+            const price = data[symbol];
+            const target = document.getElementById(`price-${symbol}`);
+            if (target) {
+                target.innerText = (price === "N/A") ? "暫無資料" : `$${price}`;
+            }
+        }
     });
 
-    // 啟動連線，並觸發後端一次推播文章（載入即有內容）
-    connection.start()
-        .then(() => {
-            console.log("✅ SignalR 已成功連線");
-
-            // 首次觸發
-                // ✅ 頁面一載入就先抓資料，立刻顯示（不等 WebSocket）
-                    fetch("/Home/PushArticles")
-                        .then(res => res.json())
-                        .then(articles => {
-                            renderSignalRCards(articles); // 用你現在的插入邏輯 // 直接插入卡片
-                                           })
-                        .catch(err => console.error("❌ 預抓失敗", err));
-
-            // 每 30 秒再呼叫一次後端觸發推播
-            setInterval(() => {
-                fetch("/Home/PushArticles")
-                    .then(res => res.json())
-                    .then(data => console.log("🔁 自動推播成功", data))
-                    .catch(err => console.error("❌ 推播失敗", err));
-            }, 30000); // 30 秒
-        })
-        .catch(err => console.error("❌ SignalR 連線失敗", err));
+    connection.start().catch(err => console.error("SignalR 連線錯誤：", err.toString()));
 </script>
+

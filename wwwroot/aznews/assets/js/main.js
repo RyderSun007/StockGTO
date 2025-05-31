@@ -266,7 +266,7 @@
 
 
 
-/* 8. sildeBar scroll */
+/* 8. sildeBar scroll
     $.scrollUp({
       scrollName: 'scrollUp', // Element ID
       topDistance: '300', // Distance from top before showing element (px)
@@ -277,7 +277,7 @@
       scrollText: '<i class="ti-arrow-up"></i>', // Text for element
       activeOverlay: false, // Set CSS color to display scrollUp active point, e.g '#00FFFF'
     });
-
+     */
 
 /* 9. data-background */
     $("[data-background]").each(function () {
@@ -291,10 +291,10 @@
 /* 11. Datepicker */
     
 // 11. ---- Mailchimp js --------//  
-    function mailChimp() {
-      $('#mc_embed_signup').find('form').ajaxChimp();
-    }
-    mailChimp();
+    //function mailChimp() {
+    //  $('#mc_embed_signup').find('form').ajaxChimp();
+    //}
+    //mailChimp();
 
 
 // 12 Pop Up Img

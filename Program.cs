@@ -7,6 +7,9 @@ using StockGTO.Data;
 using StockGTO.Hubs;
 using DotNetEnv;
 using StockGTO.Models;
+using Microsoft.AspNetCore.SignalR;
+using StockGTO.Services;
+
 
 namespace StockGTO
 {
@@ -97,6 +100,7 @@ namespace StockGTO
             }
 
 
+
             // =======================
             // 中介層 Pipeline 設定區
             // =======================
@@ -125,7 +129,49 @@ namespace StockGTO
                 pattern: "Logout",
                 defaults: new { controller = "Account", action = "Logout" });
 
+
+            app.MapHub<StockHub>("/stockHub");
             app.MapHub<ArticleHub>("/ArticleHub");
+
+
+
+
+            // ✅ 股票清單
+            string[] symbols = new[]
+            {
+    "AAPL", "NVDA", "TSLA", "ORCL", "AMD",
+    "MSFT", "META", "GOOGL", "INTC", "NFLX",
+    "BABA", "T", "V", "DIS", "IBM"
+};
+
+            var stockService = new AlphaVantageService(); // 呼叫 AlphaVantage API
+            var hubContext = app.Services.GetRequiredService<IHubContext<StockHub>>();
+
+            // ✅ 每 1 分鐘更新一次全部股票資料並推播
+            _ = Task.Run(async () =>
+            {
+                while (true)
+                {
+                    var data = new Dictionary<string, string>();
+
+                    foreach (var symbol in symbols)
+                    {
+                        var price = await stockService.GetStockPrice(symbol);
+                        data[symbol] = !string.IsNullOrWhiteSpace(price) ? price : "N/A";
+
+                        // ⚠️ 避免觸發 AlphaVantage 限速（5 次 / 分鐘）
+                        await Task.Delay(12000); // 每支股票間隔 12 秒 → 安全區間
+                    }
+
+                    // ✅ 通知所有前端：一次傳送所有股票報價
+                    await hubContext.Clients.All.SendAsync("ReceiveStockPrices", data);
+                    Console.WriteLine("✅ 每分鐘推播一次股價完成");
+                }
+            });
+
+
+
+
 
             app.Run();
         }

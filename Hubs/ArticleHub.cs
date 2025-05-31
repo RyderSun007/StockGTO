@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace StockGTO.Hubs  // ← 如果你專案不是叫 StockGTO 就換成你的
+namespace StockGTO.Hubs  
 {
     public class ArticleHub : Hub
     {
