@@ -1,164 +1,245 @@
 ﻿<!DOCTYPE html>
 <html lang="zh-Hant">
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+@using Microsoft.AspNetCore.Identity
+@using StockGTO.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"] - StockGTO</title>
 
-    <!-- 🌐 字體與圖示 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="manifest" href="@Url.Content("~/aznews/site.webmanifest")" />
+    <link rel="shortcut icon" type="image/x-icon" href="~/aznews/assets/img/favicon.ico" asp-append-version="true" />
 
-    <!-- 🎨 共用樣式 -->
-    <link rel="stylesheet" href="@Url.Content("~/css/global.css")" />
+    <link rel="stylesheet" href="~/aznews/assets/css/bootstrap.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/aznews/assets/css/owl.carousel.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/aznews/assets/css/ticker-style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/aznews/assets/css/flaticon.css" asp-append-version="true" />
 
-    <!-- 🧱 Satner 主題樣式 -->
-    <link rel="stylesheet" href="@Url.Content("~/satner/css/bootstrap.css")" />
-    <link rel="stylesheet" href="@Url.Content("~/satner/vendors/linericon/style.css")" />
-    <link rel="stylesheet" href="@Url.Content("~/satner/css/font-awesome.min.css")" />
-    <link rel="stylesheet" href="@Url.Content("~/satner/vendors/owl-carousel/owl.carousel.min.css")" />
-    <link rel="stylesheet" href="@Url.Content("~/satner/vendors/owl-carousel/owl.theme.default.min.css")" />
-    <link rel="stylesheet" href="@Url.Content("~/satner/css/magnific-popup.css")" />
-    <link rel="stylesheet" href="@Url.Content("~/satner/vendors/nice-select/css/nice-select.css")" />
-    <link rel="stylesheet" href="@Url.Content("~/satner/css/style.css")" />
-
-    <!-- 🏠 首頁專用樣式 -->
-    @if (ViewContext.RouteData.Values["Action"]?.ToString() == "Index" &&
-    ViewContext.RouteData.Values["Controller"]?.ToString() == "Home")
-    {
-        <link rel="stylesheet" href="@Url.Content("~/css/homepage.css")" />
-    }
-
-    <!-- 📚 文章頁專用樣式 -->
-    @if (ViewContext.RouteData.Values["Controller"]?.ToString() == "Post")
-    {
-        <link rel="stylesheet" href="@Url.Content("~/css/post.css")" />
-    }
-
-    <!-- 🛠️ 後台管理樣式 -->
-    @if (ViewContext.RouteData.Values["Controller"]?.ToString()?.Contains("Manage") == true ||
-    ViewContext.RouteData.Values["Controller"]?.ToString() == "Employee" ||
-    ViewContext.RouteData.Values["Controller"]?.ToString() == "ArticlePost")
-    {
-        <link rel="stylesheet" href="@Url.Content("~/css/admin.css")" />
-    }
+    <link rel="stylesheet" href="~/aznews/assets/css/animate.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/aznews/assets/css/magnific-popup.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/aznews/assets/css/fontawesome-all.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/aznews/assets/css/themify-icons.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/aznews/assets/css/slick.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/aznews/assets/css/nice-select.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/aznews/assets/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/aznews/assets/css/hover-card.css" asp-append-version="true" />
 
     @RenderSection("Styles", required: false)
 </head>
 
 <body>
-    <!-- 🔹 導覽列 -->
-    <header class="header_area">
-        <div class="main_menu">
+    <header class="bg-white border-bottom sticky-top shadow-sm">
+        <div class="container">
             <nav class="navbar navbar-expand-lg navbar-light">
-                <div class="container">
-                    <a class="navbar-brand logo_h" asp-controller="Home" asp-action="Index">
-                        <img src="@Url.Content("~/satner/img/logo.png")" alt="Logo" />
-                    </a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
+                <!-- Logo -->
+                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
+                    <img src="~/aznews/assets/img/logo/logo.png" style="width: 150px;" alt="StockGTO" />
+                </a>
 
-                    <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
-                        <ul class="nav navbar-nav menu_nav justify-content-end">
-                            <li class="nav-item active"><a class="nav-link" asp-controller="Home" asp-action="Index">首頁</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="IndexV2">首頁 V2</a></li>
-                            
-                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="News">新聞</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Taiwan">台股</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="US">美股</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="StockSelect">選股</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Fund">基金</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="ETF">ETF</a></li>
+                <!-- 漢堡按鈕（RWD） -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-                            <!-- 🔹 靜態資料 -->
-                            <li class="nav-item submenu dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">靜態資料</a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="/staticpages/about.html">關於我們</a></li>
-                                    <li><a class="dropdown-item" href="/staticpages/contact.html">聯絡我們</a></li>
-                                    <li><a class="dropdown-item" href="/staticpages/services.html">服務項目</a></li>
-                                    <li><a class="dropdown-item" href="/staticpages/portfolio.html">作品集</a></li>
+                <!-- 導覽內容 -->
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                        <!-- 主分類：頭條 -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="headlineDropdown" data-bs-toggle="dropdown">News</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">外匯</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">商品</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">股票</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">指數</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">加密</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">ETFs</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">債券</a></li>
+                            </ul>
+                        </li>
+                        <!-- 主分類：市場行情 -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="marketDropdown" data-bs-toggle="dropdown">市場行情</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse?category=FinancialStatements">財報分析</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">熱門</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">外匯</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">商品</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">股票</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">指數</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">加密</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">ETFs</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">債券</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- 主分類：快訊 -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="newsDropdown" data-bs-toggle="dropdown">快訊</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">全部</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">外匯</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">商品</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">股票</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">指數</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">加密貨幣</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">技術分析</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">財經指標</a></li>
+                            </ul>
+                        </li>
+
+
+                        <!-- 主分類：投資學習 -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="headlineDropdown" data-bs-toggle="dropdown">投資學習</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">初學入門</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">技術面</a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">財報面 </a></li>
+                                <li><a class="dropdown-item" href="/KnowledgeArticle/Browse">籌碼面 </a></li>
+                            </ul>
+                        </li>
+
+
+                        <!-- 關於我們 -->
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="About">About</a>
+                        </li>
+                    </ul>
+
+                    <!-- 右側登入狀態 -->
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            var currentUser = await UserManager.GetUserAsync(User);
+                            var imgSrc = !string.IsNullOrEmpty(currentUser.ProfileImage)
+                            ? currentUser.ProfileImage
+                            : "/images/default-profile.png";
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                    <img src="@imgSrc" class="rounded-circle me-2 border" width="30" height="30" />
+                                    <span>@currentUser.DisplayName</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li><a class="dropdown-item" href="/Member/MemberCenter">👤 會員中心</a></li>
+                                    <li><a class="dropdown-item" href="/KnowledgeArticle/Manage">🗂 我的文章</a></li>
+                                    <li><a class="dropdown-item" href="/Member/Favorites">⭐ 我的收藏</a></li>
+                                    <li><a class="dropdown-item" href="/Member/MemberCenter#settings">⚙️ 帳號設定</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><a class="dropdown-item text-danger" href="/Logout">🚪 登出</a></li>
                                 </ul>
                             </li>
-
-                            <!-- 🔹 自有程式 -->
-                            <li class="nav-item submenu dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">自有程式</a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" asp-controller="Post" asp-action="Post">C#筆記 View</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Post" asp-action="Manage">C#筆記編輯刪除</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Post" asp-action="CreateManage">C#筆記新增文章</a></li>
-                                </ul>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-danger" href="/LoginWithGoogle">
+                                    <i class="fab fa-google me-1"></i> 使用 Google 登入
+                                </a>
                             </li>
 
-                            <!-- 🔹 CRUD 區塊 -->
-                            <li class="nav-item submenu dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">CRUD區塊</a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" asp-controller="ArticlePost" asp-action="CreateIndexPost">CRUD(HTML技術)</a></li>
-                                    <li><a class="dropdown-item" asp-controller="ArticlePost" asp-action="ManageIndexPost">CRUD(AJAX技術)</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Home" asp-action="Templates">模板管理</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Employee" asp-action="ShowEmployee">員工清單</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
+                        }
+                    </ul>
                 </div>
             </nav>
         </div>
     </header>
 
-    <!-- 🔸 主內容 -->
+
+
+
     <main class="container pt-5" style="padding-top: 120px;">
         @RenderBody()
     </main>
+    <footer class="footer-clean">
+        <div class="container">
+            <div class="row text-start">
 
-    <!-- 🔻 頁尾 -->
-    <footer class="footer-area bg-dark text-light mt-5 py-4">
-        <div class="container text-center">
-            <p>&copy; 2025 股市方舟 StockGTO. All rights reserved.</p>
+                <!-- 公司資訊 -->
+                <div class="col-md-3 mb-4">
+                    <h5 class="footer-title text-green">StockGTO | 股市周刊</h5>
+                    <p>台灣 彰化 員林市</p>
+                    <p>Phone: 0900-123-456</p>
+                    <p>Email: support@stockgto.com</p>
+                    <div class="social-icons mt-3">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <!-- 快速連結 -->
+                <div class="col-md-3 mb-4">
+                    <h5 class="footer-title text-white">快速連結</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="/">首頁</a></li>
+                        <li><a href="/Home/About">關於我們</a></li>
+
+                    </ul>
+                </div>
+
+                <!-- 我們提供 -->
+                <div class="col-md-3 mb-4">
+                    <h5 class="footer-title text-white">我們提供</h5>
+                    <ul class="list-unstyled">
+                        <li class="text-green">財經新聞爬蟲</li>
+                        <li>投資模擬器</li>
+                        <li class="text-green">自動發文系統</li>
+                        <li>會員推薦工具</li>
+                    </ul>
+                </div>
+
+                <!-- 訂閱電子報 -->
+                <div class="col-md-3 mb-4">
+                    <h5 class="footer-title text-white">訂閱電子報</h5>
+                    <p class="footer-text">每週寄送市場觀察與網站新功能，不漏接任何一則靈魂語錄！</p>
+                    <form class="d-flex mt-2">
+                        <input type="email" placeholder="輸入 Email 來訂閱" />
+                        <button type="submit" class="text-green" style="background-color: #00cc66;">訂閱</button>
+                    </form>
+                </div>
+            </div>
+
+            <hr />
+            <div class="text-center copyright">
+                &copy; 2025 <span class="text-green">StockGTO | 股市周刊</span>. <span class="text-green">All rights reserved.</span>
+            </div>
         </div>
     </footer>
 
-    <!-- 📦 JavaScript 套件 -->
-    <script src="@Url.Content("~/satner/js/jquery-3.2.1.min.js")"></script>
-    <script src="@Url.Content("~/satner/js/bootstrap.min.js")"></script>
-    <script src="@Url.Content("~/satner/js/stellar.js")"></script>
-    <script src="@Url.Content("~/satner/js/jquery.magnific-popup.min.js")"></script>
-    <script src="@Url.Content("~/satner/vendors/nice-select/js/jquery.nice-select.min.js")"></script>
-    <script src="@Url.Content("~/satner/vendors/isotope/imagesloaded.pkgd.min.js")"></script>
-    <script src="@Url.Content("~/satner/vendors/isotope/isotope-min.js")"></script>
-    <script src="@Url.Content("~/satner/vendors/owl-carousel/owl.carousel.min.js")"></script>
-    <script src="@Url.Content("~/satner/js/mail-script.js")"></script>
-    <script src="@Url.Content("~/satner/js/theme.js")"></script>
 
-    <script>
-        $(document).ready(function () {
-            $(".testi_slider").owlCarousel({
-                items: 2,
-                loop: true,
-                margin: 30,
-                autoplay: true,
-                autoplayTimeout: 3000,
-                smartSpeed: 800,
-                dots: true,
-                nav: false,
-                responsive: {
-                    0: { items: 1 },
-                    768: { items: 2 }
-                }
-            });
-        });
-    </script>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="~/aznews/assets/js/owl.carousel.min.js" asp-append-version="true"></script>
+    <script src="~/aznews/assets/js/slick.min.js" asp-append-version="true"></script>
+
+    <script src="~/aznews/assets/js/wow.min.js" asp-append-version="true"></script>
+    <script src="~/aznews/assets/js/jquery.magnific-popup.js" asp-append-version="true"></script>
+    <script src="~/aznews/assets/js/jquery.nice-select.min.js" asp-append-version="true"></script>
+    <script src="~/aznews/assets/js/main.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+    <script src="~/aznews/assets/js/hover-card.js" asp-append-version="true"></script>
 
     @RenderSection("Scripts", required: false)
-    <!-- ✅ Bootstrap 的 JS 功能支援（特別是 Carousel 需要） -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-Ho+dA7wXwMJzO7pT+xnQH4BGki6zGHrqlA1P+v+yE8nRnT3h0/8k4C1N+3C+VoRC"
-            crossorigin="anonymous"></script>
 </body>
 </html>
+

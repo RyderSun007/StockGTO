@@ -11,18 +11,22 @@
 
   <ItemGroup>
     <Compile Remove="Views\Account\**" />
+    <Compile Remove="Views\GIS\**" />
     <Compile Remove="Views\NewFolder1\**" />
     <Compile Remove="Views\NewFolder2\**" />
     <Compile Remove="Views\OldSunStock\**" />
     <Content Remove="Views\Account\**" />
+    <Content Remove="Views\GIS\**" />
     <Content Remove="Views\NewFolder1\**" />
     <Content Remove="Views\NewFolder2\**" />
     <Content Remove="Views\OldSunStock\**" />
     <EmbeddedResource Remove="Views\Account\**" />
+    <EmbeddedResource Remove="Views\GIS\**" />
     <EmbeddedResource Remove="Views\NewFolder1\**" />
     <EmbeddedResource Remove="Views\NewFolder2\**" />
     <EmbeddedResource Remove="Views\OldSunStock\**" />
     <None Remove="Views\Account\**" />
+    <None Remove="Views\GIS\**" />
     <None Remove="Views\NewFolder1\**" />
     <None Remove="Views\NewFolder2\**" />
     <None Remove="Views\OldSunStock\**" />
@@ -31,6 +35,7 @@
   <ItemGroup>
     <Compile Remove="Controllers\ArticlePostController.cs" />
     <Compile Remove="Controllers\EmployeeController.cs" />
+    <Compile Remove="Controllers\GISController.cs" />
     <Compile Remove="Controllers\OldSunStockController.cs" />
     <Compile Remove="Models\Employee.cs" />
   </ItemGroup>
@@ -43,11 +48,8 @@
     <Content Remove="Views\Home\TEST.cshtml" />
     <Content Remove="wwwroot\aznews\assets\css\admin-fix.css" />
     <Content Remove="wwwroot\aznews\assets\css\animate - 複製.min.css" />
-    <Content Remove="wwwroot\aznews\assets\css\main.css" />
-    <Content Remove="wwwroot\aznews\assets\css\main.map" />
+    <Content Remove="wwwroot\aznews\assets\css\flaticon.css" />
     <Content Remove="wwwroot\aznews\assets\js\mail-script.js" />
-    <Content Remove="wwwroot\aznews\assets\js\main.js" />
-    <Content Remove="wwwroot\aznews\assets\js\site.js" />
   </ItemGroup>
 
   <ItemGroup>
