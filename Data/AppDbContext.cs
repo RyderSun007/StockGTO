@@ -64,5 +64,12 @@ namespace StockGTO.Data
         public DbSet<Comment> Comments { get; set; }
         public DbSet<ArticleFavorite> ArticleFavorites { get; set; }
 
+
+
+        //  🧾 定義 DiyTicketType 表格對應的資料模型
+        public DbSet<DiyTicketType> DiyTicketTypes { get; set; }
+        //  🧾 定義 DiyBooking 表格對應的資料模型
+        public DbSet<DiyBooking> DiyBookings { get; set; }
+
     }
 }

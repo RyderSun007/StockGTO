@@ -1,0 +1,743 @@
+﻿<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<div class="container py-5">
+    <h2 class="text-center mb-4 fw-bold">🎟 簡易票務預約系統</h2>
+
+    <!-- 選擇日期 -->
+    <div class="mb-3">
+        <label class="form-label">選擇日期</label>
+        <input type="date" id="selectedDate" class="form-control w-25">
+    </div>
+
+    <!-- 選擇票種 -->
+    <div class="mb-3">
+        <label class="form-label">選擇票種</label>
+        <select id="ticketType" class="form-select w-25">
+            <option value="成人票">成人票</option>
+            <option value="兒童票">兒童票</option>
+            <option value="VIP 套票">VIP 套票</option>
+        </select>
+    </div>
+
+    <!-- 剩餘名額 -->
+    <div class="mb-3">
+        <p class="fw-bold">剩餘名額：<span id="remaining">-</span></p>
+    </div>
+
+    <!-- 預約按鈕 -->
+    <button class="btn btn-primary" id="bookBtn">立即預約</button>
+</div>
+
+<script>
+    // 假資料：不同日期的剩餘名額
+    var ticketData = {
+        '2025-07-25': { '成人票': 5, '兒童票': 0, 'VIP 套票': 7 },
+        '2025-07-26': { '成人票': 10, '兒童票': 3, 'VIP 套票': 0 },
+        '2025-07-27': { '成人票': 8, '兒童票': 5, 'VIP 套票': 2 }
+    };
+
+    // 更新剩餘名額
+    function updateRemaining() {
+        var date = document.getElementById("selectedDate").value;
+        var type = document.getElementById("ticketType").value;
+        var remaining = (ticketData[date] && ticketData[date][type] !== undefined)
+            ? ticketData[date][type]
+            : 0;
+        document.getElementById("remaining").textContent = remaining;
+    }
+
+    document.getElementById("selectedDate").addEventListener("change", updateRemaining);
+    document.getElementById("ticketType").addEventListener("change", updateRemaining);
+
+    // 預約邏輯
+    document.getElementById("bookBtn").addEventListener("click", function () {
+        var date = document.getElementById("selectedDate").value;
+        var type = document.getElementById("ticketType").value;
+
+        if (!ticketData[date]) {
+            alert("此日期無票務資訊！");
+            return;
+        }
+        if (ticketData[date][type] > 0) {
+            ticketData[date][type]--;
+            alert(`預約成功！${date} 的 ${type} 剩餘 ${ticketData[date][type]} 名`);
+            updateRemaining();
+        } else {
+            alert(`${type} 已滿，無法預約`);
+        }
+    });
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<div class="container py-5">
+    <h2 class="text-center mb-4 fw-bold">🎢 豪華卡片式票務預約</h2>
+    <div class="row g-4">
+        <!-- 成人票 -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <img src="https://picsum.photos/500/300?random=101" class="card-img-top">
+                <div class="card-body text-center">
+                    <h5 class="card-title">成人票</h5>
+                    <p class="text-muted">2025/07/25 10:00</p>
+                    <span class="badge bg-success fs-6" id="adultRemain">剩 5 名</span>
+                    <button class="btn btn-primary w-100 mt-2" onclick="book('adult')">立即預約</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 兒童票 -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <img src="https://picsum.photos/500/300?random=102" class="card-img-top">
+                <div class="card-body text-center">
+                    <h5 class="card-title">兒童票</h5>
+                    <p class="text-muted">2025/07/25 14:00</p>
+                    <span class="badge bg-danger fs-6" id="childRemain">已滿</span>
+                    <button class="btn btn-secondary w-100 mt-2" disabled>已滿</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIP 套票 -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <img src="https://picsum.photos/500/300?random=103" class="card-img-top">
+                <div class="card-body text-center">
+                    <h5 class="card-title">VIP 套票</h5>
+                    <p class="text-muted">2025/07/25 16:00</p>
+                    <span class="badge bg-warning text-dark fs-6" id="vipRemain">剩 7 名</span>
+                    <button class="btn btn-primary w-100 mt-2" onclick="book('vip')">立即預約</button>
+                </div>
+            </div>
+        </div>
+        <!-- 成人票 -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <img src="https://picsum.photos/500/300?random=101" class="card-img-top">
+                <div class="card-body text-center">
+                    <h5 class="card-title">成人票</h5>
+                    <p class="text-muted">2025/07/25 10:00</p>
+                    <span class="badge bg-success fs-6" id="adultRemain">剩 5 名</span>
+                    <button class="btn btn-primary w-100 mt-2" onclick="book('adult')">立即預約</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 兒童票 -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <img src="https://picsum.photos/500/300?random=102" class="card-img-top">
+                <div class="card-body text-center">
+                    <h5 class="card-title">兒童票</h5>
+                    <p class="text-muted">2025/07/25 14:00</p>
+                    <span class="badge bg-danger fs-6" id="childRemain">已滿</span>
+                    <button class="btn btn-secondary w-100 mt-2" disabled>已滿</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIP 套票 -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <img src="https://picsum.photos/500/300?random=103" class="card-img-top">
+                <div class="card-body text-center">
+                    <h5 class="card-title">VIP 套票</h5>
+                    <p class="text-muted">2025/07/25 16:00</p>
+                    <span class="badge bg-warning text-dark fs-6" id="vipRemain">剩 7 名</span>
+                    <button class="btn btn-primary w-100 mt-2" onclick="book('vip')">立即預約</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var remainData = { adult: 5, child: 0, vip: 7 };
+
+    function book(type) {
+        if (remainData[type] > 0) {
+            remainData[type]--;
+            alert(`預約成功！${type} 剩餘 ${remainData[type]} 名`);
+            document.getElementById(type + "Remain").textContent = `剩 ${remainData[type]} 名`;
+            if (remainData[type] === 0) {
+                document.getElementById(type + "Remain").textContent = "已滿";
+                document.getElementById(type + "Remain").className = "badge bg-danger fs-6";
+            }
+        } else {
+            alert("已滿，無法預約");
+        }
+    }
+</script>
+
+
+<div class="container py-5">
+    <h2 class="text-center mb-4 fw-bold">🔥 熱銷票種即時進度</h2>
+
+    <div class="mb-3">
+        <h5>成人票 <span class="badge bg-success ms-2" id="adultRemain2">剩 5 名</span></h5>
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" id="adultBar" style="width:90%">已售 45 / 50</div>
+        </div>
+        <button class="btn btn-primary mt-2" onclick="buyTicket('adult')">立即預約</button>
+    </div>
+
+    <div class="mb-3">
+        <h5>VIP 套票 <span class="badge bg-warning text-dark ms-2" id="vipRemain2">剩 7 名</span></h5>
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning text-dark" id="vipBar" style="width:30%">已售 3 / 10</div>
+        </div>
+        <button class="btn btn-primary mt-2" onclick="buyTicket('vip')">立即預約</button>
+    </div>
+</div>
+
+<script>
+    var ticketData2 = { adult: { sold: 45, total: 50 }, vip: { sold: 3, total: 10 } };
+
+    function buyTicket(type) {
+        if (ticketData2[type].sold < ticketData2[type].total) {
+            ticketData2[type].sold++;
+            var remain = ticketData2[type].total - ticketData2[type].sold;
+            document.getElementById(type + "Remain2").textContent = `剩 ${remain} 名`;
+            var percent = (ticketData2[type].sold / ticketData2[type].total) * 100;
+            document.getElementById(type + "Bar").style.width = percent + "%";
+            document.getElementById(type + "Bar").textContent = `已售 ${ticketData2[type].sold} / ${ticketData2[type].total}`;
+        } else {
+            alert("已滿，無法預約");
+        }
+    }
+</script>
+
+
+<div class="container py-5 text-center">
+    <h2 class="mb-4 fw-bold">⏳ 限時票務搶購</h2>
+
+    <div class="border p-4 d-inline-block">
+        <h5>成人票</h5>
+        <p>剩餘 <span class="badge bg-success fs-6" id="remain3">5 名</span></p>
+        <p class="text-danger">倒數：<span id="timer">00:05:00</span></p>
+        <button class="btn btn-primary" onclick="bookNow()">立即預約</button>
+    </div>
+    <div class="border p-4 d-inline-block">
+        <h5>成人票</h5>
+        <p>剩餘 <span class="badge bg-success fs-6" id="remain3">5 名</span></p>
+        <p class="text-danger">倒數：<span id="timer">00:05:00</span></p>
+        <button class="btn btn-primary" onclick="bookNow()">立即預約</button>
+    </div>
+    <div class="border p-4 d-inline-block">
+        <h5>成人票</h5>
+        <p>剩餘 <span class="badge bg-success fs-6" id="remain3">5 名</span></p>
+        <p class="text-danger">倒數：<span id="timer">00:05:00</span></p>
+        <button class="btn btn-primary" onclick="bookNow()">立即預約</button>
+    </div>
+    <div class="border p-4 d-inline-block">
+        <h5>成人票</h5>
+        <p>剩餘 <span class="badge bg-success fs-6" id="remain3">5 名</span></p>
+        <p class="text-danger">倒數：<span id="timer">00:05:00</span></p>
+        <button class="btn btn-primary" onclick="bookNow()">立即預約</button>
+    </div>
+    <div class="border p-4 d-inline-block">
+        <h5>成人票</h5>
+        <p>剩餘 <span class="badge bg-success fs-6" id="remain3">5 名</span></p>
+        <p class="text-danger">倒數：<span id="timer">00:05:00</span></p>
+        <button class="btn btn-primary" onclick="bookNow()">立即預約</button>
+    </div>
+    
+</div>
+
+<script>
+    var remain3 = 5;
+    function startTimer() {
+        let timer = 5 * 60, display = document.getElementById('timer');
+        setInterval(function () {
+            let m = parseInt(timer / 60, 10), s = parseInt(timer % 60, 10);
+            m = m < 10 ? "0" + m : m; s = s < 10 ? "0" + s : s;
+            display.textContent = `00:${m}:${s}`;
+            if (--timer < 0) timer = 0;
+        }, 1000);
+    }
+    startTimer();
+
+    function bookNow() {
+        if (remain3 > 0) {
+            remain3--;
+            document.getElementById("remain3").textContent = remain3 + " 名";
+            alert("預約成功！剩 " + remain3 + " 名");
+        } else {
+            alert("已滿，無法預約");
+        }
+    }
+</script>
+
+<div class="container py-5">
+    <h2 class="text-center mb-4 fw-bold">📌 票種快速切換</h2>
+    <ul class="nav nav-tabs" id="ticketTabs">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#adultTab">成人票</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#vipTab">VIP 套票</button></li>
+    </ul>
+    <div class="tab-content border p-3">
+        <div class="tab-pane fade show active" id="adultTab">
+            <p>剩 5 名 | 2025/07/25 10:00</p>
+            <button class="btn btn-primary" onclick="alert('成人票已預約成功！')">立即預約</button>
+        </div>
+        <div class="tab-pane fade" id="vipTab">
+            <p>剩 7 名 | 2025/07/25 16:00</p>
+            <button class="btn btn-primary" onclick="alert('VIP 套票已預約成功！')">立即預約</button>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container py-5">
+    <h2 class="text-center mb-4 fw-bold">🎠 互動卡片票務</h2>
+    <div class="row g-4">
+
+        <!-- 成人票 -->
+        <div class="col-md-4">
+            <div class="ticket-card position-relative overflow-hidden rounded-4 shadow-lg">
+                <img src="https://picsum.photos/500/300?random=201" class="img-fluid">
+                <div class="ticket-overlay d-flex flex-column justify-content-center align-items-center text-white">
+                    <h3 class="fw-bold">成人票</h3>
+                    <p class="mb-1">2025/07/25 10:00</p>
+                    <span class="badge bg-success fs-6" id="remain-adult">剩 5 名</span>
+                    <button class="btn btn-light btn-sm mt-2" onclick="bookImage('adult')">立即預約</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 兒童票 -->
+        <div class="col-md-4">
+            <div class="ticket-card position-relative overflow-hidden rounded-4 shadow-lg">
+                <img src="https://picsum.photos/500/300?random=202" class="img-fluid">
+                <div class="ticket-overlay d-flex flex-column justify-content-center align-items-center text-white">
+                    <h3 class="fw-bold">兒童票</h3>
+                    <p class="mb-1">2025/07/25 11:00</p>
+                    <span class="badge bg-danger fs-6" id="remain-child">已滿</span>
+                    <button class="btn btn-secondary btn-sm mt-2" disabled>已滿</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIP 套票 -->
+        <div class="col-md-4">
+            <div class="ticket-card position-relative overflow-hidden rounded-4 shadow-lg">
+                <img src="https://picsum.photos/500/300?random=203" class="img-fluid">
+                <div class="ticket-overlay d-flex flex-column justify-content-center align-items-center text-white">
+                    <h3 class="fw-bold">VIP 套票</h3>
+                    <p class="mb-1">2025/07/25 13:00</p>
+                    <span class="badge bg-warning text-dark fs-6" id="remain-vip">剩 3 名</span>
+                    <button class="btn btn-light btn-sm mt-2" onclick="bookImage('vip')">立即預約</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 學生票 -->
+        <div class="col-md-4">
+            <div class="ticket-card position-relative overflow-hidden rounded-4 shadow-lg">
+                <img src="https://picsum.photos/500/300?random=204" class="img-fluid">
+                <div class="ticket-overlay d-flex flex-column justify-content-center align-items-center text-white">
+                    <h3 class="fw-bold">學生票</h3>
+                    <p class="mb-1">2025/07/26 09:00</p>
+                    <span class="badge bg-info text-dark fs-6" id="remain-student">剩 10 名</span>
+                    <button class="btn btn-light btn-sm mt-2" onclick="bookImage('student')">立即預約</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 早鳥票 -->
+        <div class="col-md-4">
+            <div class="ticket-card position-relative overflow-hidden rounded-4 shadow-lg">
+                <img src="https://picsum.photos/500/300?random=205" class="img-fluid">
+                <div class="ticket-overlay d-flex flex-column justify-content-center align-items-center text-white">
+                    <h3 class="fw-bold">早鳥票</h3>
+                    <p class="mb-1">2025/07/26 15:00</p>
+                    <span class="badge bg-primary fs-6" id="remain-early">剩 2 名</span>
+                    <button class="btn btn-light btn-sm mt-2" onclick="bookImage('early')">立即預約</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 團體票 -->
+        <div class="col-md-4">
+            <div class="ticket-card position-relative overflow-hidden rounded-4 shadow-lg">
+                <img src="https://picsum.photos/500/300?random=206" class="img-fluid">
+                <div class="ticket-overlay d-flex flex-column justify-content-center align-items-center text-white">
+                    <h3 class="fw-bold">團體票</h3>
+                    <p class="mb-1">2025/07/26 17:00</p>
+                    <span class="badge bg-secondary fs-6" id="remain-group">剩 20 名</span>
+                    <button class="btn btn-light btn-sm mt-2" onclick="bookImage('group')">立即預約</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .ticket-card {
+        cursor: pointer;
+        transition: transform 0.4s ease, filter 0.4s ease;
+    }
+
+        .ticket-card img {
+            object-fit: cover;
+            width: 100%;
+            height: 300px;
+            transition: transform 0.4s ease;
+        }
+
+    .ticket-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.45);
+        opacity: 1;
+        transition: background 0.4s ease;
+        text-align: center;
+    }
+
+    .ticket-card:hover {
+        transform: scale(1.03);
+        filter: brightness(1.1);
+    }
+
+        .ticket-card:hover .ticket-overlay {
+            background: rgba(0, 0, 0, 0.65);
+        }
+</style>
+
+<script>
+    var imageRemain = {
+        adult: 5,
+        vip: 3,
+        student: 10,
+        early: 2,
+        group: 20
+    };
+
+    function bookImage(type) {
+        if (imageRemain[type] > 0) {
+            imageRemain[type]--;
+            document.getElementById("remain-" + type).textContent = "剩 " + imageRemain[type] + " 名";
+            alert("預約成功！剩 " + imageRemain[type] + " 名");
+
+            if (imageRemain[type] === 0) {
+                document.getElementById("remain-" + type).textContent = "已滿";
+                document.getElementById("remain-" + type).className = "badge bg-danger fs-6";
+            }
+        } else {
+            alert("已滿，無法預約");
+        }
+    }
+</script>
+
+
+
+
+<div class="container py-5">
+    <h2 class="text-center mb-4 fw-bold">🏆 熱銷票種排行榜</h2>
+    <ol class="list-group list-group-numbered">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            成人票
+            <span class="badge bg-success rounded-pill">剩 5 名</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            VIP 套票
+            <span class="badge bg-warning text-dark rounded-pill">剩 7 名</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            兒童票
+            <span class="badge bg-danger rounded-pill">已滿</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            團體票
+            <span class="badge bg-success rounded-pill">剩 5 名</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            優惠票
+            <span class="badge bg-warning text-dark rounded-pill">剩 7 名</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            學生票
+            <span class="badge bg-danger rounded-pill">已滿</span>
+        </li>
+    </ol>
+</div>
+
+
+<script>
+    var flipRemain = { adult: 5, vip: 7 };
+    function bookFlip(type) {
+        if (flipRemain[type] > 0) {
+            flipRemain[type]--;
+            alert(`${type === 'adult' ? '成人票' : 'VIP 套票'} 預約成功！剩 ${flipRemain[type]} 名`);
+        } else {
+            alert("已滿，無法預約");
+        }
+    }
+</script>
+<div class="container py-5 text-center">
+    <h2 class="mb-4 fw-bold">🎟 翻牌票務大合集</h2>
+    <div class="d-flex justify-content-center gap-4 flex-wrap">
+
+        <!-- 範例：六種票種 -->
+        <div class="flip-card">
+            <div class="flip-card-inner">
+                <div class="flip-card-front bg-primary text-white d-flex align-items-center justify-content-center">成人票</div>
+                <div class="flip-card-back bg-dark text-white d-flex flex-column align-items-center justify-content-center">
+                    <p>剩 5 名</p><button class="btn btn-light btn-sm" onclick="bookAll('adult')">預約</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card">
+            <div class="flip-card-inner">
+                <div class="flip-card-front bg-success text-white d-flex align-items-center justify-content-center">兒童票</div>
+                <div class="flip-card-back bg-dark text-white d-flex flex-column align-items-center justify-content-center">
+                    <p>剩 0 名</p><button class="btn btn-secondary btn-sm" disabled>已滿</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card">
+            <div class="flip-card-inner">
+                <div class="flip-card-front bg-warning text-dark d-flex align-items-center justify-content-center">VIP 套票</div>
+                <div class="flip-card-back bg-dark text-white d-flex flex-column align-items-center justify-content-center">
+                    <p>剩 7 名</p><button class="btn btn-light btn-sm" onclick="bookAll('vip')">預約</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card">
+            <div class="flip-card-inner">
+                <div class="flip-card-front bg-info text-dark d-flex align-items-center justify-content-center">學生票</div>
+                <div class="flip-card-back bg-dark text-white d-flex flex-column align-items-center justify-content-center">
+                    <p>剩 12 名</p><button class="btn btn-light btn-sm" onclick="bookAll('student')">預約</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card">
+            <div class="flip-card-inner">
+                <div class="flip-card-front bg-danger text-white d-flex align-items-center justify-content-center">早鳥票</div>
+                <div class="flip-card-back bg-dark text-white d-flex flex-column align-items-center justify-content-center">
+                    <p>剩 3 名</p><button class="btn btn-light btn-sm" onclick="bookAll('early')">預約</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card">
+            <div class="flip-card-inner">
+                <div class="flip-card-front bg-secondary text-white d-flex align-items-center justify-content-center">團體票</div>
+                <div class="flip-card-back bg-dark text-white d-flex flex-column align-items-center justify-content-center">
+                    <p>剩 15 名</p><button class="btn btn-light btn-sm" onclick="bookAll('group')">預約</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .flip-card {
+        width: 150px;
+        height: 150px;
+        perspective: 1000px;
+    }
+
+    .flip-card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.8s;
+        transform-style: preserve-3d;
+    }
+
+    .flip-card:hover .flip-card-inner {
+        transform: rotateY(180deg);
+    }
+
+    .flip-card-front, .flip-card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .flip-card-back {
+        transform: rotateY(180deg);
+        flex-direction: column;
+        gap: 5px;
+    }
+</style>
+
+<script>
+    var remainAll = { adult:5, vip:7, student:12, early:3, group:15 };
+    function bookAll(type) {
+        if (remainAll[type] > 0) {
+            remainAll[type]--;
+            alert(`預約成功！剩 ${remainAll[type]} 名`);
+        } else {
+            alert("已滿");
+        }
+    }
+</script>
+<div class="container py-5">
+    <h2 class="mb-4 fw-bold text-center">📋 列表＋翻牌混合票務</h2>
+    <div class="list-group">
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+            <span>成人票</span>
+            <button class="btn btn-primary btn-sm" onclick="alert('成人票預約成功！')">預約</button>
+        </div>
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+            <span>VIP 套票</span>
+            <button class="btn btn-primary btn-sm" onclick="alert('VIP 套票預約成功！')">預約</button>
+        </div>
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+            <span>兒童票 <span class="badge bg-danger ms-2">已滿</span></span>
+            <button class="btn btn-secondary btn-sm" disabled>已滿</button>
+        </div>
+    </div>
+</div>
+<div class="container py-5">
+    <h2 class="text-center mb-4 fw-bold">🎡 官網 Banner 風格票務</h2>
+    <div id="ticketCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="https://picsum.photos/1200/400?random=301" class="d-block w-100 rounded">
+                <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded">
+                    <h5>成人票</h5>
+                    <p>剩餘 5 名 | 2025/07/25 10:00</p>
+                    <button class="btn btn-primary btn-sm" onclick="alert('成人票預約成功！')">立即預約</button>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="https://picsum.photos/1200/400?random=302" class="d-block w-100 rounded">
+                <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded">
+                    <h5>VIP 套票</h5>
+                    <p>剩餘 7 名 | 2025/07/25 16:00</p>
+                    <button class="btn btn-primary btn-sm" onclick="alert('VIP 套票預約成功！')">立即預約</button>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#ticketCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#ticketCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </div>
+</div>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="container py-5">
+    <h2 class="text-center mb-4 fw-bold">📅 票務日曆（格子版）</h2>
+    <div class="calendar-grid" id="ticketCalendar"></div>
+</div>
+
+<style>
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr); /* 一週 7 天 */
+        gap: 8px;
+    }
+
+    .calendar-cell {
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 10px;
+        background: #f8f9fa;
+        text-align: center;
+        cursor: pointer;
+        transition: 0.3s;
+        min-height: 80px;
+    }
+
+        .calendar-cell:hover {
+            background: #e9ecef;
+        }
+
+    .calendar-date {
+        font-weight: bold;
+    }
+
+    .remain {
+        font-size: 14px;
+    }
+</style>
+
+<script>
+    // 假資料：日期與剩餘票數
+    var ticketCalendarData = {
+        "2025-07-01": 10,
+        "2025-07-02": 0,
+        "2025-07-03": 5,
+        "2025-07-05": 2,
+        "2025-07-07": 8,
+        "2025-07-10": 0
+    };
+
+    function renderCalendar() {
+        const calendarEl = document.getElementById("ticketCalendar");
+        const year = 2025, month = 6; // 7月 (JS 的月從0開始, 6代表7月)
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const firstDay = new Date(year, month, 1).getDay(); // 本月1號星期幾
+
+        // 填充空白格（讓日曆對齊星期）
+        for (let i = 0; i < firstDay; i++) {
+            const emptyCell = document.createElement("div");
+            emptyCell.className = "calendar-cell";
+            calendarEl.appendChild(emptyCell);
+        }
+
+        // 繪製日曆格子
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateStr = `${year}-${(month + 1).toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
+            const cell = document.createElement("div");
+            cell.className = "calendar-cell";
+
+            const remain = ticketCalendarData[dateStr] !== undefined
+                ? ticketCalendarData[dateStr]
+                : "-";
+
+            cell.innerHTML = `
+                <div class="calendar-date">${day}</div>
+                <div class="remain ${remain === 0 ? 'text-danger' : 'text-success'}">
+                    ${remain === "-" ? "無" : remain === 0 ? "已滿" : `剩 ${remain} 名`}
+                </div>
+            `;
+
+            cell.onclick = () => {
+                if (remain > 0) {
+                    alert(`${dateStr} 預約成功！剩 ${remain - 1} 名`);
+                    ticketCalendarData[dateStr] = remain - 1;
+                    cell.querySelector(".remain").textContent = remain - 1 > 0 ? `剩 ${remain - 1} 名` : "已滿";
+                    cell.querySelector(".remain").className = "remain " + (remain - 1 === 0 ? "text-danger" : "text-success");
+                } else {
+                    alert(`${dateStr} 已滿或無票務資訊`);
+                }
+            };
+
+            calendarEl.appendChild(cell);
+        }
+    }
+
+    renderCalendar();
+</script>
+
+
+
+
+
+
+

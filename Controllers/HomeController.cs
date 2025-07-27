@@ -122,5 +122,10 @@ namespace StockGTO.Controllers
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
             });
         }
+
+        public IActionResult Show()
+        {
+            return View();
+        }
     }
 }
