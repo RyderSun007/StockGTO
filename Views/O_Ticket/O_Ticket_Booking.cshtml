@@ -1,0 +1,383 @@
+﻿@{
+    ViewData["Title"] = "O_Ticket 團體預約系統 ";
+    Layout = null;
+}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<div class="container my-5">
+    <h2 class="mb-4">O_Ticket 團體預約系統 (設計版)</h2>
+
+    <div class="card mb-4">
+        <div class="card-body">
+
+            <!-- 日期 / 地區 / 入館時間 -->
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label class="form-label">選擇日期：</label>
+                    <input type="date" id="date" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">地區：</label>
+                    <input type="text" id="area" class="form-control" placeholder="請輸入地區" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">入館時間：</label>
+                    <select id="timeSlot" class="form-select">
+                        <option value="09:00">10:00</option>
+                        <option value="10:00">11:00</option>
+                        <option value="11:00">12:00</option>
+                        <option value="13:00">14:00</option>
+                        <option value="14:00">15:00</option>
+                        <option value="15:00">16:00</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 票種（動態） -->
+            <h5 class="mt-4">票種</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered text-center align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th style="width:30%">票種</th>
+                            <th style="width:20%">票價</th>
+                            <th style="width:20%">是否入園票</th>
+                            <th style="width:30%">預約張數</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ticketBody">
+                        <tr><td colspan="4" class="text-muted">載入票種中…</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- DIY 體驗票 -->
+            <h5 class="mt-4">DIY 體驗票（分時段，每時段上限 96）</h5>
+            <table class="table table-bordered text-center align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>時段</th>
+                        <th>剩餘名額</th>
+                        <th>預約張數</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>09:00</td>
+                        <td id="remain_0900" data-capacity="96">96</td>
+                        <td><input type="number" min="0" value="0" class="form-control diy-input" data-time="09:00" /></td>
+                    </tr>
+                    <tr>
+                        <td>10:00</td>
+                        <td id="remain_1000" data-capacity="96">96</td>
+                        <td><input type="number" min="0" value="0" class="form-control diy-input" data-time="11:00" /></td>
+                    </tr>
+                    <tr>
+                        <td>11:00</td>
+                        <td id="remain_1100" data-capacity="96">96</td>
+                        <td><input type="number" min="0" value="0" class="form-control diy-input" data-time="13:00" /></td>
+                    </tr>
+                    <tr>
+                        <td>13:00</td>
+                        <td id="remain_1300" data-capacity="96">96</td>
+                        <td><input type="number" min="0" value="0" class="form-control diy-input" data-time="15:00" /></td>
+                    </tr>
+                    <tr>
+                        <td>14:00</td>
+                        <td id="remain_1400" data-capacity="96">96</td>
+                        <td><input type="number" min="0" value="0" class="form-control diy-input" data-time="17:00" /></td>
+                    </tr>
+                    <tr>
+                        <td>15:00</td>
+                        <td id="remain_1500" data-capacity="96">96</td>
+                        <td><input type="number" min="0" value="0" class="form-control diy-input" data-time="19:00" /></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- 其他資料 -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">旅行社 / 公司：</label>
+                    <input type="text" id="company" class="form-control" placeholder="請輸入旅行社 / 公司" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">團體名稱：</label>
+                    <input type="text" id="groupName" class="form-control" placeholder="請輸入團體名稱" />
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">導遊 / 領隊姓名：</label>
+                    <input type="text" id="leader" class="form-control" placeholder="請輸入姓名" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">聯絡電話：</label>
+                    <input type="text" id="phone" class="form-control" placeholder="請輸入電話" />
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label class="form-label">遊覽車數：</label>
+                    <input type="number" id="busCount" value="0" min="0" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">是否需要導覽：</label>
+                    <select id="guide" class="form-select">
+                        <option>是</option>
+                        <option>否</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">備註：</label>
+                <textarea id="note" class="form-control" rows="3" placeholder="特殊需求請填寫"></textarea>
+            </div>
+
+            <div class="text-end">
+                <button class="btn btn-secondary">取消</button>
+                <button type="button" class="btn btn-primary" onclick="previewBooking()">送出預約</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- 📌 預覽確認 Modal -->
+<div class="modal fade" id="previewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">🔍 預約確認</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr><th>日期</th><td id="p_date"></td></tr>
+                        <tr><th>地區</th><td id="p_area"></td></tr>
+                        <tr><th>入館時間</th><td id="p_timeSlot"></td></tr>
+                        <tr><th>票種/張數</th><td id="p_tickets"></td></tr>
+                        <tr><th>總人數（僅入園票）</th><td id="p_total"></td></tr>
+                        <tr><th>旅行社 / 公司</th><td id="p_company"></td></tr>
+                        <tr><th>團體名稱</th><td id="p_group"></td></tr>
+                        <tr><th>導遊/領隊</th><td id="p_leader"></td></tr>
+                        <tr><th>電話</th><td id="p_phone"></td></tr>
+                        <tr><th>遊覽車數</th><td id="p_bus"></td></tr>
+                        <tr><th>導覽</th><td id="p_guide"></td></tr>
+                        <tr><th>備註</th><td id="p_note"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">返回修改</button>
+                <button class="btn btn-success" id="btnConfirmSubmit">確認送出</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form id="antiForm">
+    @Html.AntiForgeryToken()
+</form>
+
+<script>
+    // ===================== 票種載入 =====================
+    async function loadTicketTypes() {
+      const tbody = document.getElementById('ticketBody');
+      tbody.innerHTML = `<tr><td colspan="4" class="text-muted">載入票種中…</td></tr>`;
+      try {
+        const res = await fetch('/O_Ticket/TicketTypes', { credentials: 'same-origin' });
+        if (!res.ok) {
+          const txt = await res.text();
+          tbody.innerHTML = `<tr><td colspan="4" class="text-danger">票種載入失敗：${res.status} ${res.statusText} ${txt}</td></tr>`;
+          return;
+        }
+        const types = await res.json();
+        if (!Array.isArray(types) || !types.length) {
+          tbody.innerHTML = `<tr><td colspan="4" class="text-muted">目前沒有啟用中的票種</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = types.map(t => `
+          <tr>
+            <td class="text-start">${t.name}</td>
+            <td>$${Number(t.unitPrice).toLocaleString()}</td>
+            <td>${t.isEntrance ? '✅ 入園票' : '—'}</td>
+            <td>
+              <input type="number" min="0" value="0"
+                     class="form-control ticket-qty"
+                     data-ticket-id="${t.id}"
+                     data-name="${t.name}"
+                     data-is-entrance="${t.isEntrance}">
+            </td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        console.error(e);
+        tbody.innerHTML = `<tr><td colspan="4" class="text-danger">票種載入失敗（例外）：${e.message}</td></tr>`;
+      }
+    }
+
+    // ===================== 共用小工具 =====================
+    function getCsrf() {
+      const el = document.querySelector('input[name="__RequestVerificationToken"]');
+      return el ? el.value : '';
+    }
+
+    function resetRemainToCapacity() {
+      document.querySelectorAll('td[id^="remain_"]').forEach(td => {
+        const cap = parseInt(td.dataset.capacity) || 0;
+        td.innerText = cap;
+      });
+    }
+
+    function resetForNewSelection() {
+      document.querySelectorAll('.ticket-qty').forEach(inp => inp.value = 0);
+      document.querySelectorAll('.diy-input').forEach(inp => inp.value = 0);
+      resetRemainToCapacity();
+    }
+
+    function calcEntranceTotal() {
+      let sum = 0;
+      document.querySelectorAll('.ticket-qty').forEach(inp => {
+        if (inp.dataset.isEntrance === 'true') sum += (parseInt(inp.value) || 0);
+      });
+      return sum;
+    }
+
+    // ===================== 預覽 =====================
+    function previewBooking() {
+      resetRemainToCapacity();
+
+      const ticketSummary = [];
+      document.querySelectorAll('.ticket-qty').forEach(inp => {
+        const cnt = parseInt(inp.value) || 0;
+        if (cnt > 0) ticketSummary.push(`${inp.dataset.name}：${cnt} 張`);
+      });
+
+      // DIY（不列入總人數）
+      let diyTotal = 0;
+      document.querySelectorAll('.diy-input').forEach(input => {
+        const count = parseInt(input.value) || 0;
+        if (count <= 0) return;
+        const time = input.dataset.time;
+        const cellId = 'remain_' + time.replace(':','');
+        const cell = document.getElementById(cellId);
+        const remain = parseInt(cell.innerText) || 0;
+        if (count > remain) {
+          alert(`❌ ${time} DIY 剩餘 ${remain} 張，您填了 ${count} 張，請調整。`);
+          throw 'DIY over';
+        }
+        cell.innerText = remain - count;
+        ticketSummary.push(`DIY ${time}：${count} 張（這個時段剩餘 ${remain - count}）`);
+        diyTotal += count;
+      });
+
+      const totalEntrance = calcEntranceTotal();
+      if (totalEntrance <= 0) { alert("❌ 請先購買至少 1 張入園票。"); return; }
+      if (diyTotal > totalEntrance) { alert(`❌ DIY 人數 (${diyTotal}) 不可超過入園票人數 (${totalEntrance})！`); return; }
+
+      // 填入 Modal
+      document.getElementById("p_date").innerText     = document.getElementById("date").value;
+      document.getElementById("p_area").innerText     = document.getElementById("area").value;
+      document.getElementById("p_timeSlot").innerText = document.getElementById("timeSlot").value;
+      document.getElementById("p_tickets").innerHTML  = ticketSummary.join("<br/>");
+      document.getElementById("p_total").innerText    = totalEntrance;
+      document.getElementById("p_company").innerText  = document.getElementById("company").value;
+      document.getElementById("p_group").innerText    = document.getElementById("groupName").value;
+      document.getElementById("p_leader").innerText   = document.getElementById("leader").value;
+      document.getElementById("p_phone").innerText    = document.getElementById("phone").value;
+      document.getElementById("p_bus").innerText      = document.getElementById("busCount").value;
+      document.getElementById("p_guide").innerText    = document.getElementById("guide").value;
+      document.getElementById("p_note").innerText     = document.getElementById("note").value;
+
+      new bootstrap.Modal(document.getElementById('previewModal')).show();
+    }
+
+    // ===================== 送出 =====================
+    function buildPayload() {
+      const lines = [];
+      document.querySelectorAll('.ticket-qty').forEach(inp => {
+        const cnt = parseInt(inp.value) || 0;
+        if (cnt > 0) lines.push({ ticketTypeId: parseInt(inp.dataset.ticketId), count: cnt });
+      });
+
+      const diySlots = [];
+      document.querySelectorAll('.diy-input').forEach(inp => {
+        const c = parseInt(inp.value) || 0;
+        if (c > 0) diySlots.push({ timeSlot: inp.dataset.time, count: c });
+      });
+
+      return {
+        date:       document.getElementById("date").value,
+        area:       document.getElementById("area").value,
+        timeSlot:   document.getElementById("timeSlot").value,
+        company:    document.getElementById("company").value,
+        groupName:  document.getElementById("groupName").value,
+        userName:   document.getElementById("leader").value,
+        userPhone:  document.getElementById("phone").value,
+        busCount:   parseInt(document.getElementById("busCount").value) || 0,
+        guide:      document.getElementById("guide").value === '是',
+        note:       document.getElementById("note").value,
+        lines,      // 動態票種
+        diySlots
+      };
+    }
+
+    document.getElementById('btnConfirmSubmit').addEventListener('click', submitBooking);
+    async function submitBooking() {
+      const btn = document.getElementById('btnConfirmSubmit');
+      btn.disabled = true;
+      btn.textContent = '送出中...';
+      try {
+        const payload = buildPayload();
+        const baseTickets = calcEntranceTotal();
+        const diyTotal = (payload.diySlots || []).reduce((s, x) => s + (x.count|0), 0);
+
+        if (!payload.date)     { alert('請選擇日期'); return; }
+        if (!payload.timeSlot) { alert('請選擇入館時間'); return; }
+        if (baseTickets <= 0)  { alert('請先購買至少 1 張入園票'); return; }
+        if (diyTotal > baseTickets) { alert(`DIY 人數 (${diyTotal}) 不可超過入園票人數 (${baseTickets})！`); return; }
+
+        const res = await fetch('/O_Ticket/BookingCreate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': getCsrf()
+          },
+          credentials: 'same-origin',
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          let text = ''; try { text = await res.text(); } catch {}
+          alert(`送出失敗：${res.status} ${res.statusText}${text ? ' - ' + text : ''}`);
+          return;
+        }
+
+        const data = await res.json();
+        if (data.ok) {
+          window.location.href = '/O_Ticket/O_Ticket_Manage';
+        } else {
+          alert(data.message || '送出失敗');
+        }
+      } catch (err) {
+        if (err !== 'DIY over') {
+          console.error(err);
+          alert('送出發生例外：' + (err?.message || err));
+        }
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '確認送出';
+      }
+    }
+
+    // ===================== Init =====================
+    document.getElementById('date').addEventListener('change', resetForNewSelection);
+    document.getElementById('timeSlot').addEventListener('change', resetForNewSelection);
+    loadTicketTypes();
+</script>

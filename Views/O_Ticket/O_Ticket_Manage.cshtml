@@ -1,0 +1,265 @@
+﻿@model IEnumerable<StockGTO.Models.O_Ticket_Booking>
+
+@{
+    ViewData["Title"] = "DIY 團體預約紀錄（動態票種版）";
+    Layout = null;
+    const int DIY_CAP_PER_SLOT = 96;
+    var items = Model?.ToList() ?? new List<StockGTO.Models.O_Ticket_Booking>();
+
+    // 可能的票種（動態）
+    var allTypeNames = items
+        .SelectMany(b => b.TicketLines ?? Enumerable.Empty<StockGTO.Models.O_Ticket_BookingTicket>())
+        .Select(l => l.TicketType?.Name)
+        .Where(n => !string.IsNullOrWhiteSpace(n))
+        .Distinct()
+        .OrderBy(n => n)
+        .ToList();
+
+    // 可能的 DIY 時段（動態）
+    var allSlots = items
+        .SelectMany(b => b.DiyDetails ?? Enumerable.Empty<StockGTO.Models.O_Ticket_DiyBooking>())
+        .Select(d => d.TimeSlot)
+        .Where(ts => !string.IsNullOrWhiteSpace(ts))
+        .Distinct()
+        .OrderBy(ts => ts)
+        .ToList();
+
+    // 以日期分組（頁面下方 DIY 狀態用）
+    var byDate = items.GroupBy(b => b.Date.Date)
+                      .OrderBy(g => g.Key)
+                      .ToList();
+
+    int EntranceCount(StockGTO.Models.O_Ticket_Booking b)
+        => (b.TicketLines ?? Enumerable.Empty<StockGTO.Models.O_Ticket_BookingTicket>())
+           .Where(l => l.TicketType?.IsEntrance == true)
+           .Sum(l => l.Count);
+}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+<div class="container-fluid my-4">
+
+    <h3 class="mb-3">@ViewData["Title"]</h3>
+
+    <!-- 查詢區（依日期區間） -->
+    <form class="row g-2 mb-4" method="get">
+        <div class="col-auto">
+            <label class="form-label">起日</label>
+            <input type="date" name="start" class="form-control" value="@(Context.Request.Query["start"])" />
+        </div>
+        <div class="col-auto">
+            <label class="form-label">迄日</label>
+            <input type="date" name="end" class="form-control" value="@(Context.Request.Query["end"])" />
+        </div>
+        <div class="col-auto align-self-end">
+            <button class="btn btn-primary">查詢</button>
+        </div>
+    </form>
+
+    <!-- 明細列表 -->
+    <div class="card mb-4">
+        <div class="card-header">預約列表（依日期 ↓、時段 ↑）</div>
+        <div class="card-body table-responsive">
+            <table class="table table-sm table-bordered align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>日期</th>
+                        <th>序號</th>
+                        <th>地區</th>
+                        <th>入館</th>
+                        <th>公司/旅行社</th>
+                        <th>團名</th>
+                        <th>導遊</th>
+                        <th>電話</th>
+                        <th>票種明細（動態）</th>
+                        <th class="text-end">總人數<br /><small class="text-muted">只計入園票</small></th>
+                        <th>DIY 明細</th>
+                        <th>備註</th>
+                        <th>狀態</th>
+                        <th>建立時間</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var b in items.OrderByDescending(x => x.Date).ThenBy(x => x.TimeSlot))
+                    {
+                        var ticketLines = b.TicketLines ?? Enumerable.Empty<StockGTO.Models.O_Ticket_BookingTicket>();
+                        var diy = b.DiyDetails ?? Enumerable.Empty<StockGTO.Models.O_Ticket_DiyBooking>();
+                        <tr>
+                            <td>@b.Date:yyyy-MM-dd</td>
+                            <td>@b.SerialNo</td>
+                            <td>@b.Area</td>
+                            <td>@b.TimeSlot</td>
+                            <td>@b.Company</td>
+                            <td>@b.GroupName</td>
+                            <td>@b.UserName</td>
+                            <td>@b.UserPhone</td>
+                            <td>
+                                @if (!ticketLines.Any())
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                                else
+                                {
+                                    <ul class="mb-0 ps-3">
+                                        @foreach (var g in ticketLines.GroupBy(l => l.TicketType?.Name).OrderBy(g => g.Key))
+                                        {
+                                            var name = g.Key ?? "(未命名)";
+                                            var cnt = g.Sum(x => x.Count);
+                                            var price = g.First().UnitPrice;
+                                            <li>@name：@cnt 張 <small class="text-muted">@($"@{price:n0}")</small></li>
+                                        }
+                                    </ul>
+                                }
+                            </td>
+                            <td class="text-end fw-bold">@EntranceCount(b)</td>
+                            <td>
+                                @if (!diy.Any())
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                                else
+                                {
+                                    <ul class="mb-0 ps-3">
+                                        @foreach (var g in diy.GroupBy(d => d.TimeSlot).OrderBy(g => g.Key))
+                                        {
+                                            var cnt = g.Sum(x => x.Count);
+                                            <li>DIY @g.Key：@cnt 張</li>
+                                        }
+                                    </ul>
+                                }
+                            </td>
+                            <td>@b.Note</td>
+                            <td>
+                                @switch (b.Status)
+                                {
+                                    case "Unverified":
+                                        <span class="badge bg-warning text-dark">未驗證</span>
+                                        ; break;
+                                    case "Confirmed":
+
+                                        <span class="badge bg-success">已確認</span>
+                                        ; break;
+                                    case "Cancelled":
+
+                                        <span class="badge bg-secondary">已取消</span>
+                                        ; break;
+                                    default:
+
+                                        <span class="badge bg-light text-dark">@b.Status</span>
+                                        ; break;
+                                }
+                            </td>
+                            <td>@b.CreatedAt:yyyy-MM-dd HH:mm</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 日期統計（動態票種） -->
+    <div class="card mb-4">
+        <div class="card-header">日期統計（票種動態 + 總人數 = 只計入園票）</div>
+        <div class="card-body table-responsive">
+            <table class="table table-sm table-bordered align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>日期</th>
+                        @foreach (var t in allTypeNames)
+                        {
+                            <th class="text-end">@t</th>
+                        }
+                        <th class="text-end">總人數<br /><small class="text-muted">只計 IsEntrance</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var g in byDate)
+                    {
+                        // 各票種數量
+                        var typeCount = allTypeNames.ToDictionary(n => n!, n => 0);
+                        foreach (var b in g)
+                        {
+                            foreach (var l in b.TicketLines ?? Enumerable.Empty<StockGTO.Models.O_Ticket_BookingTicket>())
+                            {
+                                var name = l.TicketType?.Name;
+                                if (!string.IsNullOrWhiteSpace(name))
+                                    typeCount[name!] += l.Count;
+                            }
+                        }
+                        var totalEntrance = g.Sum(b => EntranceCount(b));
+
+                        <tr>
+                            <td>@g.Key:yyyy-MM-dd</td>
+                            @foreach (var t in allTypeNames)
+                            {
+                                <td class="text-end">@typeCount[t]</td>
+                            }
+                            <td class="text-end fw-bold">@totalEntrance</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- DIY 教室預約狀態 -->
+    <div class="card">
+        <div class="card-header"> DIY 教室預約狀態（各日期 × 各時段）</div>
+        <div class="card-body table-responsive">
+            <table class="table table-sm table-bordered align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>日期</th>
+                        <th>時段</th>
+                        <th class="text-end">已預約</th>
+                        <th class="text-end">剩餘名額</th>
+                        <th>明細（公司 / 團名 / 電話 / 張數）</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var g in byDate)
+                    {
+                        foreach (var slot in allSlots)
+                        {
+                            var details = g.SelectMany(b =>
+                            (b.DiyDetails ?? Enumerable.Empty<StockGTO.Models.O_Ticket_DiyBooking>())
+                            .Where(d => d.TimeSlot == slot)
+                            .Select(d => new
+                            {
+                                C = b.Company,
+                                G = b.GroupName,
+                                P = b.UserPhone,
+                                Count = d.Count
+                            }))
+                            .ToList();
+                            var booked = details.Sum(x => x.Count);
+                            <tr>
+                                <td>@g.Key:yyyy-MM-dd</td>
+                                <td>@slot</td>
+                                <td class="text-end">@booked</td>
+                                <td class="text-end @((DIY_CAP_PER_SLOT - booked) < 0 ? "text-danger fw-bold" : "")">
+                                    @(DIY_CAP_PER_SLOT - booked)
+                                </td>
+                                <td>
+                                    @if (!details.Any())
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                    else
+                                    {
+                                        <ul class="mb-0 ps-3">
+                                            @foreach (var r in details)
+                                            {
+                                                <li>@r.C / @r.G / @r.P ：@r.Count 人</li>
+                                            }
+                                        </ul>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>

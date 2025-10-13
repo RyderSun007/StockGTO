@@ -20,6 +20,7 @@ namespace StockGTO.Controllers
         /// <summary>
         /// ✅ Booking 首頁：初始載入票種（第一次載入顯示最大容量）
         /// </summary>
+        /// ////
         public async Task<IActionResult> Booking()
         {
             var tickets = await _context.DiyTicketTypes
@@ -28,6 +29,38 @@ namespace StockGTO.Controllers
 
             return View(tickets);
         }
+
+
+
+
+        /// <summary>
+        /// ✅ Booking2 首頁：新版預約 UI
+        /// </summary>
+        public async Task<IActionResult> Booking2()
+        {
+            var tickets = await _context.DiyTicketTypes
+                .Where(t => t.IsActive)
+                .ToListAsync();
+
+            return View(tickets);  // ⚡ 會自動找 Views/Otherworld/Booking2.cshtml
+        }
+        /// <summary>
+        /// ✅ 後台查看所有預約資料（新版本 ManageBookings2）
+        /// </summary>
+        public async Task<IActionResult> ManageBookings2()
+        {
+            var bookings = await _context.DiyBookings
+                .Include(b => b.TicketType)   // 把票種一起載入
+                .OrderByDescending(b => b.CreatedAt)
+                .ToListAsync();
+
+            return View(bookings); // 對應 Views/Otherworld/ManageBookings2.cshtml
+        }
+
+
+
+
+
 
         /// <summary>
         /// ✅ 根據日期動態載入剩餘數量（AJAX 呼叫）
