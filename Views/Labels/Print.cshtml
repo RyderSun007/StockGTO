@@ -1,0 +1,240 @@
+﻿@{
+    Layout = null;
+    var token = (string)(ViewBag.Token ?? "");
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>條碼列印</title>
+    <style>
+        /* A4 + 安全邊界 */
+        @@page {
+            size: A4;
+            margin: 10mm;
+        }
+
+        :root {
+            /* 5×6 A4 緊湊版 */
+            --cols: 5;
+            --rows: 6;
+            --cell-w: 32mm; /* 單格寬 */
+            --cell-h: 40mm; /* 單格高 */
+            --gap-x: 3mm; /* 欄距 */
+            --gap-y: 3mm; /* 列距 */
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui,"Noto Sans TC",Arial;
+        }
+
+        .controls {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #fff;
+            padding: 10px 16px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .page {
+            padding: 6mm;
+            page-break-after: always;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(var(--cols), var(--cell-w));
+            gap: var(--gap-y) var(--gap-x);
+            justify-content: center;
+        }
+
+        .label {
+            width: var(--cell-w);
+            height: var(--cell-h);
+            padding: 1.5mm;
+            border: 0.3mm dashed #ccc;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-align: center;
+            page-break-inside: avoid;
+        }
+
+        .store {
+            font-weight: 700;
+            font-size: 9pt;
+            line-height: 1.2;
+        }
+
+        .bar {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .code {
+            font-size: 8pt;
+            line-height: 1.2;
+            margin-top: 1mm;
+        }
+
+        @@media print {
+            .controls {
+                display: none;
+            }
+
+            .label {
+                border: none;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <div class="controls">
+        <button onclick="window.print()">列印</button>
+        <label>
+            版型：
+            <select id="preset" onchange="applyPreset(this.value)">
+                <option value="5x6" selected>5 × 6（30/頁）</option>
+                <option value="4x6">4 × 6（24/頁）</option>
+                <option value="4x8">4 × 8（32/頁）</option>
+                <option value="4x7">4 × 7（28/頁）</option>
+                <option value="3x8">3 × 8（24/頁）</option>
+                <option value="3x9">3 × 9（27/頁）</option>
+            </select>
+        </label>
+        <label>
+            缺圖補畫：
+            <select id="fallback" onchange="render()">
+                <option value="code128" selected>Code128</option>
+                <option value="qrcode">QR</option>
+                <option value="none">不補</option>
+            </select>
+        </label>
+    </div>
+
+    <!-- 這個一定要有；剛剛 root 為 null 就是抓不到它 -->
+    <div id="root"></div>
+
+    <!-- CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js" defer></script>
+
+    <!-- 你的主腳本（用 defer，等 DOM ready 再跑） -->
+    <script defer>
+        (function(){
+          const token = "@token";
+          const root  = document.getElementById('root');
+          let data = [];
+
+          const mm = v => Math.round(v * 3.78);
+                  const PRESETS = {
+          "5x6": { cols:5, rows:6, wmm:32, hmm:40, gapXmm:3, gapYmm:3, barH_mm:28, qr_mm:28 },
+          "4x6": { cols:4, rows:6, wmm:42, hmm:34, gapXmm:6, gapYmm:4, barH_mm:24, qr_mm:24 },
+          "4x8": { cols:4, rows:8, wmm:38, hmm:30, gapXmm:6, gapYmm:3, barH_mm:20, qr_mm:20 },
+          "4x7": { cols:4, rows:7, wmm:40, hmm:32, gapXmm:6, gapYmm:4, barH_mm:22, qr_mm:22 },
+          "3x8": { cols:3, rows:8, wmm:58, hmm:30, gapXmm:6, gapYmm:4, barH_mm:22, qr_mm:22 },
+          "3x9": { cols:3, rows:9, wmm:56, hmm:28, gapXmm:6, gapYmm:3, barH_mm:20, qr_mm:20 }
+        };
+          let currentPreset = PRESETS["5x6"];
+
+          function applyPreset(key){
+            const p = PRESETS[key] ?? PRESETS["5x6"];
+            document.documentElement.style.setProperty('--cols',  String(p.cols));
+            document.documentElement.style.setProperty('--rows',  String(p.rows));
+            document.documentElement.style.setProperty('--cell-w', p.wmm + 'mm');
+            document.documentElement.style.setProperty('--cell-h', p.hmm + 'mm');
+            document.documentElement.style.setProperty('--gap-x',  p.gapXmm + 'mm');
+            document.documentElement.style.setProperty('--gap-y',  p.gapYmm + 'mm');
+            currentPreset = p;
+            render();
+          }
+
+          function el(t,c){ const e=document.createElement(t); if(c) e.className=c; return e; }
+
+          function drawFallback(container, code){
+            const mode = document.getElementById('fallback').value;
+            container.innerHTML = "";
+            if(!code){ container.textContent="(無資料)"; return; }
+            if(mode === 'code128'){
+              const svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
+              container.appendChild(svg);
+              JsBarcode(svg, code, { format:"code128", displayValue:false, height:mm(currentPreset.barH_mm), margin:2, width:1.4 });
+            }else if(mode === 'qrcode'){
+              const canvas = document.createElement('canvas');
+              container.appendChild(canvas);
+              QRCode.toCanvas(canvas, code, { width:mm(currentPreset.qr_mm), margin:0 });
+            }else{
+              container.textContent = "(無圖片)";
+            }
+          }
+
+          function render(){
+            root.innerHTML = "";
+            const { cols, rows } = currentPreset;
+            const pageSize = cols * rows;
+            for(let p=0; p*pageSize < data.length; p++){
+              const page = el('div','page');
+              const grid = el('div','grid');
+              page.appendChild(grid);
+              root.appendChild(page);
+
+              const slice = data.slice(p*pageSize, (p+1)*pageSize);
+              for(const x of slice){
+                const code = x.code ?? x.Code ?? "";
+                const store = x.store ?? x.Store ?? "";
+                const url = x.imgUrl ?? x.ImgUrl ?? "";
+
+                const box = el('div','label');
+                const s = el('div','store'); s.textContent = store;
+                const b = el('div','bar');
+                const c = el('div','code');  c.textContent = code;
+                box.append(s,b,c); grid.appendChild(box);
+
+                if(url){
+                  const img = new Image();
+                  img.onload  = ()=>{ img.style.maxWidth="100%"; img.style.maxHeight="100%"; b.replaceChildren(img); };
+                  img.onerror = ()=> drawFallback(b, code);
+                  img.src = url + `?v=${Date.now()}`;
+                }else{
+                  drawFallback(b, code);
+                }
+              }
+            }
+            if(data.length === 0){
+              root.innerHTML = `<div style="padding:16px;color:#555">沒有資料可顯示（請檢查 CSV 是否有內容）</div>`;
+            }
+          }
+
+          async function load(){
+            try{
+              const url = `/labels/${token}/data.json?v=${Date.now()}`;
+              const res = await fetch(url, { cache: "no-store" });
+              if(!res.ok) throw new Error(`HTTP ${res.status}`);
+              data = await res.json();
+              applyPreset(document.getElementById('preset').value); // 會觸發 render()
+            }catch(err){
+              console.error('載入 data.json 失敗', err);
+              // 這裡不再用 root 之前，先確保 root 存在
+              if(root) root.innerHTML = `<div style="padding:16px;color:#c00">載入失敗：${String(err)}</div>`;
+            }
+          }
+
+          // 啟動
+          load();
+        })();
+    </script>
+</body>
+</html>

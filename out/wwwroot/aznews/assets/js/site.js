@@ -1,9 +1,9 @@
 $(function () {
      // start the ticker 
-	$('#js-news').ticker();
+	//$('#js-news').ticker();
 	
 	// hide the release history when the page loads
-	$('#release-wrapper').css('margin-top', '-' + ($('#release-wrapper').height() + 20) + 'px');
+	//$('#release-wrapper').css('margin-top', '-' + ($('#release-wrapper').height() + 20) + 'px');
 
 	// show/hide the release history on click
 	$('a[href="#release-history"]').toggle(function () {	

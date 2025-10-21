@@ -55,10 +55,14 @@ namespace StockGTO
                 .AddEnvironmentVariables();
 
             // ✅ 資料庫連線字串
-            var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+            var connectionString =
+           Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
+            ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
             // ✅ 註冊服務（依需求加入）
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddScoped<O_HR_ControlService>();
 
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(connectionString));
@@ -80,6 +84,13 @@ namespace StockGTO
                 options.ClientId = Environment.GetEnvironmentVariable("Authentication__Google__ClientId");
                 options.ClientSecret = Environment.GetEnvironmentVariable("Authentication__Google__ClientSecret");
             });
+
+            // 如果你有介面 IO_HR_ControlService，改用這一行（擇一）
+            //builder.Services.AddScoped<IO_HR_ControlService, O_HR_ControlService>();
+
+            // 如果你沒有介面，就註冊具體型別
+            builder.Services.AddScoped<O_HR_ControlService>();
+
 
             // ✅ ForwardedHeaders 支援：讓 ASP.NET Core 知道外面是 HTTPS
             builder.Services.Configure<ForwardedHeadersOptions>(options =>

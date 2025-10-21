@@ -6981,6 +6981,14 @@ del {
 }
 
 
+/* 小巧版表格，行高/字體/間距都縮小 */
+table.compact {
+    font-size: 13px;
+}
+
+    table.compact th, table.compact td {
+        padding: 4px 6px;
+    }
 
 
 
