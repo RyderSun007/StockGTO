@@ -1,0 +1,56 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>上傳條碼資料</title>
+    <style>
+        body {
+            font-family: system-ui,"Noto Sans TC",Arial;
+            margin: 24px
+        }
+
+        .box {
+            border: 1px solid #ddd;
+            padding: 16px;
+            border-radius: 12px;
+            max-width: 720px
+        }
+
+        .row {
+            margin: 12px 0
+        }
+
+        input[type=file] {
+            width: 100%
+        }
+
+        button {
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            background: #fff;
+            cursor: pointer
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>上傳 CSV + 圖片（不寫資料庫）</h2>
+        <p>CSV 欄位：<code>Code,Store,ImgFile</code>；圖片檔名需與第三欄一致。</p>
+        <form method="post" enctype="multipart/form-data">
+            <div class="row">
+                <label>CSV 檔：</label>
+                <input type="file" name="csv" accept=".csv" required />
+            </div>
+            <div class="row">
+                <label>條碼圖片（可多選）：</label>
+                <input type="file" name="images" accept=".png,.jpg,.jpeg,.svg" multiple />
+            </div>
+            <div class="row"><button type="submit">上傳並前往排版列印</button></div>
+        </form>
+    </div>
+</body>
+</html>

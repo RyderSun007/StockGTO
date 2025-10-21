@@ -13,7 +13,6 @@
 
     var main = newsList.FirstOrDefault(x => x.Position == 1);
 
-
     // 這裡加上Random
     var random = new Random();
     var shuffledArticles = Model.ArticlePosts.OrderBy(x => random.Next()).Take(6).ToList();
@@ -27,9 +26,7 @@
 
 <div id="app">
     <div class="vue-cards-section">
-        
         <div class="vue-card-container">
-
             <a href="/" class="card-link">
                 <card data-image="/aznews/assets/img/stock01.JPG">
                     <h1 slot="header">台積電 TSMC</h1>
@@ -57,16 +54,9 @@
                     <p slot="content">金融穩健代表</p>
                 </card>
             </a>
-
         </div>
     </div>
 </div>
-
-
-
-
-
-
 
 <!-- 🔔 跑馬燈區塊 Start -->
 <div class="bg-light py-2 px-3 text-dark" style="overflow: hidden; white-space: nowrap;">
@@ -79,8 +69,6 @@
         }
     </marquee>
 </div>
-<!-- 🔔 跑馬燈區塊 End -->
-<!-- 🔔 現代跑馬燈區塊 End -->
 <!-- 🔔 跑馬燈區塊 End -->
 <!-- 🌟【首頁熱門區塊 Trending Area】Start -->
 <div class="trending-area fix">
@@ -158,15 +146,7 @@
     </div> <!-- .container -->
 </div>
 <!-- 🌟【首頁熱門區塊 Trending Area】End -->
-
-
-
-
-
-
-
 <!-- 🔥 熱門文章排行輪播區塊 Start -->
-
 <div class="weekly-news-area pt-50">
     <div class="container">
         <div class="weekly-wrapper">
@@ -209,7 +189,6 @@
         </div>
     </div>
 </div>
-
 <!-- 🔥 熱門文章排行輪播區塊 End -->
 <!-- 🔄 Weekly Top News 改為隨機文章輪播 -->
 <div class="weekly-news-area pt-50">
@@ -253,138 +232,6 @@
     </div>
 </div>
 
-
-
-
-
-<!-- Start Youtube -->
-        <div class="youtube-area video-padding">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="video-items-active">
-                            <div class="video-items text-center">
-                        <iframe src="https://www.youtube.com/embed/m_dhMSvUCIc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                            </div>
-                            <div class="video-items text-center">
-                        <iframe src="https://www.youtube.com/embed/V1p33hqPrUk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                            </div>
-                            <div class="video-items text-center">
-                        <iframe src="https://www.youtube.com/embed/AEBeWMM1atA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-                            </div>
-                            <div class="video-items text-center">
-                        <iframe src="https://www.youtube.com/embed/6YLkmv0_-EE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-                            </div>
-                            <div class="video-items text-center">
-                        <iframe src="https://www.youtube.com/embed/6IquAgfvYmc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="video-info">    
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="video-caption">
-                                <div class="top-caption">
-                                    <span class="color1">Politics</span>
-                                </div>
-                                <div class="bottom-caption">
-                                    <h2>新聞直播</h2>
-                                    <p>各大新聞台 </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="testmonial-nav text-center">
-                                <div class="single-video">
-                            <iframe src="https://www.youtube.com/embed/m_dhMSvUCIc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                                    <div class="video-intro">
-                                        <h4>TVBS NEWSt</h4>
-                                    </div>
-                                </div>
-                                <div class="single-video">
-                            <iframe src="https://www.youtube.com/embed/V1p33hqPrUk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                                    <div class="video-intro">
-                                        <h4>東森新聞</h4>
-                                    </div>
-                                </div>
-                                <div class="single-video">
-                            <iframe src="https://www.youtube.com/embed/AEBeWMM1atA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                                    <div class="video-intro">
-                                        <h4>EBC東森財經股市</h4>
-                                    </div>
-                                </div>
-                                <div class="single-video">
-                            <iframe src="https://www.youtube.com/embed/6YLkmv0_-EE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                                    <div class="video-intro">
-                                        <h4> 非凡商業台 </h4>
-                                    </div>
-                                </div>
-                                <div class="single-video">
-                            <iframe src="https://www.youtube.com/embed/6IquAgfvYmc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                                    <div class="video-intro">
-                                        <h4>寰宇新聞台 </h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- End Start youtube -->
-
-
-
-
-
-<div class="container my-4">
-    <div class="card shadow-sm border-0 rounded-4">
-        <div class="card-body">
-            <h4 class="fw-bold text-primary mb-4">📈 即時股價列表</h4>
-            <table class="table table-hover text-center">
-                <thead class="table-light">
-                    <tr>
-                        <th>代號</th>
-                        <th>即時價格</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var symbol in new[] { "AAPL", "NVDA", "TSLA", "ORCL", "AMD", "MSFT", "META", "GOOGL", "INTC", "NFLX", "BABA", "T", "V", "DIS", "IBM" })
-                    {
-                        <tr>
-                            <td class="fw-bold">@symbol</td>
-                            <td id="price-@symbol">載入中...</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- ✅ Jquery + Bootstrap 必要核心 -->
 <script src="~/aznews/assets/js/vendor/jquery-1.12.4.min.js" asp-append-version="true"></script>
 <script src="~/aznews/assets/js/bootstrap.min.js" asp-append-version="true"></script>
@@ -401,25 +248,3 @@
 
 <!-- ✅ 你自訂的功能 -->
 <script src="~/aznews/assets/js/site.js" asp-append-version="true"></script>
-
-<!-- ✅ 引入 SignalR 套件（只要一次） -->
-<!-- ✅ SignalR JS 套件 -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
-<script>
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/stockHub")
-        .build();
-
-    connection.on("ReceiveStockPrices", function (data) {
-        for (const symbol in data) {
-            const price = data[symbol];
-            const target = document.getElementById(`price-${symbol}`);
-            if (target) {
-                target.innerText = (price === "N/A") ? "暫無資料" : `$${price}`;
-            }
-        }
-    });
-
-    connection.start().catch(err => console.error("SignalR 連線錯誤：", err.toString()));
-</script>
-

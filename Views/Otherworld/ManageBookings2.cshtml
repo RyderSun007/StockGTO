@@ -1,0 +1,262 @@
+﻿@{
+    ViewData["Title"] = "DIY 團體預約管理 (設計版)";
+    Layout = null; // 不使用共用 Layout
+}
+
+<style>
+    body {
+        font-family: "Microsoft JhengHei", sans-serif;
+        background: #f4f6f9;
+        padding: 30px;
+    }
+
+    h1, h2 {
+        font-size: 22px;
+        margin: 25px 0 15px;
+        color: #333;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+        margin-bottom: 25px;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px 10px;
+        font-size: 13px;
+        text-align: center;
+    }
+
+    th {
+        background: #2c3e50;
+        color: white;
+    }
+
+    tr:nth-child(even) {
+        background: #f9f9f9;
+    }
+
+    .badge {
+        padding: 3px 8px;
+        border-radius: 5px;
+        font-size: 12px;
+    }
+
+    .badge-pending {
+        background: #ffeeba;
+        color: #856404;
+    }
+
+    .badge-confirm {
+        background: #c3e6cb;
+        color: #155724;
+    }
+
+    .badge-cancel {
+        background: #f5c6cb;
+        color: #721c24;
+    }
+
+    .highlight {
+        background: #ffeeba;
+        font-weight: bold;
+    }
+</style>
+
+<h1>📋 DIY 團體預約紀錄 (設計版)</h1>
+
+<!-- 第一層：完整紀錄 -->
+<table>
+    <thead>
+        <tr>
+            <th>時段</th>
+            <th>序號</th>
+            <th>日期</th>
+            <th>地區</th>
+            <th>入館時間</th>
+            <th>團號</th>
+            <th>旅行社</th>
+            <th>團體名稱</th>
+            <th>導遊/領隊</th>
+            <th>電話</th>
+            <th>車數</th>
+            <th>預約人數</th>
+            <th>導覽</th>
+            <th>票種</th>
+            <th>備註</th>
+            <th>狀態</th>
+            <th>建立時間</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>早上</td>
+            <td>1</td>
+            <td>2025-10-05</td>
+            <td>台北</td>
+            <td>09:00</td>
+            <td>C037</td>
+            <td>深旅旅行社</td>
+            <td>南陽月遊</td>
+            <td>陳波娟</td>
+            <td>0928498303</td>
+            <td>1</td>
+            <td>43</td>
+            <td>有</td>
+            <td>成人 30、優待 8、星光 5</td>
+            <td>需安排素食</td>
+            <td><span class="badge badge-pending">待確認</span></td>
+            <td>2025-10-01 10:30</td>
+        </tr>
+        <tr>
+            <td>早上</td>
+            <td>2</td>
+            <td>2025-10-06</td>
+            <td>高雄</td>
+            <td>09:00</td>
+            <td>C038</td>
+            <td>高雄旅行社</td>
+            <td>獅子會</td>
+            <td>劉士豪</td>
+            <td>092325715</td>
+            <td>2</td>
+            <td>79</td>
+            <td>有</td>
+            <td>成人 50、兒童 20、優待 9</td>
+            <td>月結</td>
+            <td><span class="badge badge-confirm">已確認</span></td>
+            <td>2025-10-02 09:00</td>
+        </tr>
+        <tr>
+            <td>下午</td>
+            <td>3</td>
+            <td>2025-10-07</td>
+            <td>嘉義</td>
+            <td>14:00</td>
+            <td>C039</td>
+            <td>統安旅遊</td>
+            <td>嘉義保協會</td>
+            <td>樂樂</td>
+            <td>0939238183</td>
+            <td>1</td>
+            <td>20</td>
+            <td>無</td>
+            <td>成人 18、星光 2</td>
+            <td>20人優惠</td>
+            <td><span class="badge badge-pending">待確認</span></td>
+            <td>2025-10-03 11:00</td>
+        </tr>
+        <tr>
+            <td>星光</td>
+            <td>4</td>
+            <td>2025-10-08</td>
+            <td>台中</td>
+            <td>19:30</td>
+            <td>C040</td>
+            <td>夜遊旅行社</td>
+            <td>星光團</td>
+            <td>張小華</td>
+            <td>0912345678</td>
+            <td>2</td>
+            <td>50</td>
+            <td>有</td>
+            <td>成人 40、星光 10</td>
+            <td>夜間需加強導覽</td>
+            <td><span class="badge badge-confirm">已確認</span></td>
+            <td>2025-10-04 20:00</td>
+        </tr>
+        <tr>
+            <td>下午</td>
+            <td>5</td>
+            <td>2025-10-09</td>
+            <td>苗栗</td>
+            <td>13:00</td>
+            <td>C041</td>
+            <td>友惠通運</td>
+            <td>企業旅遊</td>
+            <td>李先生</td>
+            <td>0952330817</td>
+            <td>1</td>
+            <td>34</td>
+            <td>有</td>
+            <td>成人 30、優待 4</td>
+            <td>需開發票</td>
+            <td><span class="badge badge-pending">待確認</span></td>
+            <td>2025-10-04 11:05</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- 第二層：日期統計 -->
+<h2>📊 日期統計總覽</h2>
+<table>
+    <thead>
+        <tr>
+            <th>日期</th>
+            <th>遊覽車數</th>
+            <th>成人票</th>
+            <th>優待票</th>
+            <th>星光票</th>
+            <th>總人數</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>2025-10-05</td>
+            <td>3</td>
+            <td>120</td>
+            <td>35</td>
+            <td>12</td>
+            <td class="highlight">167</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- 第三層：旅行社明細 -->
+<h2>📑 旅行社明細</h2>
+<table>
+    <thead>
+        <tr>
+            <th>旅行社</th>
+            <th>團體名稱</th>
+            <th>車數</th>
+            <th>成人票</th>
+            <th>優待票</th>
+            <th>星光票</th>
+            <th>總人數</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>深旅旅行社</td>
+            <td>南陽月遊</td>
+            <td>1</td>
+            <td>30</td>
+            <td>8</td>
+            <td>5</td>
+            <td>43</td>
+        </tr>
+        <tr>
+            <td>高雄旅行社</td>
+            <td>獅子會</td>
+            <td>2</td>
+            <td>50</td>
+            <td>20</td>
+            <td>9</td>
+            <td>79</td>
+        </tr>
+        <tr>
+            <td>統安旅遊</td>
+            <td>嘉義保協會</td>
+            <td>1</td>
+            <td>40</td>
+            <td>7</td>
+            <td>0</td>
+            <td>47</td>
+        </tr>
+    </tbody>
+</table>

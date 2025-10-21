@@ -1,0 +1,563 @@
+﻿@model List<StockGTO.Models.O_HR_Control_RawTimePunch>
+
+@{
+    ViewBag.Title = "人資出勤控制";
+    Layout = null;
+
+    // ====== 參數 / ViewBag ======
+    long? batchId = ViewBag.BatchId as long?;
+    int take = ViewBag.Take ?? 200;                 // 只用來控制「原始逐筆」折疊區
+    int rawTake = Math.Min(take, 2000);             // 原始逐筆最多 2000 筆
+    int year = ViewBag.Year ?? DateTime.Today.Year;
+    int month = ViewBag.Month ?? DateTime.Today.Month;
+
+    var holidays = ViewBag.Holidays as List<StockGTO.Models.O_HR_Control_Holiday> ?? new();
+    var holidaySet = new HashSet<DateOnly>(holidays.Select(h => h.Date));
+
+    // ====== 只拿有效日期(>1900) 做「同人同日」群組 ======
+    var groups = (Model ?? new())
+        .Where(x => x.PunchDate.Year > 1900)
+        .GroupBy(x => new { x.EmpNo, x.EmpName, x.DeptName, x.PunchDate })
+        .OrderBy(g => g.Key.EmpNo).ThenBy(g => g.Key.PunchDate)
+        .Take(10_000)
+        .ToList();
+
+    // ====== 分頁 ======
+    int pg = (int)(ViewBag.Page ?? 1);
+    int pageSize = (int)(ViewBag.PageSize ?? 500);
+    int totalGroups = groups.Count;
+    var pageGroups = groups.Skip((pg - 1) * pageSize).Take(pageSize).ToList();
+    int totalPages = Math.Max(1, (int)Math.Ceiling(totalGroups / (double)pageSize));
+
+    // ====== 國假備註快取（Memo 優先） ======
+    var holidayMemoMap = ViewBag.HolidayMemoMap as Dictionary<DateOnly, string> ?? new();
+}
+
+@functions {
+    // ================== 規則&小工具 ==================
+    static readonly TimeSpan FirstShift = TimeSpan.FromHours(7);     // 07:00（視窗從 07:30 開始吃）
+    static readonly TimeSpan LastShift  = TimeSpan.FromHours(21);    // 21:00
+    const int EarlyWindowMin = 30;   // 上班前可提前 30 分鐘
+    const int GraceLateMin   = 5;    // 遲到寬限 5 分鐘
+    static readonly TimeSpan TooEarlyCut = TimeSpan.FromMinutes(450); // 07:30 以前不吃（標異常用）
+
+    static readonly TimeSpan EarlyPunchHint = TimeSpan.FromHours(8);    // 08:00 前提示
+    static readonly TimeSpan LatePunchHint  = TimeSpan.FromHours(21.5); // 21:30 後提示
+    const double PtMaxHoursHint = 8.0;
+
+    DateTime? RoundInToShiftWindow(DateTime? dt)
+    {
+        if (dt == null) return null;
+        var v = dt.Value;
+        if (v.TimeOfDay < TooEarlyCut) return null; // 07:30 前不吃
+
+        for (var t = v.Date + FirstShift; t <= v.Date + LastShift; t = t.AddMinutes(30))
+        {
+            var winStart = t.AddMinutes(-EarlyWindowMin);
+            var winEnd   = t.AddMinutes(GraceLateMin);
+            if (v >= winStart && v <= winEnd)
+                return t; // 命中 → 用班別點（整點或 30）
+        }
+        return null;
+    }
+
+    DateTime? RoundOutToHalfHourFloor(DateTime? dt)
+    {
+        if (dt == null) return null;
+        var v = dt.Value;
+        var baseHour = new DateTime(v.Year, v.Month, v.Day, v.Hour, 0, 0);
+        return (v.Minute < 30) ? baseHour : baseHour.AddMinutes(30);
+    }
+
+    double CalcWorkHours(DateTime? inDt, DateTime? outDt)
+    {
+        if (inDt == null || outDt == null) return 0;
+        var span = outDt.Value - inDt.Value;
+        return Math.Max(0, span.TotalMinutes / 60.0);
+    }
+
+    // 餐扣（≤4 不扣；4~<8 扣0.5；≥8 扣1）
+    double CalcBreakHours(double workH)
+    {
+        if (workH <= 4.0) return 0.0;
+        if (workH < 8.0)  return 0.5;
+        return 1.0;
+    }
+
+    void SplitOvertime(double payH, out double h8to10, out double h10to12)
+    {
+        h8to10 = 0; h10to12 = 0;
+        if (payH <= 8.0) return;
+        var extra = payH - 8.0;
+        var seg1 = Math.Min(extra, 2.0);
+        var seg2 = Math.Max(0.0, Math.Min(extra - 2.0, 2.0));
+        h8to10 = Math.Round(seg1, 2);
+        h10to12 = Math.Round(seg2, 2);
+    }
+
+    string ShowH(double h) => (Math.Round(h * 2) / 2.0).ToString("0.##");
+
+    bool Has7DayStreak(List<DateOnly> days)
+    {
+        if (days.Count < 7) return false;
+        days.Sort();
+        int streak = 1;
+        for (int i = 1; i < days.Count; i++)
+        {
+            if (days[i] == days[i - 1].AddDays(1)) streak++;
+            else streak = 1;
+            if (streak >= 7) return true;
+        }
+        return false;
+    }
+
+    // 彙總用
+    class EmpSum
+    {
+        public string EmpNo   { get; set; } = "";
+        public string EmpName { get; set; } = "";
+        public string Dept    { get; set; } = "";
+
+        public double SysH { get; set; }
+        public double PayH { get; set; }
+        public double Ot8to10 { get; set; }
+        public double Ot10to12 { get; set; }
+        public double OtHoliday { get; set; }
+        public int WorkDays { get; set; }
+        public int OtWorkDays { get; set; }
+        public int HolidayDays { get; set; }
+        public int Over12Days { get; set; }
+        public List<string> MissingDates { get; } = new();
+
+        // 橫式表需要的清單
+        public List<string> EarlyDates { get; } = new();
+        public List<string> LateDates  { get; } = new();
+        public List<string> PtOver8Dates { get; } = new();
+        public bool SevenStreak { get; set; }
+    }
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    <style>
+        body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "PingFang TC", "Microsoft JhengHei", sans-serif; line-height: 1.6; padding: 18px; }
+        h2 { margin: 0 0 12px 0; }
+        section { border: 1px solid #ddd; padding: 12px; margin-bottom: 16px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th, td { border: 1px solid #ccc; padding: 6px 8px; }
+        thead { background: #f7f7f7; }
+        .muted { color: #777; }
+        .badge { display:inline-block; padding:2px 6px; font-size:12px; border:1px solid #ccc; border-radius:4px; text-decoration:none; background:#fafafa; }
+        thead.sticky th { position: sticky; top: 0; z-index: 2; }
+        .right { float:right; }
+        .nowrap { white-space:nowrap; }
+    </style>
+</head>
+<body>
+
+<h2>人資出勤控制</h2>
+
+@if (TempData["msg"] is string msg)
+{
+    <div style="padding:8px; background:#e6ffed; border:1px solid #b6f0c2; margin-bottom:10px;">@msg</div>
+}
+
+    <!-- 1) 本月國定假日 -->
+    <section>
+        <h3>1) 本月國定假日</h3>
+
+        <!-- A. 切換月份 -->
+        <form method="get" asp-action="Index" asp-controller="O_HR_Control"
+              style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <input type="hidden" name="batchId" value="@(batchId ?? null)" />
+            年：<input type="number" name="year" value="@year" style="width:90px;" />
+            月：<input type="number" name="month" value="@month" style="width:60px;" min="1" max="12" />
+            <button type="submit">切換月份</button>
+            <span class="muted">（目前 @year-@month 已登錄 @holidays.Count 筆）</span>
+        </form>
+
+        <!-- B. 匯入假期 -->
+        <form method="post" asp-action="UpsertHolidays" asp-controller="O_HR_Control" style="margin:10px 0;">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="year" value="@year" />
+            <input type="hidden" name="month" value="@month" />
+
+            <textarea name="dates" rows="3" style="width:100%;"
+                      placeholder="每行一筆：YYYY-MM-DD 假期名稱（可多行）
+例如：
+2025-10-01 過年
+2025-10-02 端午"></textarea>
+            <br />
+            <button type="submit" class="btn btn-success">匯入假期</button>
+            <span class="muted">（會覆寫該月份已存在的假期）</span>
+        </form>
+
+        <!-- C. 假期清單 -->
+        <table style="margin-top:8px; width:100%; border-collapse:collapse;">
+            <thead>
+                <tr>
+                    <th style="width:120px;">日期</th>
+                    <th>假別說明</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (holidays.Count == 0)
+                {
+                    <tr><td colspan="2" style="text-align:center; color:#777;">本月尚無資料</td></tr>
+                }
+                else
+                {
+                    foreach (var h in holidays.OrderBy(x => x.Date))
+                    {
+                        <tr>
+                            <td>@h.Date.ToString("yyyy-MM-dd")</td>
+                            <td>@(string.IsNullOrWhiteSpace(h.Memo) ? h.Name : h.Memo)</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </section>
+
+
+<!-- 2) 匯入 Excel + 每日表 -->
+<section>
+    <h3>2) 匯入打卡 Excel（欄位：工號、姓名、部門、刷卡日期、刷卡時間）</h3>
+
+    <form method="post" asp-action="Import" asp-controller="O_HR_Control" enctype="multipart/form-data" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <input type="file" name="file" />
+        <button type="submit">上傳匯入</button>
+        @if (batchId.HasValue)
+        {
+            <span class="badge">目前批次：@batchId</span>
+            <span class="muted">（下表依「同人同日」成對顯示，僅供快速檢查）</span>
+        }
+    </form>
+
+    @if (batchId.HasValue && groups.Count > 0)
+    {
+        
+                var seq = 0;
+
+                // 彙總（橫式統計資料來源）
+                var sums = new Dictionary<string, EmpSum>();
+
+                // 連 7 天判斷要用的出勤日
+                var empAttendDates = new Dictionary<string, HashSet<DateOnly>>();
+
+                <table> ... </table>
+        
+
+        <table style="margin-top:8px;">
+            <thead class="sticky">
+                <tr>
+                    <th style="width:60px;">序號</th>
+                    <th style="width:110px;">工號</th>
+                    <th style="width:110px;">姓名</th>
+                    <th>部門</th>
+                    <th style="width:120px;">日期</th>
+                    <th style="width:110px;">上班時間</th>
+                    <th style="width:110px;">下班時間</th>
+                    <th style="width:130px;">系統判斷上班時間</th>
+                    <th style="width:130px;">系統判斷下班時間</th>
+                    <th style="width:110px;">系統統計時數</th>
+                    <th style="width:110px;">扣餐後時數</th>
+                        <th style="width:120px;">&gt;8 且 &le; 10</th>
+                        <th style="width:120px;">&gt;10 且 &le; 12</th>
+                    <th style="width:140px;">國定假日上班時數</th>
+                    <th style="min-width:160px;">備註/國假別</th>
+                    <th style="width:120px;">狀態</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var g in pageGroups)
+                {
+                    // ---- A) 取當日最早/最晚卡，去除同分鐘重複 ----
+                    var ordered = g.OrderBy(x => x.PunchDateTime).ToList();
+                    var dayPunches = ordered
+                        .Where(x => x.PunchDateTime.Year > 1900)
+                        .Select(x => x.PunchDateTime)
+                        .OrderBy(t => t)
+                        .GroupBy(t => new { t.Hour, t.Minute })
+                        .Select(gg => gg.First())
+                        .ToList();
+
+                    DateTime? inDT = dayPunches.FirstOrDefault();
+                    DateTime? outDT = (dayPunches.Count >= 2) ? dayPunches.Last() : (DateTime?)null;
+                    if (inDT != null && (outDT == null || outDT <= inDT))
+                    {
+                        outDT = dayPunches.Skip(1).FirstOrDefault(t => t > inDT);
+                        if (outDT == default) outDT = null;
+                    }
+
+                    // ---- B) 計算系統時間/時數 ----
+                    var note = "";
+                    if (holidayMemoMap.TryGetValue(g.Key.PunchDate, out var memo) && !string.IsNullOrWhiteSpace(memo))
+                        note = memo;
+                    else if (holidaySet.Contains(g.Key.PunchDate))
+                        note = "國假";
+
+                    var sysIn  = RoundInToShiftWindow(inDT);
+                    var sysOut = RoundOutToHalfHourFloor(outDT);
+
+                    var sysHours = 0.0;
+                    if (sysIn != null && sysOut != null && sysOut > sysIn)
+                        sysHours = Math.Round((sysOut.Value - sysIn.Value).TotalHours, 2);
+
+                    var breakH = CalcBreakHours(sysHours);
+                    var payH   = Math.Max(0, Math.Round(sysHours - breakH, 2));
+
+                    double ot8to10 = 0, ot10to12 = 0, otHoli = 0;
+                    if (payH > 0)
+                    {
+                        if (holidaySet.Contains(g.Key.PunchDate)) otHoli = payH;
+                        else SplitOvertime(payH, out ot8to10, out ot10to12);
+                    }
+
+                    // ---- C) 異常原因（明確字串） ----
+                    var reason = "OK";
+                    if (dayPunches.Count == 1) reason = "缺卡";
+                    else if (sysIn == null && inDT != null) reason = "上班時間無效";
+                    else if (sysOut == null && outDT != null) reason = "下班時間無效";
+                    else if (sysIn != null && sysOut != null && sysOut <= sysIn) reason = "打卡順序異常";
+                    else if (sysHours == 0) reason = "無效工時";
+                    else if (sysHours > 12) reason = "超時異常";
+
+                    // ---- D) 彙總（橫式統計表）----
+                    if (!sums.TryGetValue(g.Key.EmpNo, out var sum))
+                    {
+                        sum = new EmpSum { EmpNo = g.Key.EmpNo, EmpName = g.Key.EmpName, Dept = g.Key.DeptName };
+                        sums[g.Key.EmpNo] = sum;
+                    }
+                    else
+                    {
+                        sum.EmpName = g.Key.EmpName;
+                        sum.Dept    = g.Key.DeptName;
+                    }
+
+                    if (dayPunches.Count == 1)
+                        sum.MissingDates.Add(g.Key.PunchDate.ToString("yyyy-MM-dd"));
+
+                    sum.SysH       += sysHours;
+                    sum.PayH       += payH;
+                    sum.Ot8to10    += ot8to10;
+                    sum.Ot10to12   += ot10to12;
+                    sum.OtHoliday  += otHoli;
+
+                    if (payH > 0) sum.WorkDays++;
+                    if (!holidaySet.Contains(g.Key.PunchDate) && (ot8to10 > 0 || ot10to12 > 0)) sum.OtWorkDays++;
+                    if (holidaySet.Contains(g.Key.PunchDate) && payH > 0) sum.HolidayDays++;
+                    if (sysHours > 12) sum.Over12Days++;
+
+                    // 供 7 天連續判斷
+                    if (payH > 0)
+                    {
+                        if (!empAttendDates.TryGetValue(g.Key.EmpNo, out var set))
+                            empAttendDates[g.Key.EmpNo] = set = new HashSet<DateOnly>();
+                        set.Add(g.Key.PunchDate);
+                    }
+
+                    // 早/晚/PT>8h 清單
+                    if (inDT  != null && inDT.Value.TimeOfDay  < EarlyPunchHint) sum.EarlyDates.Add(g.Key.PunchDate.ToString("yyyy-MM-dd"));
+                    if (outDT != null && outDT.Value.TimeOfDay > LatePunchHint)  sum.LateDates.Add(g.Key.PunchDate.ToString("yyyy-MM-dd"));
+                    if (sysHours > PtMaxHoursHint) sum.PtOver8Dates.Add(g.Key.PunchDate.ToString("yyyy-MM-dd"));
+
+                    // ---- E) 明細列 ----
+                    <tr>
+                        <td>@(++seq)</td>
+                        <td>@g.Key.EmpNo</td>
+                        <td>@g.Key.EmpName</td>
+                        <td>@g.Key.DeptName</td>
+                        <td>@g.Key.PunchDate.ToString("yyyy-MM-dd")</td>
+                        <td>@(inDT?.ToString("HH:mm") ?? "")</td>
+                        <td>@(outDT?.ToString("HH:mm") ?? "")</td>
+                        <td>@(sysIn?.ToString("HH:mm") ?? "")</td>
+                        <td>@(sysOut?.ToString("HH:mm") ?? "")</td>
+                        <td>@sysHours</td>
+                        <td>@payH</td>
+                        <td>@ShowH(ot8to10)</td>
+                        <td>@ShowH(ot10to12)</td>
+                        <td>@ShowH(otHoli)</td>
+                        <td>@note</td>
+                        <td>@reason</td>
+                    </tr>
+
+                    // ---- F) 在每位員工「結束時」輸出一個可展開的橫式統計（同你指定順序）----
+                    // 偵測「下一筆是不同員工」或「已到本頁最後一筆」
+                    var isLastOfEmpInPage = g == pageGroups.Last() || pageGroups[pageGroups.IndexOf(g) + 1].Key.EmpNo != g.Key.EmpNo;
+                    if (isLastOfEmpInPage)
+                    {
+                        // 算是否連上七天
+                        if (empAttendDates.TryGetValue(g.Key.EmpNo, out var daysSet))
+                            sum.SevenStreak = Has7DayStreak(daysSet.ToList());
+
+                        <tr>
+                            <td colspan="16" style="background:#f8f6ff; padding:10px 8px;">
+                                <details>
+                                    <summary style="cursor:pointer; font-weight:700;">
+                                        @g.Key.EmpNo @g.Key.EmpName — 統計（展開）
+                                    </summary>
+                                    <table style="margin-top:8px;">
+                                        <thead class="sticky">
+                                            <tr>
+                                                <th>工號</th><th>姓名</th><th>部門</th>
+                                                <th>出勤天數</th><th>缺卡天數</th><th>是否連上7天</th>
+                                                <th>系統統計時數</th><th>扣餐後總時數</th>
+                                                <th>&gt;8 且 ≤10 小時</th><th>&gt;10 且 ≤12 小時</th><th>&gt;12 小時異常天數</th>
+                                                <th>平日加班天數</th><th>國假出勤天數</th><th>國定假日上班時數</th>
+                                                <th>缺卡日期</th><th>PT &gt; 8 小時</th><th>太早打卡</th><th>太晚打卡</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>@sum.EmpNo</td>
+                                                <td>@sum.EmpName</td>
+                                                <td>@sum.Dept</td>
+                                                <td>@sum.WorkDays</td>
+                                                <td>@sum.MissingDates.Count</td>
+                                                <td>@(sum.SevenStreak ? "是" : "否")</td>
+                                                <td>@ShowH(sum.SysH)</td>
+                                                <td>@ShowH(sum.PayH)</td>
+                                                <td>@ShowH(sum.Ot8to10)</td>
+                                                <td>@ShowH(sum.Ot10to12)</td>
+                                                <td>@sum.Over12Days</td>
+                                                <td>@sum.OtWorkDays</td>
+                                                <td>@sum.HolidayDays</td>
+                                                <td>@ShowH(sum.OtHoliday)</td>
+                                                <td>@(sum.MissingDates.Count==0 ? "—" : string.Join("、", sum.MissingDates))</td>
+                                                <td>@(sum.PtOver8Dates.Count==0 ? "—" : string.Join("、", sum.PtOver8Dates))</td>
+                                                <td>@(sum.EarlyDates.Count==0 ? "—" : string.Join("、", sum.EarlyDates))</td>
+                                                <td>@(sum.LateDates.Count==0 ? "—" : string.Join("、", sum.LateDates))</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </details>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+        <!-- 分頁工具 -->
+        <div style="margin-top:8px; display:flex; gap:10px; align-items:center;">
+            <span class="muted">頁次 @pg / @totalPages（本頁 @pageGroups.Count 筆、共 @totalGroups 筆）</span>
+            @if (pg > 1)
+            {
+                <a class="badge" href="@Url.Action("Index", "O_HR_Control", new { batchId = ViewBag.BatchId, year = ViewBag.Year, month = ViewBag.Month, page = pg - 1, pageSize })">上一頁</a>
+            }
+            @if (pg < totalPages)
+            {
+                <a class="badge" href="@Url.Action("Index", "O_HR_Control", new { batchId = ViewBag.BatchId, year = ViewBag.Year, month = ViewBag.Month, page = pg + 1, pageSize })">下一頁</a>
+            }
+
+            <form method="get" asp-action="Index" asp-controller="O_HR_Control" style="display:inline; margin-left:8px;">
+                <input type="hidden" name="batchId" value="@ViewBag.BatchId" />
+                <input type="hidden" name="year" value="@ViewBag.Year" />
+                <input type="hidden" name="month" value="@ViewBag.Month" />
+                <input type="hidden" name="page" value="1" />
+                <label>每頁</label>
+                <input type="number" name="pageSize" value="@pageSize" min="100" max="5000" style="width:80px;" />
+                <button type="submit">套用</button>
+            </form>
+        </div>
+
+        
+
+        <!-- 4) 員工橫式統計表（可匯出/可貼 Excel） -->
+        <section style="margin-top:14px;">
+            <h3>3) 員工橫式統計表（可匯出）</h3>
+
+            <form method="get" asp-controller="O_HR_Control" asp-action="ExportDailyCsv" class="right" style="margin-left:8px;">
+                <input type="hidden" name="year" value="@ViewBag.Year" />
+                <input type="hidden" name="month" value="@ViewBag.Month" />
+                <button type="submit" class="badge">匯出 CSV（用日結表）</button>
+            </form>
+            <div style="clear:both;"></div>
+
+            @{
+                // sums 已在上方累積齊全，現在畫一張一人一列的總表
+            }
+
+            <table style="margin-top:8px;">
+                <thead class="sticky">
+                    <tr>
+                        <th>工號</th><th>姓名</th><th>部門</th>
+                        <th>出勤天數</th><th>缺卡天數</th><th>是否連上7天</th>
+                        <th>系統統計時數</th><th>扣餐後總時數</th>
+                        <th>&gt;8 且 ≤10 小時</th><th>&gt;10 且 ≤12 小時</th><th>&gt;12 小時異常天數</th>
+                        <th>平日加班天數</th><th>國假出勤天數</th><th>國定假日上班時數</th>
+                        <th>缺卡日期</th><th>PT &gt; 8 小時</th><th>太早打卡</th><th>太晚打卡</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var s in sums.Values.OrderBy(x => x.EmpNo))
+                {
+                    <tr>
+                        <td>@s.EmpNo</td>
+                        <td>@s.EmpName</td>
+                        <td>@s.Dept</td>
+                        <td>@s.WorkDays</td>
+                        <td>@s.MissingDates.Count</td>
+                        <td>@(s.SevenStreak ? "是" : "否")</td>
+                        <td>@ShowH(s.SysH)</td>
+                        <td>@ShowH(s.PayH)</td>
+                        <td>@ShowH(s.Ot8to10)</td>
+                        <td>@ShowH(s.Ot10to12)</td>
+                        <td>@s.Over12Days</td>
+                        <td>@s.OtWorkDays</td>
+                        <td>@s.HolidayDays</td>
+                        <td>@ShowH(s.OtHoliday)</td>
+                        <td>@(s.MissingDates.Count==0 ? "—" : string.Join("、", s.MissingDates))</td>
+                        <td>@(s.PtOver8Dates.Count==0 ? "—" : string.Join("、", s.PtOver8Dates))</td>
+                        <td>@(s.EarlyDates.Count==0 ? "—" : string.Join("、", s.EarlyDates))</td>
+                        <td>@(s.LateDates.Count==0 ? "—" : string.Join("、", s.LateDates))</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </section>
+    }
+    else if (batchId.HasValue)
+    {
+        <div class="muted" style="margin-top:8px;">找不到該批次的資料。</div>
+    }
+</section>
+
+<!-- 原始逐筆（最多 rawTake 筆） -->
+@if (batchId.HasValue && Model?.Count > 0)
+{
+    <details style="margin-top:10px;">
+        <summary>查看本批次「原始逐筆」明細（前 @Math.Min(Model.Count, rawTake) 筆）</summary>
+        <table style="margin-top:8px;">
+            <thead><tr>
+                <th>#</th><th>列</th><th>工號</th><th>姓名</th><th>部門</th>
+                <th>日期</th><th>時間字串</th><th>解析時間</th><th>狀態</th><th>錯誤</th>
+            </tr></thead>
+            <tbody>
+            @for (var i = 0; i < Math.Min(Model.Count, rawTake); i++)
+            {
+                var r = Model[i];
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@r.SourceRowNo</td>
+                    <td>@r.EmpNo</td>
+                    <td>@r.EmpName</td>
+                    <td>@r.DeptName</td>
+                    <td>@(r.PunchDate.Year > 1900 ? r.PunchDate.ToString("yyyy-MM-dd") : "")</td>
+                    <td>@r.PunchTimeStr</td>
+                    <td>@(r.PunchDateTime.Year > 1900 ? r.PunchDateTime.ToString("yyyy-MM-dd HH:mm") : "")</td>
+                    <td>@r.ParseStatus</td>
+                    <td>@r.ErrorMsg</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </details>
+}
+
+</body>
+</html>

@@ -46,6 +46,8 @@
     <Content Remove="Views\Home\Privacy.cshtml" />
     <Content Remove="Views\Home\Templates.cshtml" />
     <Content Remove="Views\Home\TEST.cshtml" />
+    <Content Remove="Views\Labels\Create.cshtml" />
+    <Content Remove="Views\Labels\Index.cshtml" />
     <Content Remove="wwwroot\aznews\assets\css\admin-fix.css" />
     <Content Remove="wwwroot\aznews\assets\css\animate - 複製.min.css" />
     <Content Remove="wwwroot\aznews\assets\css\flaticon.css" />
@@ -54,11 +56,14 @@
 
   <ItemGroup>
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
+    <PackageReference Include="EPPlus" Version="6.2.1" />
+    <PackageReference Include="EPPlus.System.Drawing" Version="6.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.5">
       <PrivateAssets>all</PrivateAssets>
@@ -80,6 +85,7 @@
   <ItemGroup>
     <Folder Include="DATA\" />
     <Folder Include="Migrations\" />
+    <Folder Include="Views\Views\" />
   </ItemGroup>
 
 </Project>
