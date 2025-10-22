@@ -46,3 +46,5 @@ HSNPortal/wwwroot/assets/vendor/tinymce/package-lock.json
 # 原本這行會擋住所有靜態檔案：
 # wwwroot/*
 # 🔥 現在整包放行，不擋任何 css/js/img
+/out/
+/wwwroot/aznews/assets/img/posts/
