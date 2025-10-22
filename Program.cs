@@ -118,7 +118,7 @@ namespace StockGTO
                 SeedRoles.InitializeAsync(services).GetAwaiter().GetResult();
             }
 
-            // ★ 放在最前面：轉換反代標頭 → 正確產生 Redirect/絕對網址
+            // ★ 放在最前面：轉換反代標頭 → 正確產生 Redirect/絕對網址55
             app.UseForwardedHeaders();
 
             // ★ 正式機錯誤處理：改走 /error/500（之後我們會給你 ErrorController 與 View）
