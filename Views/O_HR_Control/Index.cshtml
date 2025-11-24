@@ -78,32 +78,24 @@
 
     
     // 餐扣規則：
-    // H < 4           → 0
-    // 4 ≤ H < 8       → 0.5
-    // H = 8           → 1.0
-    // 8 < H < 12      → 1.5
-    // 12 ≤ H < 16     → 2.0
-    
+    //   H < 4.5        → 0
+    //   4.5 ≤ H ≤ 8    → 0.5
+    //   8 < H ≤ 12.5   → 1
+    //   12.5 < H       → 2  （最大扣 2 小時）
+
     double CalcBreakHours(double h)
     {
-        if (h < 4.0)
+        if (h < 4.5)
             return 0.0;
 
-        if (h < 8.0)
+        if (h <= 8.0)
             return 0.5;
 
-        if (h == 8.0)
+        if (h <= 12.5)
             return 1.0;
 
-        if (h <= 12.0)
-            return 1.0;
-
-        if (h <= 20.0)
-            return 2.0;
-
-        return 2.0; // 最大值-2扣餐
+        return 2.0;    // 其餘一律扣 2 小時（最大值）
     }
-
 
     void SplitOvertime(double payH, out double h8to10, out double h10to12)
     {
