@@ -42,7 +42,7 @@
     static readonly TimeSpan TooEarlyCut = TimeSpan.FromMinutes(450); // 07:30 以前不吃（標異常用）
 
     static readonly TimeSpan EarlyPunchHint = TimeSpan.FromHours(8);    // 08:00 前提示
-    static readonly TimeSpan LatePunchHint  = TimeSpan.FromHours(21.5); // 21:30 後提示
+    static readonly TimeSpan LatePunchHint = TimeSpan.FromHours(22);   // 太晚打卡：下班 > 22:00
     const double PtMaxHoursHint = 8.0;
 
     DateTime? RoundInToShiftWindow(DateTime? dt)
@@ -76,13 +76,34 @@
         return Math.Max(0, span.TotalMinutes / 60.0);
     }
 
-    // 餐扣（≤4 不扣；4~<8 扣0.5；≥8 扣1）
-    double CalcBreakHours(double workH)
+    
+    // 餐扣規則：
+    // H < 4           → 0
+    // 4 ≤ H < 8       → 0.5
+    // H = 8           → 1.0
+    // 8 < H < 12      → 1.5
+    // 12 ≤ H < 16     → 2.0
+    
+    double CalcBreakHours(double h)
     {
-        if (workH <= 4.0) return 0.0;
-        if (workH < 8.0)  return 0.5;
-        return 1.0;
+        if (h < 4.0)
+            return 0.0;
+
+        if (h < 8.0)
+            return 0.5;
+
+        if (h == 8.0)
+            return 1.0;
+
+        if (h <= 12.0)
+            return 1.0;
+
+        if (h <= 20.0)
+            return 2.0;
+
+        return 2.0; // 最大值-2扣餐
     }
+
 
     void SplitOvertime(double payH, out double h8to10, out double h10to12)
     {
@@ -151,7 +172,15 @@
         thead { background: #f7f7f7; }
         .muted { color: #777; }
         .badge { display:inline-block; padding:2px 6px; font-size:12px; border:1px solid #ccc; border-radius:4px; text-decoration:none; background:#fafafa; }
-        thead.sticky th { position: sticky; top: 0; z-index: 2; }
+
+        thead.sticky th {
+            position: sticky;
+            top: 0;
+            z-index: 3;
+            background-color: #e9f0ff; /* 淡藍灰 */
+            color: #222;
+            box-shadow: 0 1px 0 #ccc;
+        }
         .right { float:right; }
         .nowrap { white-space:nowrap; }
     </style>
@@ -178,7 +207,19 @@
             <button type="submit">切換月份</button>
             <span class="muted">（目前 @year-@month 已登錄 @holidays.Count 筆）</span>
         </form>
-
+        <!-- A-2. 清除本月國假 -->
+        <form method="post" asp-action="ClearMonthHolidays" asp-controller="O_HR_Control"
+              style="display:inline-block; margin-top:8px;">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="year" value="@year" />
+            <input type="hidden" name="month" value="@month" />
+            <button type="submit"
+                    onclick="return confirm('確定要清除這個月份的所有國定假日嗎？');">
+                清除本月國假
+            </button>
+            <span class="muted">（會把 @year-@month 的國假全部刪除）</span>
+        </form>
+        假別說明
         <!-- B. 匯入假期 -->
         <form method="post" asp-action="UpsertHolidays" asp-controller="O_HR_Control" style="margin:10px 0;">
             @Html.AntiForgeryToken()
@@ -304,24 +345,62 @@
                     if (sysIn != null && sysOut != null && sysOut > sysIn)
                         sysHours = Math.Round((sysOut.Value - sysIn.Value).TotalHours, 2);
 
-                    var breakH = CalcBreakHours(sysHours);
-                    var payH   = Math.Max(0, Math.Round(sysHours - breakH, 2));
+                        var breakH = CalcBreakHours(sysHours); // 先算扣餐
+                        var payH = Math.Max(0, Math.Round(sysHours - breakH, 2)); // 扣餐後時數
 
-                    double ot8to10 = 0, ot10to12 = 0, otHoli = 0;
-                    if (payH > 0)
-                    {
-                        if (holidaySet.Contains(g.Key.PunchDate)) otHoli = payH;
-                        else SplitOvertime(payH, out ot8to10, out ot10to12);
-                    }
+                        double ot8to10 = 0, ot10to12 = 0, otHoli = 0;
+                        if (payH > 0)
+                        {
+                            // 1) 不分平日 / 國假，一律先把「扣餐後時數」拆成 >8≤10、>10≤12
+                            SplitOvertime(payH, out ot8to10, out ot10to12);
 
-                    // ---- C) 異常原因（明確字串） ----
-                    var reason = "OK";
-                    if (dayPunches.Count == 1) reason = "缺卡";
-                    else if (sysIn == null && inDT != null) reason = "上班時間無效";
-                    else if (sysOut == null && outDT != null) reason = "下班時間無效";
-                    else if (sysIn != null && sysOut != null && sysOut <= sysIn) reason = "打卡順序異常";
-                    else if (sysHours == 0) reason = "無效工時";
-                    else if (sysHours > 12) reason = "超時異常";
+                            // 2) 如果這天是國假，再額外記錄「國假上班時數」
+                            if (holidaySet.Contains(g.Key.PunchDate))
+                                otHoli = payH;
+                        }
+
+
+                        // ---- C) 異常原因（可累積多個標籤）----
+                        var reasons = new List<string>();
+
+                        // 太早 / 太晚 / PT>8 的條件先算出來（你原本缺這段才會錯）
+                        bool isEarlyPunch = (inDT != null && inDT.Value.TimeOfDay < EarlyPunchHint);
+                        bool isLatePunch = (outDT != null && outDT.Value.TimeOfDay > LatePunchHint);
+                        bool isPtOver8 = (payH > PtMaxHoursHint);
+
+                        // === 基本異常 ===
+                        if (dayPunches.Count == 1)
+                            reasons.Add("缺卡（僅 1 筆刷卡）");
+
+                        if (sysIn == null && inDT != null)
+                            reasons.Add("上班時間無效（不在班別視窗）");
+
+                        if (sysOut == null && outDT != null)
+                            reasons.Add("下班時間無效（無法對應下班）");
+
+                        if (sysIn != null && sysOut != null && sysOut <= sysIn)
+                            reasons.Add("打卡順序異常（下班 ≤ 上班）");
+
+                        if (sysHours == 0)
+                            reasons.Add("無效工時（系統時數 = 0）");
+
+                        if (sysHours > 12)
+                            reasons.Add("超時異常（系統時數 > 12 小時）");
+
+                        // === 太早 / 太晚打卡 ===
+                        if (isEarlyPunch)
+                            reasons.Add($"太早打卡（上班 < {EarlyPunchHint:hh\\:mm}）");
+
+                        if (isLatePunch)
+                            reasons.Add($"太晚打卡（下班 > {LatePunchHint:hh\\:mm}）");
+
+                        // === PT > 8 小時（扣餐後） ===
+                        if (isPtOver8)
+                            reasons.Add($"PT > {PtMaxHoursHint} 小時（扣餐後）");
+
+                        // === 最後組成狀態字串 ===
+                        var reason = reasons.Count == 0 ? "OK" : string.Join("；", reasons);
+
 
                     // ---- D) 彙總（橫式統計表）----
                     if (!sums.TryGetValue(g.Key.EmpNo, out var sum))
@@ -356,11 +435,18 @@
                             empAttendDates[g.Key.EmpNo] = set = new HashSet<DateOnly>();
                         set.Add(g.Key.PunchDate);
                     }
+                        // 早 / 晚 / PT>8h 清單（summary 用）——注意：這裡不要再寫 bool
+                        if (isEarlyPunch)
+                            sum.EarlyDates.Add(g.Key.PunchDate.ToString("yyyy-MM-dd"));
 
-                    // 早/晚/PT>8h 清單
-                    if (inDT  != null && inDT.Value.TimeOfDay  < EarlyPunchHint) sum.EarlyDates.Add(g.Key.PunchDate.ToString("yyyy-MM-dd"));
-                    if (outDT != null && outDT.Value.TimeOfDay > LatePunchHint)  sum.LateDates.Add(g.Key.PunchDate.ToString("yyyy-MM-dd"));
-                    if (sysHours > PtMaxHoursHint) sum.PtOver8Dates.Add(g.Key.PunchDate.ToString("yyyy-MM-dd"));
+                        if (isLatePunch)
+                            sum.LateDates.Add(g.Key.PunchDate.ToString("yyyy-MM-dd"));
+
+                        if (isPtOver8)
+                            sum.PtOver8Dates.Add(g.Key.PunchDate.ToString("yyyy-MM-dd"));
+
+                        
+
 
                     // ---- E) 明細列 ----
                     <tr>
@@ -487,8 +573,9 @@
                         <th>系統統計時數</th><th>扣餐後總時數</th>
                         <th>&gt;8 且 ≤10 小時</th><th>&gt;10 且 ≤12 小時</th><th>&gt;12 小時異常天數</th>
                         <th>平日加班天數</th><th>國假出勤天數</th><th>國定假日上班時數</th>
-                        <th>缺卡日期</th><th>PT &gt; 8 小時</th><th>太早打卡</th><th>太晚打卡</th>
+                        <th>缺卡日期</th><th>PT &gt; 8 小時（扣餐後）</th><th>太早打卡</th><th>太晚打卡</th>
                     </tr>
+
                 </thead>
                 <tbody>
                 @foreach (var s in sums.Values.OrderBy(x => x.EmpNo))

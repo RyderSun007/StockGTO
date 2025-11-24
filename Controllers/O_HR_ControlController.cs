@@ -50,10 +50,35 @@ namespace StockGTO.Controllers
                 rows = await query.ToListAsync();
             }
 
-            int y = year ?? DateTime.Today.Year;
-            int m = month ?? DateTime.Today.Month;
+            int y, m;
+
+            if (year.HasValue && month.HasValue)
+            {
+                // 有從網址 / 表單指定年月，就用指定的
+                y = year.Value;
+                m = month.Value;
+            }
+            else if (rows.Any(r => r.PunchDate.Year > 1900))
+            {
+                // 沒指定年月，就用這個批次「最早刷卡日期」當預設年月
+                var minDate = rows
+                    .Where(r => r.PunchDate.Year > 1900)
+                    .Min(r => r.PunchDate);
+
+                y = minDate.Year;
+                m = minDate.Month;
+            }
+            else
+            {
+                // 沒有資料才退回今天
+                var today = DateTime.Today;
+                y = today.Year;
+                m = today.Month;
+            }
+
             ViewBag.Year = y;
             ViewBag.Month = m;
+
 
             var first = new DateOnly(y, m, 1);
             var last = first.AddMonths(1).AddDays(-1);
@@ -135,6 +160,36 @@ namespace StockGTO.Controllers
             await _db.SaveChangesAsync();
 
             TempData["msg"] = $"已更新 {year}-{month:D2} 的假日，共 {items.Select(i => i.Date).Distinct().Count()} 天。";
+            return RedirectToAction(nameof(Index), new { year, month });
+        }
+        // === 清除某年某月的國定假日 ===
+        [HttpPost("/O_HR_Control/ClearMonthHolidays")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ClearMonthHolidays(int year, int month)
+        {
+            // 這個月的第一天、最後一天
+            var first = new DateOnly(year, month, 1);
+            var last = first.AddMonths(1).AddDays(-1);
+
+            // 撈出該月份所有國假
+            var olds = await _db.O_HR_Control_Holidays
+                .Where(h => h.Date >= first && h.Date <= last)
+                .ToListAsync();
+
+            var count = olds.Count;
+
+            if (count > 0)
+            {
+                _db.O_HR_Control_Holidays.RemoveRange(olds);
+                await _db.SaveChangesAsync();
+                TempData["msg"] = $"已清除 {year}-{month:D2} 的國定假日，共 {count} 筆。";
+            }
+            else
+            {
+                TempData["msg"] = $"{year}-{month:D2} 本月原本就沒有國定假日。";
+            }
+
+            // 回到同一個年月的 Index
             return RedirectToAction(nameof(Index), new { year, month });
         }
 
@@ -304,9 +359,24 @@ namespace StockGTO.Controllers
 
         private static double CalcBreakHours(double workH)
         {
-            if (workH <= 4.0) return 0.0;
-            if (workH < 8.0) return 0.5;
-            return 1.0;
+            //if (workH <= 4.0) return 0.0;
+            //if (workH < 8.0) return 0.5;
+            //return 1.0;
+
+            // 依表格：0~4 → 0
+            if (workH <= 4.0)
+                return 0.0;
+
+            // >4 ~ 8 → 0.5
+            if (workH <= 8.0)
+                return 0.5;
+
+            // >8 ~ 12 → 1
+            if (workH <= 12.0)
+                return 1.0;
+
+            // >12 → 2
+            return 2.0;
         }
 
         private static void SplitOvertime(double payH, out double h8to10, out double h10to12)
